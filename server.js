@@ -5,6 +5,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const router = express.Router();
 const PORT = process.env.PORT || 4000;
+const path = require('path')
 
 let Course = require('./course.model');
 let Review = require('./review.model');

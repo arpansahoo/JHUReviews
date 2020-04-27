@@ -220,7 +220,7 @@ export default class ReviewForm extends Component {
                 )
             this.props.history.push('/page-1');  
         } else {
-            this.props.history.push('/page-1');  
+            this.props.history.push('/page-'+this.props.match.params.page);  
             alert("You have already reviewed this course. New submission was not posted.")
         }
     }
