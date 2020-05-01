@@ -129,7 +129,7 @@ export default class CourseList extends Component {
     }
 
     componentDidMount() {
-        const url = "https://jhu-course-rating-api.herokuapp.com/courses"
+        const url = "https://jhu-course-rating-api.herokuapp.com/courses" 
         axios.get(url)        
             .then()
             .catch(function (error){
