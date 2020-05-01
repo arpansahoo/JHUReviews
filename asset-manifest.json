@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/jhu-course-evals/static/css/main.f464b8b5.chunk.css",
-    "main.js": "/jhu-course-evals/static/js/main.1f72e32f.chunk.js",
-    "runtime-main.js": "/jhu-course-evals/static/js/runtime-main.a0f78983.js",
-    "static/css/2.478ebdbd.chunk.css": "/jhu-course-evals/static/css/2.478ebdbd.chunk.css",
-    "static/js/2.5b00d702.chunk.js": "/jhu-course-evals/static/js/2.5b00d702.chunk.js",
-    "index.html": "/jhu-course-evals/index.html",
-    "precache-manifest.356dd6ec7f6896fc0ca49c07ead70c6f.js": "/jhu-course-evals/precache-manifest.356dd6ec7f6896fc0ca49c07ead70c6f.js",
-    "service-worker.js": "/jhu-course-evals/service-worker.js",
-    "static/js/2.5b00d702.chunk.js.LICENSE.txt": "/jhu-course-evals/static/js/2.5b00d702.chunk.js.LICENSE.txt",
-    "static/media/jay.gif": "/jhu-course-evals/static/media/jay.ed73e569.gif",
-    "static/media/jhu-cr-logo.png": "/jhu-course-evals/static/media/jhu-cr-logo.9ff6f094.png"
+    "main.css": "/static/css/main.f464b8b5.chunk.css",
+    "main.js": "/static/js/main.1f72e32f.chunk.js",
+    "runtime-main.js": "/static/js/runtime-main.e584ffa4.js",
+    "static/css/2.478ebdbd.chunk.css": "/static/css/2.478ebdbd.chunk.css",
+    "static/js/2.5b00d702.chunk.js": "/static/js/2.5b00d702.chunk.js",
+    "index.html": "/index.html",
+    "precache-manifest.f03c16f3305b4b131dcacc17096f890d.js": "/precache-manifest.f03c16f3305b4b131dcacc17096f890d.js",
+    "service-worker.js": "/service-worker.js",
+    "static/js/2.5b00d702.chunk.js.LICENSE.txt": "/static/js/2.5b00d702.chunk.js.LICENSE.txt",
+    "static/media/jay.gif": "/static/media/jay.ed73e569.gif",
+    "static/media/jhu-cr-logo.png": "/static/media/jhu-cr-logo.9ff6f094.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.a0f78983.js",
+    "static/js/runtime-main.e584ffa4.js",
     "static/css/2.478ebdbd.chunk.css",
     "static/js/2.5b00d702.chunk.js",
     "static/css/main.f464b8b5.chunk.css",
