@@ -41,7 +41,7 @@ export default class Reviews extends Component {
             <div className="flex-wrapper">
                 <h5><Badge variant={variants[0]} style={{padding: "8px", marginRight: "10px", fontWeight: "400"}}>Workload: {ratings[0]}</Badge></h5>
                 <h5><Badge variant={variants[1]} style={{padding: "8px", marginRight: "10px", fontWeight: "400"}}>Difficulty: {ratings[1]}</Badge></h5>
-                <h5><Badge variant={variants[2]} style={{padding: "8px", marginRight: "10px", fontWeight: "400"}}>Grading Leniency: {ratings[2]}</Badge></h5>
+                <h5><Badge variant={variants[2]} style={{padding: "8px", marginRight: "10px", fontWeight: "400"}}>Grading: {ratings[2]}</Badge></h5>
                 <h5><Badge variant={variants[3]} style={{padding: "8px", marginRight: "10px", fontWeight: "400"}}>Learning Experience: {ratings[3]}</Badge></h5>
                 <h5><Badge variant={variants[4]} style={{padding: "8px", fontWeight: "400"}}>Instructor Quality: {ratings[4]}</Badge></h5>
             </div>

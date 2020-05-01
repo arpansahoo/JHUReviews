@@ -63,7 +63,7 @@ function FormComponent(props) {
                 </Form.Group>
                 <Form.Group as={Col} controlId="validationCustomUsername">
                     <Form.Label>
-                        <Popover name="Grading Leniency" title="Grading Leniency" scaleOne="1 = grammar Nazi" scaleTwo="5 = was it possible to not get an A??" />
+                        <Popover name="Grading" title="Grading" scaleOne="1 = grammar Nazi" scaleTwo="5 = was it possible to not get an A??" />
                     </Form.Label>
                     <InputGroup>
                         <Form.Control as="select" defaultValue="3" required onChange={props.changeGL}>

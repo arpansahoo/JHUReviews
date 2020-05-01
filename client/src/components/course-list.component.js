@@ -233,7 +233,7 @@ export default class CourseList extends Component {
                         /> 
                     </div>
                     <div className="flex-wrapper" style={{float:"right"}}>
-                        <Spinner variant="primary" style={{marginTop: "3px", marginRight: "15px"}} className={loading ? "":"hidden"} animation="border" role="status">
+                        <Spinner size="sm" variant="primary" style={{marginTop: "13px", marginRight: "10px"}} className={loading ? "":"hidden"} animation="border" role="status">
                             <span className="sr-only">Loading...</span>
                         </Spinner>
                         <PaginationComponent page={active} changePage={this.changePage} length={courses.length} />
@@ -264,7 +264,10 @@ export default class CourseList extends Component {
                         {this.courseList(courses)}
                     </tbody>
                 </table>
-                <div style={{float:"right"}}>
+                <div className="flex-wrapper" style={{float:"right"}}>
+                    <Spinner size="sm" variant="primary" style={{marginTop: "13px", marginRight: "10px"}} className={loading ? "":"hidden"} animation="border" role="status">
+                        <span className="sr-only">Loading...</span>
+                    </Spinner>
                     <PaginationComponent page={active} changePage={this.changePage} length={courses.length} />
                 </div>
             </div>

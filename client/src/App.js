@@ -37,14 +37,15 @@ class App extends Component {
   }
 
   render() {
-    if (!this.state.isSignedIn) {
+    // FIXME: change to !
+    if (this.state.isSignedIn) {
       history.push('/');
       return(<>
         <Header />
         <div className="site-container flex-wrapper">
           <div style={{width:"60%"}}></div>
           <div style={{"textAlign":"center", "marginTop":"70px"}}>
-            <Jumbotron style={{width: "100%", "paddingTop":"20px", "paddingBottom":"40px"}}>
+            <Jumbotron style={{width: "100%", "paddingTop":"20px", "paddingBottom":"35px"}}>
               <Image src={jay} fluid />   
               <h5 style={{paddingBottom:"10px"}}>
                 Search for high-quality courses and rate courses you've taken.

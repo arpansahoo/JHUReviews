@@ -22,7 +22,7 @@ export default class ContactModal extends Component {
                         This platform was created in order to make up for that loss, so that students can continue to select courses that meet their needs.
                     </p>
                     <p>
-                        <b>Any questions or feedback?</b> Just email us at [enter email here].
+                        <b>Any questions or feedback?</b> Just email us at <a href="mailto:contact@jhureviews.com">contact@jhureviews.com</a>.
                     </p>
                 </Modal.Body>
                 <Modal.Footer>

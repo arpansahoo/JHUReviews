@@ -55,9 +55,15 @@ code {
   display: inline-flex;
 }
 
-@media only screen and (max-width: 991px) {
+@media only screen and (max-width: 950px) {
   .header-wrapper {
-    margin-bottom: -57px !important;
+    margin-bottom: 0px !important;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .header-wrapper {
+    margin-bottom: 0px !important;
   }
 
   .filter-wrapper {
@@ -65,11 +71,3 @@ code {
   }
 }
 
-@media only screen and (max-width: 700px) {
-  .filter-wrapper {
-    display: inline-flex;
-  }
-  .header-wrapper {
-    margin-bottom: 0px !important;
-  }
-}

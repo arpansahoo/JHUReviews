@@ -8,7 +8,7 @@ export default class PaginationComponent extends Component {
         let length = props.length;
 
         return(<>
-            <Pagination>
+            <Pagination size="sm" style={{paddingTop: "5px"}}>
                 <Pagination.Prev disabled={active === 1} onClick={() => props.changePage(active - 1)}/>
                 <Pagination.Item active={active === 1} onClick={() => props.changePage(1)}>{1}</Pagination.Item>
                 <Pagination.Item disabled={length <= 52} active={active === 2} onClick={() => props.changePage(2)}>{2}</Pagination.Item>
