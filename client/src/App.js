@@ -37,8 +37,7 @@ class App extends Component {
   }
 
   render() {
-    // FIXME: change to !
-    if (this.state.isSignedIn) {
+    if (!this.state.isSignedIn) {
       history.push('/');
       return(<>
         <Header />

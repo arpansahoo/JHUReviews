@@ -21,7 +21,7 @@ class Course extends Component {
     render() {
         const props = this.props
         return (<>
-            <tr className="hover">
+            <tr className="hover" onClick={() => this.handleClick(!this.state.open)} >
                 <td>{props.course.number}</td>
                 <td>
                     <div className="row" style={{paddingLeft: "17px"}}>
@@ -34,7 +34,7 @@ class Course extends Component {
                             </Button>           
                         }
                         {(!this.state.open) &&
-                            <Button variant="link" style={{padding:"0"}} onClick={() => this.handleClick(true) }>
+                            <Button variant="link" style={{padding:"0"}} onClick={() => this.handleClick(true)}>
                                 <p style={{margin: "0", marginTop: "-2px"}}>[+]</p>
                             </Button>      
                         }
@@ -253,7 +253,7 @@ export default class CourseList extends Component {
                                     <Popover 
                                         name="Rating"
                                         title="Average Course Rating (out of 5)"
-                                        scaleOne="Based on five components: Workload, Difficulty, Grading Leniency, Learning Experience, & Instructor Quality"
+                                        scaleOne="Based on five components: Workload, Difficulty, Grading, Learning, & Instructor Quality"
                                         position="bottom" 
                                     />
                                 </div>

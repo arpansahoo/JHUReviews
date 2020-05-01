@@ -81,7 +81,7 @@ function FormComponent(props) {
             <Form.Row>
                 <Form.Group as={Col} controlId="validationCustomUsername">
                         <Form.Label>
-                            <Popover name="Learning Experience" title="Learning Experience" scaleOne="1 = on my last two brain cells" scaleTwo="5 = i'm a big 200iq brain now" />
+                            <Popover name="Learning" title="Learning" scaleOne="1 = on my last two brain cells" scaleTwo="5 = i'm a big 200iq brain now" />
                         </Form.Label>
                         <InputGroup>
                             <Form.Control as="select" defaultValue="3" required onChange={props.changeLE}>
@@ -232,7 +232,7 @@ export default class ReviewForm extends Component {
                 <div style={{paddingTop:"20px", paddingBottom:"30px"}}>
                     <div style={{paddingBottom:"15px"}}>
                         <h2>You are submitting a review for:</h2>
-                        <h5 style={{color:"#6c757d"}}>Spring 2020 {this.state.number} {this.state.title}, taught by {this.state.instructor}</h5>
+                        <h5 style={{color:"#6c757d"}}>{this.state.number} {this.state.title}</h5>
                     </div>
                     <FormComponent
                         page={this.props.match.params.page}
