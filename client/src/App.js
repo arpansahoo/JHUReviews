@@ -50,7 +50,9 @@ class App extends Component {
                 Search for high-quality courses and rate courses you've taken.
               </h5>
               <FacebookLogin
-                autoLoad={true}
+                autoLoad={false}
+                disableMobileRedirect={true}
+                isMobile={false}
                 appId="736328007172590"
                 fields="name,email,picture"
                 callback={this.responseFacebook}

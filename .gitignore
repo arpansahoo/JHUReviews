@@ -27,3 +27,4 @@ package-lock.json
 classes.json
 courses.json
 config.js
+client/build
