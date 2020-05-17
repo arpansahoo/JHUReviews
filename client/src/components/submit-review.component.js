@@ -102,7 +102,7 @@ export default class ReviewForm extends Component {
             teacher_quality: array[5],
         }
 
-        axios.post('http://jhu-course-rating-api.herokuapp.com/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
+        axios.post('https://jhu-course-rating-api.herokuapp.com/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
             .then(
                 res => console.log(res.data)
             )

@@ -74,13 +74,11 @@ export default class Reviews extends Component {
         }
         // no reviews yet, display prompt to submit first review 
         return (<>
-                <h2 style={{paddingTop: "5px"}}>Reviews</h2>
-                <div className="flex-wrapper">
-                    <p>No one has reviewed this course yet. Be the first!</p>
-                    <Link to={"/submit-review/"+course._id+"/"+page}>
-                        <Button variant="outline-primary" size="sm" style={{marginTop: "-5px", marginLeft: "10px"}} >Submit a Review</Button>
-                    </Link>
-                </div>
+                <h4 style={{paddingTop: "5px"}}>Reviews</h4>
+                <p>No one has reviewed this course yet. Be the first!</p>
+                <Link to={"/submit-review/"+course._id+"/"+page}>
+                    <Button variant="outline-primary" size="sm" style={{marginTop: "-10px", marginBottom: "10px"}} >Submit a Review</Button>
+                </Link>
         </>)
     }
 

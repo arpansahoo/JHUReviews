@@ -60,6 +60,7 @@ class Course extends Component {
 }
 
 export default class CourseList extends Component {
+    interval = null;
     
     constructor(props) {
         super(props)
@@ -129,12 +130,10 @@ export default class CourseList extends Component {
     }
 
     componentDidMount() {
-        const url = "http://jhu-course-rating-api.herokuapp.com/courses" 
-        axios.get(url)        
-            .then()
-            .catch(function (error){
-                console.log(error)
-            })
+        const url = "https://jhu-course-rating-api.herokuapp.com/courses"  
+        this.setState({
+            loading: true,
+        })
         axios.get(url)        
             .then(response => {
                 this.setState({
@@ -145,9 +144,17 @@ export default class CourseList extends Component {
             .catch(function (error){
                 console.log(error)
             })
+        axios.get(url)        
+            .then(response => {
+                this.setState({
+                    courses: response.data, 
+                })
+            })
+            .catch(function (error){
+                console.log(error)
+            })
     }
 
-    
     changePage(num) {
         this.setState({active: num})
         history.push('/page-'+num)
