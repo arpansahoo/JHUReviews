@@ -19,7 +19,7 @@ export default class Header extends Component {
     render() {        
         return(<>
             <Navbar style={{marginBottom:"5px", backgroundColor:"white", "box-shadow":"0 0 12px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.15)"}} sticky="top" collapseOnSelect expand="lg" variant="light">
-                <Navbar.Brand href="/">JHU Course Reviews</Navbar.Brand>
+                <Navbar.Brand href="/">JHUReviews</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="mr-auto">
