@@ -7,6 +7,177 @@ import Popover from "./popover.component";
 import history from "../history";
 import Header from "./header.component";
 
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import Login from "./login.component";
+
+export default class ReviewForm extends Component {
+    constructor(props) {
+        super(props);
+
+        this.changeText = this.changeText.bind(this);
+        this.changeWL = this.changeWL.bind(this);
+        this.changeDiff = this.changeDiff.bind(this);
+        this.changeLE = this.changeLE.bind(this);
+        this.changeGL = this.changeGL.bind(this);
+        this.changeIQ = this.changeIQ.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+
+        var isSignedIn = false;
+        if (localStorage.getItem('loggedIn') === "true") {
+            isSignedIn = true
+        }
+
+        this.state = {
+            number: '',
+            title: '',
+            instructor: '',
+            reviews: [],
+            text: '',
+            workload: '',
+            difficulty: '',
+            learn_quality: '',
+            teacher_quality: '',
+            grade_leniency: '',
+            isSignedIn: isSignedIn,
+            uid: null,
+            uiConfig: {
+                signInFlow: 'popup',
+                signInOptions: [
+                    firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+                ],
+                callbacks: {
+                    signInSuccessWithAuthResult: () => false
+                }
+            }
+        }
+    }
+
+    login(user) {
+        var id = null;
+        if (user)
+            id = user.uid
+        this.setState({isSignedIn: !!user, uid: id})
+        if (!!user) 
+            localStorage.setItem('loggedIn', true)
+    }
+
+    componentDidMount() {
+        this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+            (user) => this.login(user)
+        );
+        axios.get('https://jhu-course-rating-api.herokuapp.com/courses/'+this.props.match.params.id)
+            .then(response => {
+                this.setState({
+                    number: response.data.number,
+                    title: response.data.name,
+                    instructor: response.data.instructor, 
+                    reviews: response.data.reviews,
+                })   
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
+    }
+
+    // Make sure we un-register Firebase observers when the component unmounts.
+    componentWillUnmount() {
+        this.unregisterAuthObserver();
+    }
+    
+    onSubmit(e) {
+        e.preventDefault()
+        var array = [this.state.text, this.state.workload, this.state.difficulty, this.state.learn_quality, this.state.grade_leniency, this.state.teacher_quality]
+        for (let i = 0; i < array.length; i++) {
+            if ("" === array[i])
+                array[i] = "3.00"
+        }
+        
+        const obj = {
+            text: array[0],
+            workload: array[1],
+            difficulty: array[2],
+            learn_quality: array[3],
+            grade_leniency: array[4],
+            teacher_quality: array[5],
+        }
+
+        axios.post('http://jhu-course-rating-api.herokuapp.com/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
+            .then(
+                res => console.log(res.data)
+            )
+            .catch(function (error) {
+                console.log(error)
+            })
+        this.props.history.push('/page-1');  
+    }
+
+    render() {
+        return (<>
+            <Header active="sp20" />
+            <div className="site-container">
+                {!this.state.isSignedIn && 
+                    <Login uiConfig={this.state.uiConfig} firebaseAuth={firebase.auth()} />
+                }
+                {this.state.isSignedIn && 
+                    <div style={{paddingTop:"20px", paddingBottom:"30px"}}>
+                        <div style={{paddingBottom:"15px"}}>
+                            <h2>You are submitting a review for:</h2>
+                            <h5 style={{color:"#6c757d"}}>{this.state.number} {this.state.title}</h5>
+                        </div>
+                        <FormComponent
+                            page={this.props.match.params.page}
+                            changeText={this.changeText} 
+                            changeWL={this.changeWL}
+                            changeDiff={this.changeDiff}
+                            changeGL={this.changeGL}
+                            changeLE={this.changeLE}
+                            changeIQ={this.changeIQ}
+                            onSubmit={this.onSubmit}
+                        />
+                    </div>
+                }   
+            </div>
+        </>)    
+    }
+
+    changeText(e) {
+        this.setState({
+            text: e.target.value
+        });
+    }
+
+    changeWL(e) {
+        this.setState({
+            workload: e.target.value
+        });
+    }
+
+    changeDiff(e) {
+        this.setState({
+            difficulty: e.target.value
+        });
+    }
+
+    changeLE(e) {
+        this.setState({
+            learn_quality: e.target.value
+        });
+    }
+
+    changeGL(e) {
+        this.setState({
+            grade_leniency: e.target.value
+        });
+    }
+
+    changeIQ(e) {
+        this.setState({
+            teacher_quality: e.target.value
+        });
+    }
+}
+
 function FormComponent(props) { 
     const [validated, setValidated] = useState(false);
     const page = props.page
@@ -137,151 +308,4 @@ function FormComponent(props) {
             </Link>
         </Form>
     );
-}
-
-export default class ReviewForm extends Component {
-    constructor(props) {
-        super(props);
-
-        this.changeText = this.changeText.bind(this);
-        this.changeWL = this.changeWL.bind(this);
-        this.changeDiff = this.changeDiff.bind(this);
-        this.changeLE = this.changeLE.bind(this);
-        this.changeGL = this.changeGL.bind(this);
-        this.changeIQ = this.changeIQ.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-
-        this.state = {
-            number: '',
-            title: '',
-            instructor: '',
-            reviews: [],
-            text: '',
-            workload: '',
-            difficulty: '',
-            learn_quality: '',
-            teacher_quality: '',
-            grade_leniency: ''
-        }
-    }
-
-    componentDidMount() {
-        axios.get('https://jhu-course-rating-api.herokuapp.com/courses/'+this.props.match.params.id)
-            .then(response => {
-                this.setState({
-                    number: response.data.number,
-                    title: response.data.name,
-                    instructor: response.data.instructor, 
-                    reviews: response.data.reviews
-                })   
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-    }
-
-    onSubmit(e) {
-        e.preventDefault()
-        var array = [this.state.text, this.state.workload, this.state.difficulty, this.state.learn_quality, this.state.grade_leniency, this.state.teacher_quality]
-        for (let i = 0; i < array.length; i++) {
-            if ("" === array[i])
-                array[i] = "3.00"
-        }
-        
-        const obj = {
-            text: array[0],
-            workload: array[1],
-            difficulty: array[2],
-            learn_quality: array[3],
-            grade_leniency: array[4],
-            teacher_quality: array[5],
-            userID: localStorage.getItem('userID')
-        }
-
-        var allowed = true
-        try {
-            for (let i = 0; i < this.state.reviews.length; i++) {
-                if (this.state.reviews[i].userID === localStorage.getItem('userID')) {
-                    allowed = false
-                    break
-                }
-            }
-        } catch(e) {
-            allowed = false
-        }
-
-        if (obj.userID == null) 
-            allowed = false
-
-        if (allowed) {
-            axios.post('https://jhu-course-rating-api.herokuapp.com/courses/add-review/'+this.props.match.params.id, obj)
-                .then(
-                    res => console.log(res.data)
-                )
-            this.props.history.push('/page-1');  
-        } else {
-            this.props.history.push('/page-'+this.props.match.params.page);  
-            alert("You have already reviewed this course. New submission was not posted.")
-        }
-    }
-
-    render() {
-        return (<>
-            <Header active="sp20" />
-            <div className="site-container">
-                <div style={{paddingTop:"20px", paddingBottom:"30px"}}>
-                    <div style={{paddingBottom:"15px"}}>
-                        <h2>You are submitting a review for:</h2>
-                        <h5 style={{color:"#6c757d"}}>{this.state.number} {this.state.title}</h5>
-                    </div>
-                    <FormComponent
-                        page={this.props.match.params.page}
-                        changeText={this.changeText} 
-                        changeWL={this.changeWL}
-                        changeDiff={this.changeDiff}
-                        changeGL={this.changeGL}
-                        changeLE={this.changeLE}
-                        changeIQ={this.changeIQ}
-                        onSubmit={this.onSubmit}
-                    />
-                </div>
-            </div>
-        </>)
-    }
-
-    changeText(e) {
-        this.setState({
-            text: e.target.value
-        });
-    }
-
-    changeWL(e) {
-        this.setState({
-            workload: e.target.value
-        });
-    }
-
-    changeDiff(e) {
-        this.setState({
-            difficulty: e.target.value
-        });
-    }
-
-    changeLE(e) {
-        this.setState({
-            learn_quality: e.target.value
-        });
-    }
-
-    changeGL(e) {
-        this.setState({
-            grade_leniency: e.target.value
-        });
-    }
-
-    changeIQ(e) {
-        this.setState({
-            teacher_quality: e.target.value
-        });
-    }
 }

@@ -62,7 +62,7 @@ export default class Reviews extends Component {
                     <div>
                         <Link to={"/submit-review/"+course._id+"/"+page}>
                             <Button variant="outline-primary" size="sm" style={{marginTop: "16px", marginLeft:"10px"}}>Submit a Review</Button>
-                        </Link>
+                        </Link> 
                     </div>
                 </div>
                 <div>

@@ -28,3 +28,4 @@ classes.json
 courses.json
 config.js
 client/build
+client/src/firebase-config.js
