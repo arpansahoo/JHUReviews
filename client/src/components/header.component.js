@@ -27,7 +27,7 @@ export default class Header extends Component {
                     </Nav>
                     <Nav>
                         {/* <Nav.Link active={this.props.active === "bookmark"} disabled>Bookmarked Courses</Nav.Link> */}
-                        <Nav.Link active={this.props.active === "contact"} onClick={() => this.handleToggleModal()}>About</Nav.Link>
+                        <Nav.Link active={this.state.showModal === true} onClick={() => this.handleToggleModal()}>About</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
