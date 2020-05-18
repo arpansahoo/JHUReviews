@@ -20,13 +20,25 @@ class Course extends Component {
 
     render() {
         const props = this.props
+        var rating = Number.parseFloat(props.course.r).toPrecision(3)
+        var color = "dark"
+        if (rating < 1) {
+            color = "dark"
+        } else if (rating < 3) {
+            color = "danger"
+        } else if (rating < 4) {
+            color = "warning"
+        } else {
+            color = "success"
+        }
+
         return (<>
             <tr className="hover" onClick={() => this.handleClick(!this.state.open)} >
-                <td>{props.course.number}</td>
+                <td>{props.course.num}</td>
                 <td>
                     <div className="row" style={{paddingLeft: "17px"}}>
                         <div style={{paddingRight: "5px"}}>
-                            {props.course.name}
+                            {props.course.n}
                         </div>
                         {(this.state.open) &&
                             <Button variant="link" style={{padding:"0"}} onClick={() => this.handleClick(false)}>
@@ -40,11 +52,11 @@ class Course extends Component {
                         }
                     </div>
                 </td>
-                <td>{props.course.instructor}</td>
-                <td>{props.course.area}</td>
-                <td>{props.course.writing}</td>
-                <td>{props.course.credits}</td>
-                <td><Badge variant={props.course.color === "dark" ? "light":props.course.color} style={{fontSize: "15px", padding: "5px", fontWeight: "400"}}>{props.course.rating}</Badge></td>
+                {/* <td>{props.course.i}</td> */}
+                <td>{props.course.a}</td>
+                <td>{props.course.w}</td>
+                <td>{props.course.c}</td>
+                <td><Badge variant={color} style={{fontSize: "15px", padding: "5px", fontWeight: "400"}}>{rating}</Badge></td>
             </tr>
             {(this.state.open) &&
                 <tr>
@@ -111,13 +123,15 @@ export default class CourseList extends Component {
         }
         if (active > 1) {
             if (localStorage.getItem('courses-length') != null) {
-                if ((active - 1) * 52 > JSON.parse(localStorage.getItem('courses-length'))) 
-                    active = Math.ceil(JSON.parse(localStorage.getItem('courses-length')) / 52) 
+                if ((active - 1) * 50 > JSON.parse(localStorage.getItem('courses-length'))) 
+                    active = Math.ceil(JSON.parse(localStorage.getItem('courses-length')) / 50) 
             } else {
-                if ((active - 1) * 52 > 1037) 
-                    active = 20 
+                if ((active - 1) * 50 > 2483) 
+                    active = 50 
             }
         }
+        if (active <= 0)
+            active = 1
         history.push('/page-'+active)
 
         this.state = {
@@ -130,7 +144,8 @@ export default class CourseList extends Component {
     }
 
     componentDidMount() {
-        const url = "https://jhu-course-rating-api.herokuapp.com/courses"  
+        //const url = "https://jhu-course-rating-api.herokuapp.com/courses"  
+        const url = 'http://localhost:4000/courses'
         this.setState({
             loading: true,
         })
@@ -141,16 +156,7 @@ export default class CourseList extends Component {
                     loading: false,
                 })
             })
-            .catch(function (error){
-                console.log(error)
-            })
-        axios.get(url)        
-            .then(response => {
-                this.setState({
-                    courses: response.data, 
-                })
-            })
-            .catch(function (error){
+            .catch(function(error) {
                 console.log(error)
             })
     }
@@ -163,7 +169,7 @@ export default class CourseList extends Component {
     courseList(courses) {
         const active = this.state.active
         return (
-            courses.slice((active - 1) * 52, (active * 52)).map(function(currentCourse, i) {
+            courses.slice((active - 1) * 50, (active * 50)).map(function(currentCourse, i) {
                 return (<Course course={currentCourse} active={active} key={i + active * Math.random(100)} />);
             })
         );
@@ -183,18 +189,18 @@ export default class CourseList extends Component {
         } catch(e) {}
 
         this.state.courses.map(function(currentCourse, i) {
-            var valid = currentCourse.number.includes(number) 
-                && currentCourse.name.toUpperCase().includes(name)
-                && currentCourse.instructor.toUpperCase().includes(instructor)
-                && currentCourse.rating >= rating
+            var valid = currentCourse.num.includes(number) 
+                && currentCourse.n.toUpperCase().includes(name)
+                // && currentCourse.instructor.toUpperCase().includes(instructor)
+                && currentCourse.r >= rating
 
-            if (valid && filters[3] && currentCourse.writing === "N")
+            if (valid && filters[3] && currentCourse.w === "N")
                 valid = false 
-            if (valid && filters[9] && currentCourse.area === "N/A")
+            if (valid && filters[9] && currentCourse.a === "N/A")
                 valid = false
 
             if (valid) {
-                const areas = currentCourse.area.toUpperCase()
+                const areas = currentCourse.a.toUpperCase()
                 const chars = ['0','1','2','3','H','S','N','E','Q']
                 var count = 0
 
@@ -251,7 +257,7 @@ export default class CourseList extends Component {
                         <tr>
                             <th className="course-num">Course #</th>
                             <th className="course-name">Course Name</th>
-                            <th className="instructor">Instructor(s)</th>
+                            {/* <th className="instructor">Instructor(s)</th> */}
                             <th>Areas</th>
                             <th>Writing</th>
                             <th>Credits</th>

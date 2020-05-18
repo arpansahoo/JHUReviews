@@ -16,11 +16,13 @@ export default class ReviewForm extends Component {
         super(props);
 
         this.changeText = this.changeText.bind(this);
-        this.changeWL = this.changeWL.bind(this);
-        this.changeDiff = this.changeDiff.bind(this);
-        this.changeLE = this.changeLE.bind(this);
-        this.changeGL = this.changeGL.bind(this);
-        this.changeIQ = this.changeIQ.bind(this);
+        this.changeWorkload = this.changeWorkload.bind(this);
+        this.changeDifficulty = this.changeDifficulty.bind(this);
+        this.changeLearning = this.changeLearning.bind(this);
+        this.changeGrading = this.changeGrading.bind(this);
+        this.changeInstructorQuality = this.changeInstructorQuality.bind(this);
+        this.changeSemester = this.changeSemester.bind(this);
+        this.changeInstructorName = this.changeInstructorName.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
 
         var isSignedIn = false;
@@ -31,14 +33,14 @@ export default class ReviewForm extends Component {
         this.state = {
             number: '',
             title: '',
-            instructor: '',
-            reviews: [],
             text: '',
             workload: '',
             difficulty: '',
-            learn_quality: '',
-            teacher_quality: '',
-            grade_leniency: '',
+            learning: '',
+            instructor_quality: '',
+            grading: '',
+            semester: '',
+            instructor_name: '', 
             isSignedIn: isSignedIn,
             uid: null,
             uiConfig: {
@@ -58,21 +60,22 @@ export default class ReviewForm extends Component {
         if (user)
             id = user.uid
         this.setState({isSignedIn: !!user, uid: id})
-        if (!!user) 
+        if (!!user) {
             localStorage.setItem('loggedIn', true)
+        } else {
+            localStorage.setItem('loggedIn', false)
+        }
     }
 
     componentDidMount() {
         this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
             (user) => this.login(user)
         );
-        axios.get('https://jhu-course-rating-api.herokuapp.com/courses/'+this.props.match.params.id)
+        axios.get('http://localhost:4000/courses/'+this.props.match.params.id)
             .then(response => {
                 this.setState({
-                    number: response.data.number,
-                    title: response.data.name,
-                    instructor: response.data.instructor, 
-                    reviews: response.data.reviews,
+                    number: response.data.num,
+                    title: response.data.n,
                 })   
             })
             .catch(function (error) {
@@ -87,29 +90,34 @@ export default class ReviewForm extends Component {
     
     onSubmit(e) {
         e.preventDefault()
-        var array = [this.state.text, this.state.workload, this.state.difficulty, this.state.learn_quality, this.state.grade_leniency, this.state.teacher_quality]
+        var array = [this.state.text, this.state.workload, this.state.difficulty, this.state.learning, this.state.grading, this.state.instructor_quality, this.state.semester, this.state.instructor_name]
+        if (array[6] === "")
+            array[6] = "Spring 2020"
         for (let i = 0; i < array.length; i++) {
-            if ("" === array[i])
+            if (array[i] === "")
                 array[i] = "3.00"
         }
         
         const obj = {
-            text: array[0],
-            workload: array[1],
-            difficulty: array[2],
-            learn_quality: array[3],
-            grade_leniency: array[4],
-            teacher_quality: array[5],
+            s: array[6],
+            i: array[7],
+            tex: array[0],
+            w: array[1],
+            d: array[2],
+            l: array[3],
+            g: array[4],
+            t: array[5]
         }
 
-        axios.post('https://jhu-course-rating-api.herokuapp.com/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
-            .then(
-                res => console.log(res.data)
-            )
+        axios.post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
+            .then(function(res) {
+                console.log(res.data)
+                window.location.reload()
+            })
             .catch(function (error) {
                 console.log(error)
             })
-        this.props.history.push('/page-1');  
+        this.props.history.push('/page-1')
     }
 
     render() {
@@ -128,11 +136,13 @@ export default class ReviewForm extends Component {
                         <FormComponent
                             page={this.props.match.params.page}
                             changeText={this.changeText} 
-                            changeWL={this.changeWL}
-                            changeDiff={this.changeDiff}
-                            changeGL={this.changeGL}
-                            changeLE={this.changeLE}
-                            changeIQ={this.changeIQ}
+                            changeWorkload={this.changeWorkload}
+                            changeDifficulty={this.changeDifficulty}
+                            changeGrading={this.changeGrading}
+                            changeLearning={this.changeLearning}
+                            changeInstructorQuality={this.changeInstructorQuality}
+                            changeSemester={this.changeSemester}
+                            changeInstructorName={this.changeInstructorName}
                             onSubmit={this.onSubmit}
                         />
                     </div>
@@ -141,39 +151,64 @@ export default class ReviewForm extends Component {
         </>)    
     }
 
-    changeText(e) {
+    changeInstructorName(e) {
         this.setState({
-            text: e.target.value
+            instructor_name: e.target.value.trim()
         });
     }
 
-    changeWL(e) {
+    changeSemester(e) {
+        var value = e.target.value
+        if (value === "Spring 2020" || value === "") {
+            value = "S20"
+        } else if (value === "Fall 2019") {
+            value = "F19"
+        } else if (value === "Spring 2019") {
+            value = "S19"
+        } else if (value === "Fall 2018") {
+            value = "F18"
+        } else if (value === "Spring 2018") {
+            value = "S18"
+        }
+        alert(value)
+        this.setState({
+            semester: value
+        });
+    }
+
+    changeText(e) {
+        this.setState({
+            text: e.target.value.trim()
+        });
+    }
+
+    changeWorkload(e) {
         this.setState({
             workload: e.target.value
         });
     }
 
-    changeDiff(e) {
+    changeDifficulty(e) {
         this.setState({
             difficulty: e.target.value
         });
     }
 
-    changeLE(e) {
+    changeLearning(e) {
         this.setState({
-            learn_quality: e.target.value
+            learning: e.target.value
         });
     }
 
-    changeGL(e) {
+    changeGrading(e) {
         this.setState({
-            grade_leniency: e.target.value
+            grading: e.target.value
         });
     }
 
-    changeIQ(e) {
+    changeInstructorQuality(e) {
         this.setState({
-            teacher_quality: e.target.value
+            instructor_quality: e.target.value
         });
     }
 }
@@ -204,10 +239,44 @@ function FormComponent(props) {
             <Form.Row>
                 <Form.Group as={Col} controlId="validationCustomUsername">
                     <Form.Label>
-                        <Popover name="Workload" title="Workload" scaleOne="1 = enough work for 3 classes" scaleTwo="5 = a whole lot of nothing" />
+                        Semester
                     </Form.Label>
                     <InputGroup>
-                        <Form.Control as="select" defaultValue="3" required onChange={props.changeWL}>
+                        <Form.Control as="select" defaultValue="Spring 2020" required onChange={props.changeSemester}>
+                            <option>Spring 2018</option>
+                            <option>Fall 2018</option>
+                            <option>Spring 2019</option>
+                            <option>Fall 2019</option>
+                            <option>Spring 2020</option>
+                        </Form.Control> 
+                        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    </InputGroup>
+                </Form.Group>
+                <Form.Group as={Col}  controlId="validationCustom05">
+                    <Form.Label>
+                        Instructor Name
+                    </Form.Label>
+                    <Form.Control 
+                        as="textarea" 
+                        placeholder="Type your instructor's name" 
+                        rows="1" 
+                        required
+                        maxLength={50}
+                        onChange={props.changeInstructorName}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        Please provide your instructor's name.
+                    </Form.Control.Feedback>
+                </Form.Group>
+            </Form.Row>
+
+            <Form.Row>
+                <Form.Group as={Col} controlId="validationCustomUsername">
+                    <Form.Label>
+                        <Popover name="Workload" title="Workload" scaleOne="1 = Enough work for 3 classes" scaleTwo="5 = A whole lot of nothing" />
+                    </Form.Label>
+                    <InputGroup>
+                        <Form.Control as="select" defaultValue="3" required onChange={props.changeWorkload}>
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -219,10 +288,10 @@ function FormComponent(props) {
                 </Form.Group>
                 <Form.Group as={Col}  controlId="validationCustomUsername">
                     <Form.Label>
-                        <Popover name="Difficulty" title="Difficulty" scaleOne="1 = were the lectures in English??" scaleTwo="5 = me and all my bois aced it" />
+                        <Popover name="Difficulty" title="Difficulty" scaleOne="1 = Were the lectures in English??" scaleTwo="5 = Me and all my bois aced it" />
                     </Form.Label>
                     <InputGroup>
-                        <Form.Control as="select" defaultValue="3" required onChange={props.changeDiff}>
+                        <Form.Control as="select" defaultValue="3" required onChange={props.changeDifficulty}>
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -234,10 +303,10 @@ function FormComponent(props) {
                 </Form.Group>
                 <Form.Group as={Col} controlId="validationCustomUsername">
                     <Form.Label>
-                        <Popover name="Grading" title="Grading" scaleOne="1 = grammar Nazi" scaleTwo="5 = was it possible to not get an A??" />
+                        <Popover name="Grading" title="Grading" scaleOne="1 = Prof had no mercy on my soul" scaleTwo="5 = Was it possible to not get an A??" />
                     </Form.Label>
                     <InputGroup>
-                        <Form.Control as="select" defaultValue="3" required onChange={props.changeGL}>
+                        <Form.Control as="select" defaultValue="3" required onChange={props.changeGrading}>
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -252,10 +321,10 @@ function FormComponent(props) {
             <Form.Row>
                 <Form.Group as={Col} controlId="validationCustomUsername">
                         <Form.Label>
-                            <Popover name="Learning" title="Learning" scaleOne="1 = on my last two brain cells" scaleTwo="5 = i'm a big 200iq brain now" />
+                            <Popover name="Learning" title="Learning" scaleOne="1 = I only have two brain cells left" scaleTwo="5 = I'm a big 200iq brain now" />
                         </Form.Label>
                         <InputGroup>
-                            <Form.Control as="select" defaultValue="3" required onChange={props.changeLE}>
+                            <Form.Control as="select" defaultValue="3" required onChange={props.changeLearning}>
                                 <option>1</option>
                                 <option>2</option>
                                 <option>3</option>
@@ -267,10 +336,10 @@ function FormComponent(props) {
                     </Form.Group>
                     <Form.Group as={Col} controlId="validationCustomUsername">
                         <Form.Label>
-                            <Popover name="Instructor Quality" title="Instructor Quality" scaleOne="1 = i had to completely self-teach" scaleTwo="5 = the prof was basically God" />
+                            <Popover name="Instructor Quality" title="Instructor Quality" scaleOne="1 = I had to completely self-teach" scaleTwo="5 = The prof was basically God" />
                         </Form.Label>
                         <InputGroup>
-                            <Form.Control as="select" defaultValue="3" required onChange={props.changeIQ}>
+                            <Form.Control as="select" defaultValue="3" required onChange={props.changeInstructorQuality}>
                                 <option>1</option>
                                 <option>2</option>
                                 <option>3</option>
@@ -296,7 +365,7 @@ function FormComponent(props) {
                         onChange={props.changeText}
                     />
                     <Form.Control.Feedback type="invalid">
-                        Please provide a valid review.
+                        Please provide a review.
                     </Form.Control.Feedback>
                 </Form.Group>
             </Form.Row>
