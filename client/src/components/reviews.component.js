@@ -73,10 +73,49 @@ export default class Reviews extends Component {
         </>)
     }
 
+    cmp(aSem, bSem) {
+        switch(aSem) {
+            case "S18":
+                aSem = 1
+                break
+            case "F18":
+                aSem = 2
+                break
+            case "S19":
+                aSem = 3
+                break
+            case "F19":
+                aSem = 4
+                break
+            default:
+                aSem = 5
+                break
+        }
+        switch(bSem) {
+            case "S18":
+                bSem = 1
+                break
+            case "F18":
+                bSem = 2
+                break
+            case "S19":
+                bSem = 3
+                break
+            case "F19":
+                bSem = 4
+                break
+            default:
+                bSem = 5
+                break
+        }
+        return [aSem, bSem]
+    }
+
     render() {
         const props = this.props
         var course = props.course
         var page = props.page
+
         if (props.course.rev.length > 0) {
             return (<>
                 <h4>Average Stats</h4>
@@ -91,7 +130,9 @@ export default class Reviews extends Component {
                     </div>
                 </div>
                 <div>
-                    {props.course.rev.map((review, key) =>
+                    {props.course.rev.sort(
+                        (a, b) => (this.cmp(a.s, b.s)[0] < this.cmp(a.s)[1]) ? 1 : -1
+                    ).map((review, key) =>
                         <Review rev={review} key={key} />
                     )}
                 </div>
