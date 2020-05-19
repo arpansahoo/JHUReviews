@@ -20,7 +20,7 @@ class Course extends Component {
 
     render() {
         const props = this.props
-        var rating = Number.parseFloat(props.course.r).toPrecision(3)
+        var rating = props.course.rating
         var color = "dark"
         if (rating < 1) {
             color = "dark"
@@ -56,13 +56,13 @@ class Course extends Component {
                 <td>{props.course.a}</td>
                 <td>{props.course.w}</td>
                 <td>{props.course.c}</td>
-                <td><Badge variant={color} style={{fontSize: "15px", padding: "5px", fontWeight: "400"}}>{rating}</Badge></td>
+                <td><Badge variant={color} style={{fontSize: "15px", padding: "5px", fontWeight: "400"}}>{props.course.rating}</Badge></td>
             </tr>
             {(this.state.open) &&
                 <tr>
                     <td colSpan="100%">
                         <div>
-                            <Reviews course={props.course} page={props.active} key={props._id} />
+                            <Reviews course={props.course} page={props.active} key={props._id} ratings={props.course.ratings} />
                         </div>
                     </td>
                 </tr>
@@ -126,7 +126,7 @@ export default class CourseList extends Component {
                 if ((active - 1) * 50 > JSON.parse(localStorage.getItem('courses-length'))) 
                     active = Math.ceil(JSON.parse(localStorage.getItem('courses-length')) / 50) 
             } else {
-                if ((active - 1) * 50 > 2483) 
+                if ((active - 1) * 50 > 2481) 
                     active = 50 
             }
         }
@@ -144,8 +144,8 @@ export default class CourseList extends Component {
     }
 
     componentDidMount() {
-        //const url = "https://jhu-course-rating-api.herokuapp.com/courses"  
-        const url = 'http://localhost:4000/courses'
+        const url = "https://jhu-course-rating-api.herokuapp.com/courses"  
+        // const url = 'http://localhost:4000/courses'
         this.setState({
             loading: true,
         })
@@ -182,18 +182,58 @@ export default class CourseList extends Component {
         const filters = this.state.filters
         const number = filters[0].toUpperCase().trim()
         const name = filters[1].toUpperCase().trim()
-        const instructor = filters[2].toUpperCase().trim()
-        var rating = 0
+        // const instructor = filters[2].toUpperCase().trim()
+        var minRating = 0
         try {
-            rating = JSON.parse(filters[10])
+            minRating = JSON.parse(filters[10])
         } catch(e) {}
 
         this.state.courses.map(function(currentCourse, i) {
-            var valid = currentCourse.num.includes(number) 
-                && currentCourse.n.toUpperCase().includes(name)
-                // && currentCourse.instructor.toUpperCase().includes(instructor)
-                && currentCourse.r >= rating
+            var ratings = [0, 0, 0, 0, 0]
+            var oldRatings = [0, 0, 0, 0, 0]
+            var newRatings = [0, 0, 0, 0, 0]
+            var oldLen = 0
+            var newLen = 0
 
+            for (var j = 0; j < currentCourse.rev.length; j++) {
+                if (Number.parseFloat(currentCourse.rev[j].b) === 1) { // old reviews
+                    oldRatings[0] += Number.parseFloat(currentCourse.rev[j].w)
+                    oldRatings[1] += Number.parseFloat(currentCourse.rev[j].d)
+                    oldRatings[2] += Number.parseFloat(currentCourse.rev[j].g)
+                    oldRatings[3] += Number.parseFloat(currentCourse.rev[j].l)
+                    oldRatings[4] += Number.parseFloat(currentCourse.rev[j].t)
+                    oldLen++
+                } else if (Number.parseFloat(currentCourse.rev[j].b) === 0) { // new reviews
+                    newRatings[0] += Number.parseFloat(currentCourse.rev[j].w)
+                    newRatings[1] += Number.parseFloat(currentCourse.rev[j].d)
+                    newRatings[2] += Number.parseFloat(currentCourse.rev[j].g)
+                    newRatings[3] += Number.parseFloat(currentCourse.rev[j].l)
+                    newRatings[4] += Number.parseFloat(currentCourse.rev[j].t)
+                    newLen++
+                }
+            }
+            var rating = 0.0
+            for (j = 0; j < ratings.length; j++) {
+                if (newLen === 0 && oldLen > 0) 
+                    ratings[j] = oldRatings[j] / oldLen
+                    rating += ratings[j]
+                    ratings[j] = Number(ratings[j]).toPrecision(3)
+                if (newLen > 0) {
+                    ratings[j] = (oldRatings[j] + (newRatings[j] / newLen)) / (oldLen + 1)
+                    rating += ratings[j]
+                    ratings[j] = Number(ratings[j]).toPrecision(3)
+                }
+            }
+            rating /= 5
+            rating = Number(rating).toPrecision(3)
+            currentCourse.rating = rating
+            currentCourse.ratings = ratings
+
+            var valid = currentCourse.num.includes(number) 
+                && currentCourse.n.toUpperCase().includes(name) 
+                // && currentCourse.instructor.toUpperCase().includes(instructor)
+                && rating >= minRating
+            
             if (valid && filters[3] && currentCourse.w === "N")
                 valid = false 
             if (valid && filters[9] && currentCourse.a === "N/A")
@@ -204,7 +244,7 @@ export default class CourseList extends Component {
                 const chars = ['0','1','2','3','H','S','N','E','Q']
                 var count = 0
 
-                for (var j = 4; j < filters.length; j++) {
+                for (j = 4; j < filters.length; j++) {
                     if (filters[j]) {
                         if (areas.includes(chars[j])) {
                             count++

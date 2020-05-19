@@ -36,11 +36,11 @@ code {
   width: 70%;
   min-width: 200px;
 }
-
+/* 
 .instructor {
   width: 20%;
   min-width: 150px;
-}
+} */
 
 .hidden {
   visibility: hidden;

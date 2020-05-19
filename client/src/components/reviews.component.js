@@ -7,11 +7,11 @@ class Review extends Component {
     avg() {
         const props = this.props
         var rating = 0;
-        rating += Number(props.rev.w)
-        rating += Number(props.rev.d)
-        rating += Number(props.rev.g)
-        rating += Number(props.rev.l)
-        rating += Number(props.rev.t)
+        rating += Number.parseFloat(props.rev.w)
+        rating += Number.parseFloat(props.rev.d)
+        rating += Number.parseFloat(props.rev.g)
+        rating += Number.parseFloat(props.rev.l)
+        rating += Number.parseFloat(props.rev.t)
         rating /= 5;
         return Number(rating).toPrecision(3)
     }
@@ -33,7 +33,7 @@ class Review extends Component {
             <Card style={{backgroundColor: "#f8f9fa", marginTop: "10px", marginBottom: "10px"}}>
                 <Card.Body style={{paddingTop: "15px", paddingBottom: "0px"}}>
                     <b style={{fontSize:"0.95em"}}>{semester} | Instructor: {this.props.rev.i} | Rating: {this.avg()}</b>
-                    <p style={{fontSize:"0.85em"}}>{this.props.rev.tex}</p>
+                    <p style={{fontSize:"0.85em"}}>{this.props.rev.c}</p>
                 </Card.Body>
             </Card>
         </>)
@@ -43,18 +43,9 @@ class Review extends Component {
 export default class Reviews extends Component {
     stats() {
         const props = this.props
-        var ratings = [0, 0, 0, 0, 0]
+        var ratings = props.ratings
         var variants = ["success", "success", "success", "success", "success"]
-        for (var i = 0; i < props.course.rev.length; i++) {
-            ratings[0] += Number(props.course.rev[i].w)
-            ratings[1] += Number(props.course.rev[i].d)
-            ratings[2] += Number(props.course.rev[i].g)
-            ratings[3] += Number(props.course.rev[i].l)
-            ratings[4] += Number(props.course.rev[i].t)
-        }
-        for (i = 0; i < ratings.length; i++) {
-            ratings[i] /= props.course.rev.length
-            ratings[i] = Number(ratings[i]).toPrecision(3)
+        for (var i = 0; i < ratings.length; i++) {
             if (ratings[i] < 3.00) {
                 variants[i] = "danger"
             } else if (ratings[i] < 4.00) {

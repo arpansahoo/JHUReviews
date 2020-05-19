@@ -6,9 +6,10 @@ export default class Login extends Component {
         const props = this.props
         return(<>
             <div style={{paddingTop:"20px", paddingBottom:"30px"}}>
-                <div style={{paddingBottom:"15px"}}>
-                    <h2>Oops, you're not verified yet!</h2>
-                    <h5 style={{color:"#6c757d"}}>Before you can submit a review, we'll need to verify that you're human.</h5>
+                <div style={{paddingBottom:"1px"}}>
+                    <h2>Oops, you're not verified!</h2>
+                    <h5 style={{color:"#6c757d"}}>Before you can submit a review, we'll need to verify that you're a JHU student.</h5>
+                    <p style={{color:"#6c757d", fontSize:"0.9em"}}>If you don't use an @jh.edu email, your reviews won't be posted. We don't record any information about you other than your email address.</p>
                 </div>
                 <StyledFirebaseAuth uiConfig={props.uiConfig} firebaseAuth={props.firebaseAuth}/>
             </div>

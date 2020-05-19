@@ -8,56 +8,21 @@
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="JHUReviews: Course Evaluations Made Powerful. A new web platform designed to help Johns Hopkins University students evaluate courses and find high-quality courses."
+      content="A new web platform designed to help Johns Hopkins University students evaluate courses and find high-quality courses."
     />
+    <meta property="og:title" content="JHUReviews - Course Evaluations Made Powerful" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jhureviews.com/" />
+    <meta property="og:image" content="https://i.ibb.co/xmX0RfP/social-preview.png" />
+
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" crossorigin="use-credentials" href="%PUBLIC_URL%/manifest.json" />
     
-    <title>JHUReviews: Course Evaluations Made Powerful</title>
+    <title>JHUReviews - Course Evaluations Made Powerful</title>
 
     <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://apis.google.com/js/api.js" async defer></script>
-    <script>
-      window.fbAsyncInit = function() {
-        FB.init({
-          appId      : '736328007172590',
-          cookie     : true,
-          xfbml      : true,
-          version    : 'v6.0'
-        });
-          
-        FB.AppEvents.logPageView();   
-          
-      };
-    
-      (function(d, s, id){
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) {return;}
-         js = d.createElement(s); js.id = id;
-         js.src = "https://connect.facebook.net/en_US/sdk.js";
-         fjs.parentNode.insertBefore(js, fjs);
-       }(document, 'script', 'facebook-jssdk'));
-    </script>
-    </script>
-    <script type="text/javascript">
-      (function(l) {
-        if (l.search) {
-          var q = {};
-          l.search.slice(1).split('&').forEach(function(v) {
-            var a = v.split('=');
-            q[a[0]] = a.slice(1).join('=').replace(/~and~/g, '&');
-          });
-          if (q.p !== undefined) {
-            window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + (q.p || '') +
-              (q.q ? ('?' + q.q) : '') +
-              l.hash
-            );
-          }
-        }
-      }(window.location))
-    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

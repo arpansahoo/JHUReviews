@@ -46,7 +46,7 @@ export default class ReviewForm extends Component {
             uiConfig: {
                 signInFlow: 'popup',
                 signInOptions: [
-                    firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+                    'microsoft.com'
                 ],
                 callbacks: {
                     signInSuccessWithAuthResult: () => false
@@ -71,7 +71,7 @@ export default class ReviewForm extends Component {
         this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
             (user) => this.login(user)
         );
-        axios.get('http://localhost:4000/courses/'+this.props.match.params.id)
+        axios.get('https://jhu-course-rating-api.herokuapp.com/courses/'+this.props.match.params.id)
             .then(response => {
                 this.setState({
                     number: response.data.num,
@@ -101,15 +101,16 @@ export default class ReviewForm extends Component {
         const obj = {
             s: array[6],
             i: array[7],
-            tex: array[0],
+            c: array[0],
             w: array[1],
             d: array[2],
             l: array[3],
             g: array[4],
-            t: array[5]
+            t: array[5],
+            b: "0"
         }
 
-        axios.post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
+        axios.post('https://jhu-course-rating-api.herokuapp.com/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
             .then(function(res) {
                 console.log(res.data)
                 window.location.reload()
