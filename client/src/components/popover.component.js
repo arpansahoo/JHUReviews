@@ -7,7 +7,7 @@ export default class PopoverComponent extends Component {
         return (
             <div className="flex-wrapper">
                 <p style={{paddingRight:"2px", margin:"0"}}>{props.name}</p>
-                <OverlayTrigger 
+                <OverlayTrigger
                     placement={props.position}
                     overlay={
                         <Popover id="popover-basic">

@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
 // eslint-disable-next-line
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import axios from 'axios';
 import { Card, Badge, Button } from 'react-bootstrap';
+import FacebookEmoji from "./facebook-emoji.component"
+import icons from './icon' 
+
+import firebase from 'firebase/app';
+import 'firebase/auth';
+// import history from "../history";
+import LoginModal from "./login-modal.component.js"
 
 class Review extends Component {
     avg() {
@@ -41,6 +49,87 @@ class Review extends Component {
 }
 
 export default class Reviews extends Component {
+    constructor(props) {
+        super(props)
+        var reactions = props.course.e
+        var isSignedIn = false;
+        if (localStorage.getItem('loggedIn') === "true") {
+            isSignedIn = true
+        }
+
+        this.state = {
+            showModal: false,
+            submitReview: false,
+            submitReact: false,
+            reactions: reactions,
+            isSignedIn: isSignedIn,
+            uid: null,
+            uiConfig: {
+                signInFlow: 'popup',
+                signInOptions: [
+                    'microsoft.com'
+                ],
+                callbacks: {
+                    signInSuccessWithAuthResult: () => false
+                }
+            }
+        }
+    }
+
+    login(user) {
+        var id = null;
+        if (user)
+            id = user.uid
+        this.setState({isSignedIn: !!user, uid: id})
+        if (!!user) {
+            localStorage.setItem('loggedIn', true)
+        } else {
+            localStorage.setItem('loggedIn', false)
+        }
+        if (this.state.submitReview && !this.state.submitReact) {
+            this.props.history.push("/submit-review/"+this.props.course._id+"/"+this.props.page)
+            window.location.reload()
+        }
+    }
+
+    componentDidMount() {
+        this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+            (user) => this.login(user)
+        );
+        axios.get('http://localhost:4000/courses/'+this.props.course._id)
+            .then(response => {
+                this.setState({
+                    reactions: response.data.e,
+                })   
+            })
+            .catch(function (error) {
+            })
+    }
+
+    // Make sure we un-register Firebase observers when the component unmounts.
+    componentWillUnmount() {
+        this.unregisterAuthObserver();
+    }
+
+    handleToggleModal() {
+        this.setState({
+            showModal: !this.state.showModal
+        })
+    }
+
+    reviewToggleModal() {
+        if (this.state.uid === null) {
+            this.setState({
+                showModal: !this.state.showModal,
+                submitReview: true,
+                submitReact: false
+            })
+        } else {
+            this.props.history.push("/submit-review/"+this.props.course._id+"/"+this.props.page)
+            window.location.reload()
+        }
+    }
+
     stats() {
         const props = this.props
         var ratings = props.ratings
@@ -64,22 +153,93 @@ export default class Reviews extends Component {
         </>)
     }
 
+    react(num) {
+        const here = this
+        axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
+            .then(function(res) {
+                here.setState({
+                    reactions: res.data,
+                    submitReact: true,
+                    submitReview: false
+                })
+            })
+            .catch(function (error) {
+                here.setState({
+                    showModal: true,
+                    submitReact: true,
+                    submitReview: false
+                })
+            })
+    }
+
     render() {
         const props = this.props
         var course = props.course
         var page = props.page
 
         if (props.course.rev.length > 0) {
-            return (<>
+            return (<>     
+                <LoginModal show={this.state.showModal && this.state.uid === null} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
+                <h5>Reactions</h5>
+                <div className="flex-wrapper" style={{marginTop: "-5px", marginBottom:"-2px", marginLeft:"-4px"}}>
+                    <div style={{width: "42px", marginRight: "15px"}}>
+                        <FacebookEmoji
+                            icon={ icons.find("facebook", "love") }
+                            label="love"
+                            number={this.state.reactions[0]}
+                            onSelect={() => this.react(0)}
+                        />
+                    </div>
+                    <div style={{width: "42px", marginRight: "15px"}}>
+                        <FacebookEmoji
+                            icon={ icons.find("facebook", "wow") }
+                            number={this.state.reactions[1]}
+                            label="wow"
+                            onSelect={() => this.react(1)}
+                        />
+                    </div>
+                    <div style={{width: "42px", marginRight: "15px"}}>
+                        <FacebookEmoji
+                            icon={ icons.find("facebook", "sad") }
+                            number={this.state.reactions[2]}
+                            label="sad"
+                            onSelect={() => this.react(2)}
+                        />
+                    </div>
+                    <div style={{width: "42px", marginRight: "15px"}}>
+                        <FacebookEmoji
+                            icon={ icons.find("facebook", "angry") }
+                            number={this.state.reactions[3]}
+                            label="angry"
+                            onSelect={() => this.react(3)}
+                        />
+                    </div>
+                    <div style={{width: "42px", marginRight: "15px"}}>
+                        <FacebookEmoji
+                            icon={ icons.find("facebook", "thumbsUp") }
+                            number={this.state.reactions[4]}
+                            label="like"
+                            onSelect={() => this.react(4)}
+                        />
+                    </div>
+                    <div style={{width: "42px", marginRight: "15px"}}>
+                        <FacebookEmoji
+                            icon={ icons.find("facebook", "thumbsDown") }
+                            number={this.state.reactions[5]}
+                            label="dislike"
+                            onSelect={() => this.react(5)}
+                        />
+                    </div>
+                </div>
+
                 <h5>Average Stats</h5>
                 { this.stats() }  
-
                 <div className="flex-wrapper">
                     <h5 style={{paddingTop: "15px"}}>Reviews</h5>
                     <div>
-                        <Link to={"/submit-review/"+course._id+"/"+page}>
-                            <Button variant="outline-primary" size="sm" style={{marginTop: "11.7px", marginLeft:"10px"}}>Submit a Review</Button>
-                        </Link> 
+                        {/* <Link to={"/submit-review/"+course._id+"/"+page}> */}
+                        <Button onClick={() => this.reviewToggleModal() }variant="outline-primary" size="sm" style={{marginTop: "11.7px", marginLeft:"10px"}}>Submit a Review</Button>
+                        {/* </Link>  */}
                     </div>
                 </div>
                 <div>

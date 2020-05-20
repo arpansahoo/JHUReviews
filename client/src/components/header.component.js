@@ -23,7 +23,7 @@ export default class Header extends Component {
                 
                 <Navbar.Brand href="/">
                     <div className="flex-wrapper">
-                    <Image src={logo} style={{maxHeight:"30px", marginTop:"-2px", marginRight:"5px"}} fluid />
+                    <Image src={logo} style={{maxHeight:"30px", marginTop:"0px", marginRight:"5px"}} fluid />
                     JHUReviews
                     <Spinner variant="primary" style={{marginTop: "0px", marginLeft: "15px"}} className={this.props.loading ? "":"hidden"} animation="border" role="status">
                         <span className="sr-only">Loading...</span>
@@ -37,6 +37,16 @@ export default class Header extends Component {
                     </Nav>
                     <Nav>
                         <Nav.Link active={this.state.showModal === true} onClick={() => this.handleToggleModal()}>About</Nav.Link>
+                        {/* {(this.props.displayName !== null && this.props.displayName.length > 0) &&
+                            <Nav.Link style={{color:"rgba(0,0,0,.5)"}} disabled>
+                                Hi, {this.props.displayName.substring(0, this.props.displayName.indexOf(" "))}!
+                            </Nav.Link>
+                        }
+                        {(this.props.displayName === null || this.props.displayName.length === 0) &&
+                            <Nav.Link>
+                                Sign in
+                            </Nav.Link>
+                        } */}
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

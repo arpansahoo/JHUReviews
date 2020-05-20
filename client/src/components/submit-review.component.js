@@ -71,7 +71,7 @@ export default class ReviewForm extends Component {
         this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
             (user) => this.login(user)
         );
-        axios.get('https://jhu-course-rating-api.herokuapp.com/courses/'+this.props.match.params.id)
+        axios.get('http://localhost:4000/courses/'+this.props.match.params.id)
             .then(response => {
                 this.setState({
                     number: response.data.num,
@@ -79,7 +79,6 @@ export default class ReviewForm extends Component {
                 })   
             })
             .catch(function (error) {
-                console.log(error)
             })
     }
 
@@ -110,15 +109,13 @@ export default class ReviewForm extends Component {
             b: "0"
         }
 
-        axios.post('https://jhu-course-rating-api.herokuapp.com/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
+        axios.post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
             .then(function(res) {
-                console.log(res.data)
                 window.location.reload()
             })
             .catch(function (error) {
-                console.log(error)
             })
-        this.props.history.push('/page-1')
+        this.props.history.push('/page-'+this.props.match.params.page)
     }
 
     render() {
@@ -126,7 +123,7 @@ export default class ReviewForm extends Component {
             <Header active="sp20" />
             <div className="site-container">
                 {!this.state.isSignedIn && 
-                    <Login uiConfig={this.state.uiConfig} firebaseAuth={firebase.auth()} />
+                    <Login uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
                 }
                 {this.state.isSignedIn && 
                     <div style={{paddingTop:"20px", paddingBottom:"30px"}}>

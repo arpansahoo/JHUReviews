@@ -16,10 +16,10 @@ export default class Filter extends Component{
                             </InputGroup.Text>
                         </InputGroup.Prepend> */}
                         <FormControl 
-                            placeholder="Search for a course..."
+                            placeholder="Search for a course or department..."
                             defaultValue={props.filters[0]}
                             id="basic-url1" 
-                            onChange={props.filterNum}
+                            onChange={props.filterCourse}
                         />
                     </InputGroup>
                     <InputGroup style={{marginRight: "15px"}} className="mb-3">
@@ -73,13 +73,14 @@ export default class Filter extends Component{
                                         <Form.Check onChange={props.filterN} defaultChecked={props.filters[6]} inline label="N" type={type} id={`inline-${type}-4`} />
                                         <Form.Check onChange={props.filterE} defaultChecked={props.filters[7]} inline label="E" type={type} id={`inline-${type}-5`} />
                                         <Form.Check onChange={props.filterQ} defaultChecked={props.filters[8]} inline label="Q" type={type} id={`inline-${type}-6`} />
+                                        <Form.Check onChange={props.filterNA} defaultChecked={props.filters[9]} inline label="No N/A" type={type} id={`inline-${type}-7`} />
+                                        <div style={{marginLeft:"-12px", marginRight:"10px"}} >
+                                            <Popover title="What's this?" scaleOne="Checking this option hides courses with no area designation" />
+                                        </div>
                                     </div>
                                     <div className="flex-wrapper">
                                         <Form.Check onChange={props.filterW} defaultChecked={props.filters[3]} inline label="Writing Only" type={type} id={`inline-${type}-1`} />
-                                        <Form.Check onChange={props.filterNA} defaultChecked={props.filters[9]} inline label="No N/A" type={type} id={`inline-${type}-7`} />
-                                        <div style={{marginLeft:"-12px"}} >
-                                            <Popover title="What's this?" scaleOne="Checking this option hides courses with no area designation" />
-                                        </div>
+                                        <Form.Check onChange={props.filterOffered} defaultChecked={props.filters[1]} inline label="Offered in Fall '20" type={type} id={`inline-${type}-8`} />
                                     </div>
                                 </div>
                             </div>

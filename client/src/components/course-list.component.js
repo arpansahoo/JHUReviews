@@ -9,6 +9,9 @@ import Filter from "./filter.component";
 import Header from "./header.component";
 import Fuse from 'fuse.js';
 
+import firebase from 'firebase/app';
+import 'firebase/auth';
+
 class Course extends Component {
     constructor(props) {
         super(props)
@@ -62,7 +65,7 @@ class Course extends Component {
                 <tr>
                     <td colSpan="100%">
                         <div>
-                            <Reviews course={props.course} page={props.active} key={props._id} ratings={props.course.ratings} />
+                            <Reviews history={history} course={props.course} page={props.active} key={props._id} ratings={props.course.ratings} />
                         </div>
                     </td>
                 </tr>
@@ -75,7 +78,7 @@ export default class CourseList extends Component {
     constructor(props) {
         super(props)
         this.changePage = this.changePage.bind(this)
-        this.filterNum = this.filterNum.bind(this)
+        this.filterCourse = this.filterCourse.bind(this)
         this.filterInstructor = this.filterInstructor.bind(this)
         this.filterW = this.filterW.bind(this)
         this.filterH = this.filterH.bind(this)
@@ -85,6 +88,32 @@ export default class CourseList extends Component {
         this.filterQ = this.filterQ.bind(this)
         this.filterNA = this.filterNA.bind(this)
         this.filterRating = this.filterRating.bind(this)
+        this.filterOffered = this.filterOffered.bind(this)
+
+        var filters = ['',false,'',false, true, true, true, true, true, false, '']
+        if (localStorage.getItem('course') !== null) 
+            filters[0] = localStorage.getItem('course')
+        if (localStorage.getItem('offered') !== null) 
+            filters[1] = JSON.parse(localStorage.getItem('offered'))
+        if (localStorage.getItem('instructor') !== null) 
+            filters[2] = localStorage.getItem('instructor')
+        if (localStorage.getItem('rating') !== null) 
+            filters[10] = localStorage.getItem('rating')
+        if (localStorage.getItem('w') !== null) 
+            filters[3] = JSON.parse(localStorage.getItem('w'))
+        if (localStorage.getItem('h') !== null) 
+            filters[4] = JSON.parse(localStorage.getItem('h'))
+        if (localStorage.getItem('s') !== null) 
+            filters[5] = JSON.parse(localStorage.getItem('s'))
+        if (localStorage.getItem('n') !== null) 
+            filters[6] = JSON.parse(localStorage.getItem('n'))
+        if (localStorage.getItem('e') !== null) 
+            filters[7] = JSON.parse(localStorage.getItem('e'))
+        if (localStorage.getItem('q') !== null) 
+            filters[8] = JSON.parse(localStorage.getItem('q'))
+        if (localStorage.getItem('na') !== null) 
+            filters[9] = JSON.parse(localStorage.getItem('na'))
+
 
         var active = 1;
         if (this.props.match != null && this.props.match.params != null) {
@@ -94,8 +123,15 @@ export default class CourseList extends Component {
                     active = JSON.parse(num)
             } catch(e) {}
         }
-        if (active > 1 && (active - 1) * 50 > 2481) 
-            active = 50 
+        if (active > 1) {
+            if (localStorage.getItem('courses-length') != null) {
+                if ((active - 1) * 50 > JSON.parse(localStorage.getItem('courses-length'))) 
+                    active = Math.ceil(JSON.parse(localStorage.getItem('courses-length')) / 50) 
+            } else {
+                if ((active - 1) * 50 > 2481) 
+                    active = 50 
+            }
+        }
         if (active <= 0)
             active = 1
         history.push('/page-'+active)
@@ -112,14 +148,14 @@ export default class CourseList extends Component {
             active: active, 
             loading: true, 
             pageLoad: false,
-            filters: ['','','',false, true, true, true, true, true, false, ''], 
+            filters: filters, 
         }
     }
 
     componentDidMount() {
         //const url = "https://jhu-course-rating-api.herokuapp.com/courses"  
-        const url = 'https://jhu-course-rating-api.herokuapp.com/courses/1-20'
-        const url2 = 'https://jhu-course-rating-api.herokuapp.com/courses'
+        const url = 'http://localhost:4000/courses/1-20'
+        const url2 = 'http://localhost:4000/courses'
         this.setState({
             loading: true,
         })
@@ -138,11 +174,9 @@ export default class CourseList extends Component {
                             })
                         })
                         .catch(function(error) {
-                            console.log(error)
                         })
                 })
                 .catch(function(error) {
-                    console.log(error)
                 })
         } else {
             axios.get(url2)        
@@ -182,48 +216,7 @@ export default class CourseList extends Component {
             minRating = JSON.parse(filters[10])
         } catch(e) {}
 
-        // Fuse.js for fuzzy search
-        var fuzzy = this.state.courses.slice()
-        const options = {
-            isCaseSensitive: false,
-            includeScore: false,
-            shouldSort: true,
-            includeMatches: false,
-            findAllMatches: false,
-            minMatchCharLength: 1,
-            location: 0,
-            threshold: 0.5,
-            distance: 100,
-            useExtendedSearch: false,
-            keys: [
-              "n",
-              "num"
-            ]
-          };
-
-        const fuse = new Fuse(fuzzy, options);
-        var pattern = filters[0].trim()
-        if (pattern.length > 0) {
-            fuzzy = fuse.search(pattern)
-        }
-
-        const pattern2 = filters[2].trim()
-        if (pattern2.length > 0 && pattern.length === 0) {
-            options.keys = ["i"]; options.threshold = 0.3
-            const fuse2 = new Fuse(fuzzy, options);
-            fuzzy = fuse2.search(pattern2)
-        } else if (pattern2.length > 0) {
-            options.keys = ["i"]; options.threshold = 0.3
-            var fuzzyClean = []
-            for (var j in fuzzy) 
-                fuzzyClean.push(fuzzy[j].item)
-            const fuse2 = new Fuse(fuzzyClean, options);
-            fuzzy = fuse2.search(pattern2)
-        }
-
-        fuzzy.map(function(currentCourse, i) {
-            if (filters[0].trim().length > 0 || filters[2].trim().length > 0)
-                currentCourse = currentCourse.item
+        this.state.courses.map(function(currentCourse, i) {
             var ratings = [0, 0, 0, 0, 0]
             var oldRatings = [0, 0, 0, 0, 0]
             var newRatings = [0, 0, 0, 0, 0]
@@ -270,6 +263,8 @@ export default class CourseList extends Component {
                 valid = false 
             if (valid && filters[9] && currentCourse.a === "N/A")
                 valid = false
+            if (valid && filters[1] && currentCourse.o === "0")
+                valid = false
 
             if (valid) {
                 const areas = currentCourse.a.toUpperCase()
@@ -294,17 +289,71 @@ export default class CourseList extends Component {
                 courses.push(currentCourse)
             return 0
         })
+
+        // Fuse.js for fuzzy search
+        const pattern = filters[0].trim()
+        const pattern2 = filters[2].trim()
+
+        if (pattern.length > 0 || pattern2.length > 0) {
+            var fuzzy = courses
+            const options = {
+                isCaseSensitive: false,
+                includeScore: false,
+                shouldSort: true,
+                includeMatches: false,
+                findAllMatches: false,
+                minMatchCharLength: 1,
+                location: 0,
+                threshold: 0.4,
+                distance: 100,
+                useExtendedSearch: false,
+                keys: [
+                "n",
+                "num",
+                "d"
+                ]
+            };
+
+            const fuse = new Fuse(fuzzy, options);
+            if (pattern.length > 0) 
+                fuzzy = fuse.search(pattern)
+            if (pattern2.length > 0 && pattern.length === 0) {
+                options.keys = ["i"]; options.threshold = 0.4
+                const fuse2 = new Fuse(fuzzy, options);
+                fuzzy = fuse2.search(pattern2)
+            } else if (pattern2.length > 0) {
+                options.keys = ["i"]; options.threshold = 0.4
+                var fuzzyClean = []
+                for (var j in fuzzy) 
+                    fuzzyClean.push(fuzzy[j].item)
+                const fuse2 = new Fuse(fuzzyClean, options);
+                fuzzy = fuse2.search(pattern2)
+            }
+            courses = []
+            for (j in fuzzy) 
+                courses.push(fuzzy[j].item)
+        }
         
         localStorage.setItem('courses-length', courses.length)
+
+        var displayName = ""
+        if (localStorage.getItem('name') !== null)
+            displayName = localStorage.getItem('name')
+        var user = firebase.auth().currentUser
+        if (user) {
+            displayName = user.displayName
+            localStorage.setItem('name', displayName)
+        }
+
         return (<>
-            <Header active="sp20" loading={this.state.loading} />
+            <Header loading={this.state.loading} displayName={displayName} />
             <br/>
             <div className="site-container">
                 <div>
                     <div>
                         <Filter 
                             filters={filters} 
-                            filterNum={this.filterNum}
+                            filterCourse={this.filterCourse}
                             filterName={this.filterName} 
                             filterInstructor={this.filterInstructor}
                             filterW={this.filterW}
@@ -315,6 +364,7 @@ export default class CourseList extends Component {
                             filterQ={this.filterQ}
                             filterNA={this.filterNA}
                             filterRating={this.filterRating}
+                            filterOffered={this.filterOffered}
                         /> 
                     </div>
                     <div className="flex-wrapper" style={{float:"right"}}>
@@ -352,9 +402,10 @@ export default class CourseList extends Component {
         </>)
     }
 
-    filterNum(event) {
+    filterCourse(event) {
         var filters = this.state.filters
         filters[0] = event.target.value
+        localStorage.setItem('course', filters[0])
         this.setState({
             active: 1,
             filters: filters
@@ -362,9 +413,21 @@ export default class CourseList extends Component {
         history.push('/page-1')
     }
 
+    filterOffered(event) {
+        var filters = this.state.filters
+        filters[1] = !filters[1]
+        localStorage.setItem('offered', filters[1])
+        this.setState({
+            active: 1,
+            filters: filters
+        })
+        history.push('/page-1')
+    } 
+
     filterInstructor(event) {
         var filters = this.state.filters
         filters[2] = event.target.value
+        localStorage.setItem('instructor', filters[2])
         this.setState({
             active: 1,
             filters: filters
@@ -375,6 +438,7 @@ export default class CourseList extends Component {
     filterRating(event) {
         var filters = this.state.filters
         filters[10] = event.target.value
+        localStorage.setItem('rating', filters[10])
         this.setState({
             active: 1,
             filters: filters
@@ -385,6 +449,7 @@ export default class CourseList extends Component {
     filterW(event) {
         var filters = this.state.filters
         filters[3] = !filters[3]
+        localStorage.setItem('w', filters[3])
         this.setState({
             active: 1,
             filters: filters
@@ -395,6 +460,7 @@ export default class CourseList extends Component {
     filterNA(event) {
         var filters = this.state.filters
         filters[9] = !filters[9]
+        localStorage.setItem('na', filters[9])
         this.setState({
             active: 1,
             filters: filters
@@ -405,6 +471,7 @@ export default class CourseList extends Component {
     filterH(event) {
         var filters = this.state.filters
         filters[4] = !filters[4]
+        localStorage.setItem('h', filters[4])
         this.setState({
             active: 1,
             filters: filters
@@ -415,6 +482,7 @@ export default class CourseList extends Component {
     filterS(event) {
         var filters = this.state.filters
         filters[5] = !filters[5]
+        localStorage.setItem('s', filters[5])
         this.setState({
             active: 1,
             filters: filters
@@ -425,6 +493,7 @@ export default class CourseList extends Component {
     filterN(event) {
         var filters = this.state.filters
         filters[6] = !filters[6]
+        localStorage.setItem('n', filters[6])
         this.setState({
             active: 1,
             filters: filters
@@ -435,6 +504,7 @@ export default class CourseList extends Component {
     filterE(event) {
         var filters = this.state.filters
         filters[7] = !filters[7]
+        localStorage.setItem('e', filters[7])
         this.setState({
             active: 1,
             filters: filters
@@ -445,6 +515,7 @@ export default class CourseList extends Component {
     filterQ(event) {
         var filters = this.state.filters
         filters[8] = !filters[8]
+        localStorage.setItem('q', filters[8])
         this.setState({
             active: 1,
             filters: filters
