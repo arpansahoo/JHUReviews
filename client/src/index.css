@@ -28,12 +28,12 @@ code {
 }
 
 .course-num {
-  width: 10%;
+  width: 8%;
   min-width: 120px;
 }
 
 .course-name {
-  width: 70%;
+  width: 100%;
   min-width: 200px;
 }
 /* 
@@ -55,6 +55,10 @@ code {
   display: inline-flex;
 }
 
+.search-flex {
+  display: flex;
+}
+
 @media only screen and (max-width: 950px) {
   .header-wrapper {
     margin-bottom: 0px !important;
@@ -68,6 +72,10 @@ code {
 
   .filter-wrapper {
     display: block;
+  }
+
+  .search-flex {
+    display: grid;
   }
 }
 

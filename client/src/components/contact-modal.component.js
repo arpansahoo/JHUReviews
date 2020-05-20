@@ -13,13 +13,13 @@ export default class ContactModal extends Component {
             >
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        About This Site
+                        About JHUReviews
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <p>
                         Beginning with the Spring 2020 semester, Johns Hopkins is no longer posting summarized course evaluations.
-                        This platform was created in order to make up for that loss, so that students can continue to select courses that meet their needs.
+                        This platform was created in order to make up for that loss, so that students can continue to review courses and select courses that meet their needs.
                     </p>
                     <p>
                         <b>Any questions or feedback?</b> Just email us at <a href="mailto:contact@jhureviews.com">contact@jhureviews.com</a>.

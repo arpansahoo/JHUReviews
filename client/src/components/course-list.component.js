@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import history from "../history";
-import { Button, Badge, Spinner } from 'react-bootstrap';
+import { Button, Badge } from 'react-bootstrap';
 import Reviews from "./reviews.component";
 import PaginationComponent from "./pagination.component";
 import Popover from "./popover.component";
 import Filter from "./filter.component";
 import Header from "./header.component";
+import Fuse from 'fuse.js';
 
 class Course extends Component {
     constructor(props) {
@@ -52,11 +53,10 @@ class Course extends Component {
                         }
                     </div>
                 </td>
-                {/* <td>{props.course.i}</td> */}
-                <td>{props.course.a}</td>
-                <td>{props.course.w}</td>
-                <td>{props.course.c}</td>
-                <td><Badge variant={color} style={{fontSize: "15px", padding: "5px", fontWeight: "400"}}>{props.course.rating}</Badge></td>
+                <td style={{paddingLeft: "14px"}}>{props.course.a}</td>
+                <td style={{paddingLeft: "15px"}}>{props.course.w}</td>
+                <td style={{paddingLeft: "15px"}}>{props.course.c}</td>
+                <td style={{paddingLeft: "15px"}}><Badge variant={color} style={{fontSize: "15px", padding: "5px", fontWeight: "400"}}>{props.course.rating}</Badge></td>
             </tr>
             {(this.state.open) &&
                 <tr>
@@ -72,13 +72,10 @@ class Course extends Component {
 }
 
 export default class CourseList extends Component {
-    interval = null;
-    
     constructor(props) {
         super(props)
         this.changePage = this.changePage.bind(this)
         this.filterNum = this.filterNum.bind(this)
-        this.filterName = this.filterName.bind(this)
         this.filterInstructor = this.filterInstructor.bind(this)
         this.filterW = this.filterW.bind(this)
         this.filterH = this.filterH.bind(this)
@@ -89,30 +86,6 @@ export default class CourseList extends Component {
         this.filterNA = this.filterNA.bind(this)
         this.filterRating = this.filterRating.bind(this)
 
-        var filters = ['','','',false, true, true, true, true, true, false, '']
-        if (localStorage.getItem('number') !== null) 
-            filters[0] = localStorage.getItem('number')
-        if (localStorage.getItem('name') !== null) 
-            filters[1] = localStorage.getItem('name')
-        if (localStorage.getItem('instructor') !== null) 
-            filters[2] = localStorage.getItem('instructor')
-        if (localStorage.getItem('rating') !== null) 
-            filters[10] = localStorage.getItem('rating')
-        if (localStorage.getItem('w') !== null) 
-            filters[3] = JSON.parse(localStorage.getItem('w'))
-        if (localStorage.getItem('h') !== null) 
-            filters[4] = JSON.parse(localStorage.getItem('h'))
-        if (localStorage.getItem('s') !== null) 
-            filters[5] = JSON.parse(localStorage.getItem('s'))
-        if (localStorage.getItem('n') !== null) 
-            filters[6] = JSON.parse(localStorage.getItem('n'))
-        if (localStorage.getItem('e') !== null) 
-            filters[7] = JSON.parse(localStorage.getItem('e'))
-        if (localStorage.getItem('q') !== null) 
-            filters[8] = JSON.parse(localStorage.getItem('q'))
-        if (localStorage.getItem('na') !== null) 
-            filters[9] = JSON.parse(localStorage.getItem('na'))
-
         var active = 1;
         if (this.props.match != null && this.props.match.params != null) {
             const num = this.props.match.params.active
@@ -121,44 +94,69 @@ export default class CourseList extends Component {
                     active = JSON.parse(num)
             } catch(e) {}
         }
-        if (active > 1) {
-            if (localStorage.getItem('courses-length') != null) {
-                if ((active - 1) * 50 > JSON.parse(localStorage.getItem('courses-length'))) 
-                    active = Math.ceil(JSON.parse(localStorage.getItem('courses-length')) / 50) 
-            } else {
-                if ((active - 1) * 50 > 2481) 
-                    active = 50 
-            }
-        }
+        if (active > 1 && (active - 1) * 50 > 2481) 
+            active = 50 
         if (active <= 0)
             active = 1
         history.push('/page-'+active)
 
+        var courses = null
+        try {
+            courses = JSON.parse(localStorage.getItem('courses'))
+        } catch(e) {}
+        if (courses === null) 
+            courses = []
+
         this.state = {
-            courses: [], 
+            courses: courses, 
             active: active, 
             loading: true, 
             pageLoad: false,
-            filters: filters, 
+            filters: ['','','',false, true, true, true, true, true, false, ''], 
         }
     }
 
     componentDidMount() {
-        const url = "https://jhu-course-rating-api.herokuapp.com/courses"  
-        // const url = 'http://localhost:4000/courses'
+        //const url = "https://jhu-course-rating-api.herokuapp.com/courses"  
+        const url = 'https://jhu-course-rating-api.herokuapp.com/courses/1-20'
+        const url2 = 'https://jhu-course-rating-api.herokuapp.com/courses'
         this.setState({
             loading: true,
         })
-        axios.get(url)        
-            .then(response => {
-                this.setState({
-                    courses: response.data, 
-                    loading: false,
+        if (this.state.courses.length === 0) {
+            axios.get(url)        
+                .then(response => {
+                    this.setState({
+                        courses: response.data, 
+                    })
+                    axios.get(url2)        
+                        .then(response => {
+                            localStorage.setItem('courses', JSON.stringify(response.data))
+                            this.setState({
+                                courses: response.data, 
+                                loading: false
+                            })
+                        })
+                        .catch(function(error) {
+                            console.log(error)
+                        })
                 })
-            })
-            .catch(function(error) {
-                console.log(error)
-            })
+                .catch(function(error) {
+                    console.log(error)
+                })
+        } else {
+            axios.get(url2)        
+                .then(response => {
+                    localStorage.setItem('courses', JSON.stringify(response.data))
+                    this.setState({
+                        courses: response.data, 
+                        loading: false
+                    })
+                })
+                .catch(function(error) {
+                    console.log(error)
+                })
+        }
     }
 
     changePage(num) {
@@ -177,18 +175,55 @@ export default class CourseList extends Component {
  
     render() {
         const active = this.state.active
-        const loading = this.state.loading 
         var courses = []
         const filters = this.state.filters
-        const number = filters[0].toUpperCase().trim()
-        const name = filters[1].toUpperCase().trim()
-        // const instructor = filters[2].toUpperCase().trim()
         var minRating = 0
         try {
             minRating = JSON.parse(filters[10])
         } catch(e) {}
 
-        this.state.courses.map(function(currentCourse, i) {
+        // Fuse.js for fuzzy search
+        var fuzzy = this.state.courses.slice()
+        const options = {
+            isCaseSensitive: false,
+            includeScore: false,
+            shouldSort: true,
+            includeMatches: false,
+            findAllMatches: false,
+            minMatchCharLength: 1,
+            location: 0,
+            threshold: 0.5,
+            distance: 100,
+            useExtendedSearch: false,
+            keys: [
+              "n",
+              "num"
+            ]
+          };
+
+        const fuse = new Fuse(fuzzy, options);
+        var pattern = filters[0].trim()
+        if (pattern.length > 0) {
+            fuzzy = fuse.search(pattern)
+        }
+
+        const pattern2 = filters[2].trim()
+        if (pattern2.length > 0 && pattern.length === 0) {
+            options.keys = ["i"]; options.threshold = 0.3
+            const fuse2 = new Fuse(fuzzy, options);
+            fuzzy = fuse2.search(pattern2)
+        } else if (pattern2.length > 0) {
+            options.keys = ["i"]; options.threshold = 0.3
+            var fuzzyClean = []
+            for (var j in fuzzy) 
+                fuzzyClean.push(fuzzy[j].item)
+            const fuse2 = new Fuse(fuzzyClean, options);
+            fuzzy = fuse2.search(pattern2)
+        }
+
+        fuzzy.map(function(currentCourse, i) {
+            if (filters[0].trim().length > 0 || filters[2].trim().length > 0)
+                currentCourse = currentCourse.item
             var ratings = [0, 0, 0, 0, 0]
             var oldRatings = [0, 0, 0, 0, 0]
             var newRatings = [0, 0, 0, 0, 0]
@@ -229,10 +264,7 @@ export default class CourseList extends Component {
             currentCourse.rating = rating
             currentCourse.ratings = ratings
 
-            var valid = currentCourse.num.includes(number) 
-                && currentCourse.n.toUpperCase().includes(name) 
-                // && currentCourse.instructor.toUpperCase().includes(instructor)
-                && rating >= minRating
+            var valid = rating >= minRating
             
             if (valid && filters[3] && currentCourse.w === "N")
                 valid = false 
@@ -265,7 +297,7 @@ export default class CourseList extends Component {
         
         localStorage.setItem('courses-length', courses.length)
         return (<>
-            <Header active="sp20" />
+            <Header active="sp20" loading={this.state.loading} />
             <br/>
             <div className="site-container">
                 <div>
@@ -286,9 +318,6 @@ export default class CourseList extends Component {
                         /> 
                     </div>
                     <div className="flex-wrapper" style={{float:"right"}}>
-                        <Spinner size="sm" variant="primary" style={{marginTop: "13px", marginRight: "10px"}} className={loading ? "":"hidden"} animation="border" role="status">
-                            <span className="sr-only">Loading...</span>
-                        </Spinner>
                         <PaginationComponent page={active} changePage={this.changePage} length={courses.length} />
                     </div>
                 </div>
@@ -297,7 +326,6 @@ export default class CourseList extends Component {
                         <tr>
                             <th className="course-num">Course #</th>
                             <th className="course-name">Course Name</th>
-                            {/* <th className="instructor">Instructor(s)</th> */}
                             <th>Areas</th>
                             <th>Writing</th>
                             <th>Credits</th>
@@ -318,9 +346,6 @@ export default class CourseList extends Component {
                     </tbody>
                 </table>
                 <div className="flex-wrapper" style={{float:"right"}}>
-                    <Spinner size="sm" variant="primary" style={{marginTop: "13px", marginRight: "10px"}} className={loading ? "":"hidden"} animation="border" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </Spinner>
                     <PaginationComponent page={active} changePage={this.changePage} length={courses.length} />
                 </div>
             </div>
@@ -330,7 +355,6 @@ export default class CourseList extends Component {
     filterNum(event) {
         var filters = this.state.filters
         filters[0] = event.target.value
-        localStorage.setItem('number', filters[0])
         this.setState({
             active: 1,
             filters: filters
@@ -338,21 +362,9 @@ export default class CourseList extends Component {
         history.push('/page-1')
     }
 
-    filterName(event) {
-        var filters = this.state.filters
-        filters[1] = event.target.value
-        localStorage.setItem('name', filters[1])
-        this.setState({
-            active: 1,
-            filters: filters
-        })
-        history.push('/page-1')
-    } 
-
     filterInstructor(event) {
         var filters = this.state.filters
         filters[2] = event.target.value
-        localStorage.setItem('instructor', filters[2])
         this.setState({
             active: 1,
             filters: filters
@@ -363,7 +375,6 @@ export default class CourseList extends Component {
     filterRating(event) {
         var filters = this.state.filters
         filters[10] = event.target.value
-        localStorage.setItem('rating', filters[10])
         this.setState({
             active: 1,
             filters: filters
@@ -374,7 +385,6 @@ export default class CourseList extends Component {
     filterW(event) {
         var filters = this.state.filters
         filters[3] = !filters[3]
-        localStorage.setItem('w', filters[3])
         this.setState({
             active: 1,
             filters: filters
@@ -385,7 +395,6 @@ export default class CourseList extends Component {
     filterNA(event) {
         var filters = this.state.filters
         filters[9] = !filters[9]
-        localStorage.setItem('na', filters[9])
         this.setState({
             active: 1,
             filters: filters
@@ -396,7 +405,6 @@ export default class CourseList extends Component {
     filterH(event) {
         var filters = this.state.filters
         filters[4] = !filters[4]
-        localStorage.setItem('h', filters[4])
         this.setState({
             active: 1,
             filters: filters
@@ -407,7 +415,6 @@ export default class CourseList extends Component {
     filterS(event) {
         var filters = this.state.filters
         filters[5] = !filters[5]
-        localStorage.setItem('s', filters[5])
         this.setState({
             active: 1,
             filters: filters
@@ -418,7 +425,6 @@ export default class CourseList extends Component {
     filterN(event) {
         var filters = this.state.filters
         filters[6] = !filters[6]
-        localStorage.setItem('n', filters[6])
         this.setState({
             active: 1,
             filters: filters
@@ -429,7 +435,6 @@ export default class CourseList extends Component {
     filterE(event) {
         var filters = this.state.filters
         filters[7] = !filters[7]
-        localStorage.setItem('e', filters[7])
         this.setState({
             active: 1,
             filters: filters
@@ -440,7 +445,6 @@ export default class CourseList extends Component {
     filterQ(event) {
         var filters = this.state.filters
         filters[8] = !filters[8]
-        localStorage.setItem('q', filters[8])
         this.setState({
             active: 1,
             filters: filters

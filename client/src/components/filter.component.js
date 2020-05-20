@@ -7,61 +7,62 @@ export default class Filter extends Component{
         const props = this.props
         return(<>
             <div className="header-wrapper">
-                <div className="filter-wrapper">
-                    <div className="flex-wrapper">
-                        <InputGroup style={{marginRight: "15px"}} className="mb-3">
-                            <InputGroup.Prepend >
-                                <InputGroup.Text id="basic-addon1">
-                                    Course #
+
+                <div className="search-flex">
+                    <InputGroup style={{marginRight: "15px"}} className="mb-3">
+                        {/* <InputGroup.Prepend >
+                            <InputGroup.Text id="basic-addon1">
+                                Course #
+                            </InputGroup.Text>
+                        </InputGroup.Prepend> */}
+                        <FormControl 
+                            placeholder="Search for a course..."
+                            defaultValue={props.filters[0]}
+                            id="basic-url1" 
+                            onChange={props.filterNum}
+                        />
+                    </InputGroup>
+                    <InputGroup style={{marginRight: "15px"}} className="mb-3">
+                        {/* <InputGroup.Prepend>
+                            <InputGroup.Text id="basic-addon3">
+                                Instructor
+                            </InputGroup.Text>
+                        </InputGroup.Prepend> */}
+                        <FormControl 
+                            placeholder="Search for an instructor..."
+                            defaultValue={props.filters[2]}
+                            id="basic-url3" 
+                            onChange={props.filterInstructor}
+                        />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                            {/* <InputGroup.Prepend>
+                                <InputGroup.Text id="basic-addon4">
+                                    Min. Rating
                                 </InputGroup.Text>
-                            </InputGroup.Prepend>
+                            </InputGroup.Prepend> */}
                             <FormControl 
-                                defaultValue={props.filters[0]}
-                                id="basic-url1" 
-                                onChange={props.filterNum}
+                                defaultValue={props.filters[10]}
+                                placeholder="Search for a minimum rating..."
+                                id="basic-url4" 
+                                onChange={props.filterRating}
                             />
-                        </InputGroup>
-                        <InputGroup style={{marginRight: "15px"}} className="mb-3">
-                            <InputGroup.Prepend >
-                                <InputGroup.Text id="basic-addon2">
-                                    Course Name
-                                </InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <FormControl 
-                                defaultValue={props.filters[1]}
-                                id="basic-url2" 
-                                onChange={props.filterName}
-                            />
-                        </InputGroup>
-                    </div>
-                    <div className="flex-wrapper">
-                        <InputGroup style={{marginRight: "15px"}} className="mb-3">
-                            <InputGroup.Prepend>
-                                <InputGroup.Text id="basic-addon3">
-                                    Instructor
-                                </InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <FormControl 
-                                defaultValue={props.filters[2]}
-                                id="basic-url3" 
-                                onChange={props.filterInstructor}
-                            />
-                        </InputGroup>
-                        <InputGroup className="mb-3">
-                                <InputGroup.Prepend>
-                                    <InputGroup.Text id="basic-addon4">
-                                        Min. Rating
-                                    </InputGroup.Text>
-                                </InputGroup.Prepend>
-                                <FormControl 
-                                    defaultValue={props.filters[10]}
-                                    id="basic-url4" 
-                                    onChange={props.filterRating}
-                                />
-                        </InputGroup>
-                    </div>
+                    </InputGroup>
+                    {/* <InputGroup style={{marginRight: "15px"}} className="mb-3">
+                        <InputGroup.Prepend >
+                            <InputGroup.Text id="basic-addon2">
+                                Course Name
+                            </InputGroup.Text>
+                        </InputGroup.Prepend>
+                        <FormControl 
+                            defaultValue={props.filters[1]}
+                            id="basic-url2" 
+                            onChange={props.filterName}
+                        />
+                    </InputGroup> */}
                 </div>
-                <div style={{marginTop: "5px"}}>
+
+                <div style={{marginTop: "5px", marginLeft: "1px"}}>
                     <Form>
                         {['checkbox'].map((type) => (
                             <div key={`inline-${type}`} className="mb-3">
@@ -85,6 +86,7 @@ export default class Filter extends Component{
                         ))}
                     </Form>
                 </div>
+
             </div>
         </>)
     }

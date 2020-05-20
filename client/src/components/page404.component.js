@@ -10,7 +10,7 @@ export default class Page404 extends Component {
         return(<>
             <Header />
             <div className="site-container">
-                <h2 style={{paddingTop:"20px"}}>Oops, we can't seem to find the page you're looking for.</h2>   
+                <h2 style={{paddingTop:"20px"}}>Oops, we can't find the page you're looking for.</h2>   
                 <h5 style={{color:"#6c757d"}}>Click <Link to={"/page-1/"}>here</Link> to go back to the main page.</h5>  
                 <Image src={jay} style={{maxHeight:"500px"}} fluid />   
             </div>
