@@ -283,14 +283,17 @@ export default class CourseList extends Component {
                     valid = true
             }
 
-            if (valid)
+            if (valid) {
+                currentCourse.abbreviation = currentCourse.n.replace("Introductory ", "Intro ")
+                currentCourse.abbreviation = currentCourse.n.replace("Introduction ", "Intro ")
                 courses.push(currentCourse)
+            }
             return 0
         })
 
         // Fuse.js for fuzzy search
-        const pattern = filters[0].trim()
-        const pattern2 = filters[2].trim()
+        var pattern = filters[0].toLowerCase().trim()
+        var pattern2 = filters[2].toLowerCase().trim()
 
         if (pattern.length > 0 || pattern2.length > 0) {
             var fuzzy = courses
@@ -306,15 +309,45 @@ export default class CourseList extends Component {
                 distance: 100,
                 useExtendedSearch: false,
                 keys: [
-                "n",
-                "num",
-                "d"
+                    "n",
+                    "num",
+                    "d",
+                    "abbreviation"
                 ]
             };
 
             const fuse = new Fuse(fuzzy, options);
-            if (pattern.length > 0) 
+            if (pattern.length > 0)  {
+                // some naive hardcoding for common abbreviations
+                pattern = pattern.replace("intro orgo", "introductory organic")
+                pattern = pattern.replace("intro organic", "introductory organic")
+                pattern = pattern.replace("intro chem", "introductory chemistry")
+                pattern = pattern.replace("gen ", "general ")
+                pattern = pattern.replace("orgo ", "organic ")
+                pattern = pattern.replace("calc ", "calculus ")
+                pattern = pattern.replace("cog ", "cognitive ")
+                pattern = pattern.replace("neuro ", "neuroscience ")
+                pattern = pattern.replace("prob", "probability")
+                pattern = pattern.replace("stat", "statistic")
+                pattern = pattern.replace("lin ", "linear ")
+                pattern = pattern.replace("expos ", "expository")
+                pattern = pattern.replace("ifp", "fiction/poetry ")
+                pattern = pattern.replace("chem lab", "chemistry laboratory")
+                pattern = pattern.replace("bio lab", "biology lab")
+                
+                if (pattern === "bbc")
+                    pattern = "Brain, Behavior, Cognition"
+                if (pattern === "orgo")
+                    pattern = "organic"
+                if (pattern === "calc")
+                    pattern = "calculus"
+                if (pattern === "csf")
+                    pattern = "computer system fundamentals"
+
+                // fuzzy search
                 fuzzy = fuse.search(pattern)
+            }
+
             if (pattern2.length > 0 && pattern.length === 0) {
                 options.keys = ["i"]; options.threshold = 0.4
                 const fuse2 = new Fuse(fuzzy, options);
