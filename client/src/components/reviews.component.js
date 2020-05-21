@@ -52,8 +52,8 @@ export default class Reviews extends Component {
 
     constructor(props) {
         super(props)
-        var reactIndex = -1
         var reactions = props.course.e
+        var reactIndex = -1
 
         this.state = {
             showModal: false,
@@ -169,13 +169,17 @@ export default class Reviews extends Component {
 
     react(num) {
         const here = this
+        var same = this.state.reactIndex === num
+        var index = -1
+        if (!same)
+            index = num
         axios.post('https://jhu-course-rating-api.herokuapp.com/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
         // axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
             .then(function(res) {
                 if (here._isMounted) {
                     here.setState({
                         reactions: res.data,
-                        reactIndex: num,
+                        reactIndex: index,
                         submitReact: true,
                         submitReview: false
                     })

@@ -63,7 +63,7 @@ export default class ReviewForm extends Component {
             (user) => this.login(user)
         );
         if (!this.state.isSignedIn) 
-            this.props.history.push('/page-1/')
+            this.props.history.push('/')
 
         axios.get('https://jhu-course-rating-api.herokuapp.com/courses/'+this.props.match.params.id)
         // axios.get('http://localhost:4000/courses/'+this.props.match.params.id)
@@ -111,7 +111,10 @@ export default class ReviewForm extends Component {
             })
             .catch(function (error) {
             })
-        this.props.history.push('/page-'+this.props.match.params.page)
+        if (this.props.match.params.page > 1)
+            this.props.history.push('/page-'+this.props.match.params.page)
+        else 
+            this.props.history.push('/')
     }
 
     render() {
@@ -207,7 +210,10 @@ function FormComponent(props) {
     const page = props.page
 
     const handleCancel = () => {
-        history.push('/page-'+page)
+        if (page > 1)
+            history.push('/page-'+page)
+        else
+            history.push('/')
     }
   
     const handleSubmit = (event) => {

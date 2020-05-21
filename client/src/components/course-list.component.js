@@ -129,9 +129,11 @@ export default class CourseList extends Component {
                     active = 50 
             }
         }
-        if (active <= 0)
-            active = 1
-        history.push('/page-'+active)
+
+        if (active > 1)
+            history.push('/page-'+active)
+        else 
+            history.push('/')
 
         var courses = null
         try {
@@ -192,7 +194,10 @@ export default class CourseList extends Component {
 
     changePage(num) {
         this.setState({active: num})
-        history.push('/page-'+num)
+        if (num > 1) 
+            history.push('/page-'+num)
+        else 
+            history.push('/')
     }
 
     courseList(courses) {
@@ -433,7 +438,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     }
 
     filterOffered(event) {
@@ -444,7 +449,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 
     filterInstructor(event) {
@@ -455,7 +460,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 
     filterRating(event) {
@@ -466,7 +471,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 
     filterW(event) {
@@ -477,7 +482,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 
     filterNA(event) {
@@ -488,7 +493,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 
     filterH(event) {
@@ -499,7 +504,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 
     filterS(event) {
@@ -510,7 +515,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 
     filterN(event) {
@@ -521,7 +526,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 
     filterE(event) {
@@ -532,7 +537,7 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 
     filterQ(event) {
@@ -543,6 +548,6 @@ export default class CourseList extends Component {
             active: 1,
             filters: filters
         })
-        history.push('/page-1')
+        history.push('/')
     } 
 }
