@@ -4,6 +4,7 @@ import ContactModal from './contact-modal.component';
 import LoginModal from './login-modal.component';
 import logo from "../images/logo1.png"
 import firebase from 'firebase/app';
+import history from "../history";
 import 'firebase/auth';
 
 export default class Header extends Component {
@@ -65,6 +66,10 @@ export default class Header extends Component {
         this.setState({
             logout: true,
         })
+        if (this.props.submit) {
+            history.push('/page-' + this.props.page)
+            window.location.reload()
+        }
     }
 
     toggleLoginModal() {

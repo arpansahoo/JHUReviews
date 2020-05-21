@@ -8,7 +8,6 @@ import icons from './icon'
 
 import firebase from 'firebase/app';
 import 'firebase/auth';
-// import history from "../history";
 import LoginModal from "./login-modal.component.js"
 
 class Review extends Component {
@@ -53,20 +52,14 @@ export default class Reviews extends Component {
 
     constructor(props) {
         super(props)
-        var isSignedIn = false;
-        if (localStorage.getItem('loggedIn') === "true") 
-            isSignedIn = true
-
         var reactIndex = -1
         var reactions = props.course.e
 
         this.state = {
             showModal: false,
-            submitReview: false,
-            submitReact: false,
             reactions: reactions,
             reactIndex: reactIndex, 
-            isSignedIn: isSignedIn,
+            isSignedIn: false,
             uid: null,
             uiConfig: {
                 signInFlow: 'popup',
@@ -98,11 +91,7 @@ export default class Reviews extends Component {
                 })
                 .catch(function (error) {})
         }
-        if (!!user) {
-            localStorage.setItem('loggedIn', true)
-        } else {
-            localStorage.setItem('loggedIn', false)
-        }
+
         if (this.state.submitReview && !this.state.submitReact) {
             this.props.history.push("/submit-review/"+this.props.course._id+"/"+this.props.page)
             window.location.reload()
@@ -136,7 +125,8 @@ export default class Reviews extends Component {
     handleToggleModal() {
         if (this._isMounted) {
             this.setState({
-                showModal: !this.state.showModal
+                showModal: !this.state.showModal,
+                submitReview: false
             })
         }
     }
@@ -209,10 +199,10 @@ export default class Reviews extends Component {
 
         if (props.course.rev.length > 0) {
             return (<>     
-                <LoginModal title="Oops, you're not verified!" show={this.state.showModal && this.state.uid === null} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
+                <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && this.state.uid === null} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
                 <h5>Reactions</h5>
                 <div className="flex-wrapper" style={{marginTop: "-5px", marginBottom:"-2px", marginLeft:"-4px"}}>
-                    <div style={{width: "42px", marginRight: "15px"}}>
+                    <div style={{width: "48px", marginRight: "15px"}}>
                         <FacebookEmoji
                             icon={ icons.find("facebook", "love") }
                             label="love"
@@ -221,16 +211,16 @@ export default class Reviews extends Component {
                             highlight={this.state.reactIndex === 0}
                         />
                     </div>
-                    <div style={{width: "42px", marginRight: "15px"}}>
+                    <div style={{width: "48px", marginRight: "15px"}}>
                         <FacebookEmoji
                             icon={ icons.find("facebook", "wow") }
                             number={this.state.reactions[1]}
-                            label="wow"
+                            label="interesting"
                             onSelect={() => this.react(1)}
                             highlight={this.state.reactIndex === 1}
                         />
                     </div>
-                    <div style={{width: "42px", marginRight: "15px"}}>
+                    <div style={{width: "48px", marginRight: "15px"}}>
                         <FacebookEmoji
                             icon={ icons.find("facebook", "sad") }
                             number={this.state.reactions[2]}
@@ -239,7 +229,7 @@ export default class Reviews extends Component {
                             highlight={this.state.reactIndex === 2}
                         />
                     </div>
-                    <div style={{width: "42px", marginRight: "15px"}}>
+                    <div style={{width: "48px", marginRight: "15px"}}>
                         <FacebookEmoji
                             icon={ icons.find("facebook", "angry") }
                             number={this.state.reactions[3]}
@@ -248,18 +238,18 @@ export default class Reviews extends Component {
                             highlight={this.state.reactIndex === 3}
                         />
                     </div>
-                    <div style={{width: "42px", marginRight: "15px"}}>
+                    <div style={{width: "48px", marginRight: "15px"}}>
                         <FacebookEmoji
-                            icon={ icons.find("facebook", "thumbsUp") }
+                            icon={ icons.find("facebook", "like") }
                             number={this.state.reactions[4]}
                             label="like"
                             onSelect={() => this.react(4)}
                             highlight={this.state.reactIndex === 4}
                         />
                     </div>
-                    <div style={{width: "42px", marginRight: "15px"}}>
+                    <div style={{width: "48px", marginRight: "15px"}}>
                         <FacebookEmoji
-                            icon={ icons.find("facebook", "thumbsDown") }
+                            icon={ icons.find("facebook", "dislike") }
                             number={this.state.reactions[5]}
                             label="dislike"
                             onSelect={() => this.react(5)}

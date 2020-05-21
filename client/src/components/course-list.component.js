@@ -144,7 +144,6 @@ export default class CourseList extends Component {
             courses: courses, 
             active: active, 
             loading: true, 
-            pageLoad: false,
             filters: filters, 
         }
     }
@@ -327,16 +326,18 @@ export default class CourseList extends Component {
                 pattern = pattern.replace("calc ", "calculus ")
                 pattern = pattern.replace("cog ", "cognitive ")
                 pattern = pattern.replace("neuro ", "neuroscience ")
-                pattern = pattern.replace("prob", "probability")
-                pattern = pattern.replace("stat", "statistic")
+                if (!pattern.includes("probability"))
+                    pattern = pattern.replace("prob", "probability")
+                if (!pattern.includes("statistic"))
+                    pattern = pattern.replace("stat", "statistic")
                 pattern = pattern.replace("lin ", "linear ")
-                pattern = pattern.replace("expos ", "expository")
-                pattern = pattern.replace("ifp", "fiction/poetry ")
+                pattern = pattern.replace("expos ", "expository ")
+                pattern = pattern.replace("ifp", "fiction/poetry")
                 pattern = pattern.replace("chem lab", "chemistry laboratory")
                 pattern = pattern.replace("bio lab", "biology lab")
                 
                 if (pattern === "bbc")
-                    pattern = "Brain, Behavior, Cognition"
+                    pattern = "brain, behavior, cognition"
                 if (pattern === "orgo")
                     pattern = "organic"
                 if (pattern === "calc")

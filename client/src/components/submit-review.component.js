@@ -9,7 +9,6 @@ import Header from "./header.component";
 
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import Login from "./login.component";
 
 export default class ReviewForm extends Component {
     constructor(props) {
@@ -38,8 +37,6 @@ export default class ReviewForm extends Component {
             learning: '',
             instructor_quality: '',
             grading: '',
-            semester: '',
-            instructor_name: '', 
             isSignedIn: isSignedIn,
             uid: null,
             uiConfig: {
@@ -59,17 +56,15 @@ export default class ReviewForm extends Component {
         if (user)
             id = user.uid
         this.setState({isSignedIn: !!user, uid: id})
-        if (!!user) {
-            localStorage.setItem('loggedIn', true)
-        } else {
-            localStorage.setItem('loggedIn', false)
-        }
     }
 
     componentDidMount() {
         this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
             (user) => this.login(user)
         );
+        if (!this.state.isSignedIn) 
+            this.props.history.push('/page-1/')
+
         axios.get('https://jhu-course-rating-api.herokuapp.com/courses/'+this.props.match.params.id)
         // axios.get('http://localhost:4000/courses/'+this.props.match.params.id)
             .then(response => {
@@ -121,31 +116,26 @@ export default class ReviewForm extends Component {
 
     render() {
         return (<>
-            <Header active="sp20" />
+            <Header submit={true} active="sp20" page={this.props.match.params.page} />
             <div className="site-container">
-                {!this.state.isSignedIn && 
-                    <Login uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
-                }
-                {this.state.isSignedIn && 
-                    <div style={{paddingTop:"20px", paddingBottom:"30px"}}>
-                        <div style={{paddingBottom:"15px"}}>
-                            <h2>You are submitting a review for:</h2>
-                            <h5 style={{color:"#6c757d"}}>{this.state.number} {this.state.title}</h5>
-                        </div>
-                        <FormComponent
-                            page={this.props.match.params.page}
-                            changeText={this.changeText} 
-                            changeWorkload={this.changeWorkload}
-                            changeDifficulty={this.changeDifficulty}
-                            changeGrading={this.changeGrading}
-                            changeLearning={this.changeLearning}
-                            changeInstructorQuality={this.changeInstructorQuality}
-                            changeSemester={this.changeSemester}
-                            changeInstructorName={this.changeInstructorName}
-                            onSubmit={this.onSubmit}
-                        />
+                <div style={{paddingTop:"20px", paddingBottom:"30px"}}>
+                    <div style={{paddingBottom:"15px"}}>
+                        <h2>You are submitting a review for:</h2>
+                        <h5 style={{color:"#6c757d"}}>{this.state.number} {this.state.title}</h5>
                     </div>
-                }   
+                    <FormComponent
+                        page={this.props.match.params.page}
+                        changeText={this.changeText} 
+                        changeWorkload={this.changeWorkload}
+                        changeDifficulty={this.changeDifficulty}
+                        changeGrading={this.changeGrading}
+                        changeLearning={this.changeLearning}
+                        changeInstructorQuality={this.changeInstructorQuality}
+                        changeSemester={this.changeSemester}
+                        changeInstructorName={this.changeInstructorName}
+                        onSubmit={this.onSubmit}
+                    />
+                </div>
             </div>
         </>)    
     }

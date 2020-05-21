@@ -37,15 +37,15 @@ export const FacebookEmoji = ({ icon, label, number, onSelect, hover, highlight 
       number: {
         position: 'relative',
         top: '-13px',
-        left: '33px',
+        left: '39px',
         fontWeight: 'bold',
         fontSize: "0.75em",
-        color: highlight ? "#007bff":"black"
+        color: highlight ? "#007bff":"black",
       }
     },
     'hover': {
       icon: {
-        transform: 'scale(1.3)',
+        transform: 'scale(1.2)',
       },
       label: {
         transform: 'translateX(-50%) translateY(-10px)',

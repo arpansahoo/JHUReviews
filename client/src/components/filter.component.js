@@ -10,11 +10,6 @@ export default class Filter extends Component{
 
                 <div className="search-flex">
                     <InputGroup style={{marginRight: "15px"}} className="mb-3">
-                        {/* <InputGroup.Prepend >
-                            <InputGroup.Text id="basic-addon1">
-                                Course #
-                            </InputGroup.Text>
-                        </InputGroup.Prepend> */}
                         <FormControl 
                             placeholder="Search for a course or department..."
                             defaultValue={props.filters[0]}
@@ -23,11 +18,6 @@ export default class Filter extends Component{
                         />
                     </InputGroup>
                     <InputGroup style={{marginRight: "15px"}} className="mb-3">
-                        {/* <InputGroup.Prepend>
-                            <InputGroup.Text id="basic-addon3">
-                                Instructor
-                            </InputGroup.Text>
-                        </InputGroup.Prepend> */}
                         <FormControl 
                             placeholder="Search for an instructor..."
                             defaultValue={props.filters[2]}
@@ -36,11 +26,6 @@ export default class Filter extends Component{
                         />
                     </InputGroup>
                     <InputGroup className="mb-3">
-                            {/* <InputGroup.Prepend>
-                                <InputGroup.Text id="basic-addon4">
-                                    Min. Rating
-                                </InputGroup.Text>
-                            </InputGroup.Prepend> */}
                             <FormControl 
                                 defaultValue={props.filters[10]}
                                 placeholder="Search for a minimum rating..."
@@ -48,18 +33,6 @@ export default class Filter extends Component{
                                 onChange={props.filterRating}
                             />
                     </InputGroup>
-                    {/* <InputGroup style={{marginRight: "15px"}} className="mb-3">
-                        <InputGroup.Prepend >
-                            <InputGroup.Text id="basic-addon2">
-                                Course Name
-                            </InputGroup.Text>
-                        </InputGroup.Prepend>
-                        <FormControl 
-                            defaultValue={props.filters[1]}
-                            id="basic-url2" 
-                            onChange={props.filterName}
-                        />
-                    </InputGroup> */}
                 </div>
 
                 <div style={{marginTop: "5px", marginLeft: "1px"}}>
