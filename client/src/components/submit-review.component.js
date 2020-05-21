@@ -26,9 +26,8 @@ export default class ReviewForm extends Component {
         this.onSubmit = this.onSubmit.bind(this);
 
         var isSignedIn = false;
-        if (localStorage.getItem('loggedIn') === "true") {
+        if (localStorage.getItem('loggedIn') === "true") 
             isSignedIn = true
-        }
 
         this.state = {
             number: '',

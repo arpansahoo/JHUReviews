@@ -9,9 +9,6 @@ import Filter from "./filter.component";
 import Header from "./header.component";
 import Fuse from 'fuse.js';
 
-import firebase from 'firebase/app';
-import 'firebase/auth';
-
 class Course extends Component {
     constructor(props) {
         super(props)
@@ -336,17 +333,8 @@ export default class CourseList extends Component {
         
         localStorage.setItem('courses-length', courses.length)
 
-        var displayName = ""
-        if (localStorage.getItem('name') !== null)
-            displayName = localStorage.getItem('name')
-        var user = firebase.auth().currentUser
-        if (user) {
-            displayName = user.displayName
-            localStorage.setItem('name', displayName)
-        }
-
         return (<>
-            <Header loading={this.state.loading} displayName={displayName} />
+            <Header loading={this.state.loading} />
             <br/>
             <div className="site-container">
                 <div>

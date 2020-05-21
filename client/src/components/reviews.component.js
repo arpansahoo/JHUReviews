@@ -49,19 +49,23 @@ class Review extends Component {
 }
 
 export default class Reviews extends Component {
+    _isMounted = false;
+
     constructor(props) {
         super(props)
-        var reactions = props.course.e
         var isSignedIn = false;
-        if (localStorage.getItem('loggedIn') === "true") {
+        if (localStorage.getItem('loggedIn') === "true") 
             isSignedIn = true
-        }
+
+        var reactIndex = -1
+        var reactions = props.course.e
 
         this.state = {
             showModal: false,
             submitReview: false,
             submitReact: false,
             reactions: reactions,
+            reactIndex: reactIndex, 
             isSignedIn: isSignedIn,
             uid: null,
             uiConfig: {
@@ -80,7 +84,19 @@ export default class Reviews extends Component {
         var id = null;
         if (user)
             id = user.uid
-        this.setState({isSignedIn: !!user, uid: id})
+        if (this._isMounted) 
+            this.setState({isSignedIn: !!user, uid: id})
+        if (!!user) {
+            axios.get('http://localhost:4000/courses/react-index/'+this.props.course._id+"/"+this.state.uid)
+                .then(response => {
+                    if (this._isMounted) {
+                        this.setState({
+                            reactIndex: JSON.parse(response.data),
+                        })   
+                    }
+                })
+                .catch(function (error) {})
+        }
         if (!!user) {
             localStorage.setItem('loggedIn', true)
         } else {
@@ -93,14 +109,17 @@ export default class Reviews extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
             (user) => this.login(user)
         );
         axios.get('http://localhost:4000/courses/'+this.props.course._id)
             .then(response => {
-                this.setState({
-                    reactions: response.data.e,
-                })   
+                if (this._isMounted) {
+                    this.setState({
+                        reactions: response.data.e,
+                    })   
+                }
             })
             .catch(function (error) {
             })
@@ -109,16 +128,19 @@ export default class Reviews extends Component {
     // Make sure we un-register Firebase observers when the component unmounts.
     componentWillUnmount() {
         this.unregisterAuthObserver();
+        this._isMounted = false;
     }
 
     handleToggleModal() {
-        this.setState({
-            showModal: !this.state.showModal
-        })
+        if (this._isMounted) {
+            this.setState({
+                showModal: !this.state.showModal
+            })
+        }
     }
 
     reviewToggleModal() {
-        if (this.state.uid === null) {
+        if (this.state.uid === null && this._isMounted) {
             this.setState({
                 showModal: !this.state.showModal,
                 submitReview: true,
@@ -157,18 +179,23 @@ export default class Reviews extends Component {
         const here = this
         axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
             .then(function(res) {
-                here.setState({
-                    reactions: res.data,
-                    submitReact: true,
-                    submitReview: false
-                })
+                if (here._isMounted) {
+                    here.setState({
+                        reactions: res.data,
+                        reactIndex: num,
+                        submitReact: true,
+                        submitReview: false
+                    })
+                }
             })
             .catch(function (error) {
-                here.setState({
-                    showModal: true,
-                    submitReact: true,
-                    submitReview: false
-                })
+                if (here._isMounted) {
+                    here.setState({
+                        showModal: true,
+                        submitReact: true,
+                        submitReview: false
+                    })
+                }
             })
     }
 
@@ -179,7 +206,7 @@ export default class Reviews extends Component {
 
         if (props.course.rev.length > 0) {
             return (<>     
-                <LoginModal show={this.state.showModal && this.state.uid === null} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
+                <LoginModal title="Oops, you're not verified!" show={this.state.showModal && this.state.uid === null} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
                 <h5>Reactions</h5>
                 <div className="flex-wrapper" style={{marginTop: "-5px", marginBottom:"-2px", marginLeft:"-4px"}}>
                     <div style={{width: "42px", marginRight: "15px"}}>
@@ -188,6 +215,7 @@ export default class Reviews extends Component {
                             label="love"
                             number={this.state.reactions[0]}
                             onSelect={() => this.react(0)}
+                            highlight={this.state.reactIndex === 0}
                         />
                     </div>
                     <div style={{width: "42px", marginRight: "15px"}}>
@@ -196,6 +224,7 @@ export default class Reviews extends Component {
                             number={this.state.reactions[1]}
                             label="wow"
                             onSelect={() => this.react(1)}
+                            highlight={this.state.reactIndex === 1}
                         />
                     </div>
                     <div style={{width: "42px", marginRight: "15px"}}>
@@ -204,6 +233,7 @@ export default class Reviews extends Component {
                             number={this.state.reactions[2]}
                             label="sad"
                             onSelect={() => this.react(2)}
+                            highlight={this.state.reactIndex === 2}
                         />
                     </div>
                     <div style={{width: "42px", marginRight: "15px"}}>
@@ -212,6 +242,7 @@ export default class Reviews extends Component {
                             number={this.state.reactions[3]}
                             label="angry"
                             onSelect={() => this.react(3)}
+                            highlight={this.state.reactIndex === 3}
                         />
                     </div>
                     <div style={{width: "42px", marginRight: "15px"}}>
@@ -220,6 +251,7 @@ export default class Reviews extends Component {
                             number={this.state.reactions[4]}
                             label="like"
                             onSelect={() => this.react(4)}
+                            highlight={this.state.reactIndex === 4}
                         />
                     </div>
                     <div style={{width: "42px", marginRight: "15px"}}>
@@ -228,6 +260,7 @@ export default class Reviews extends Component {
                             number={this.state.reactions[5]}
                             label="dislike"
                             onSelect={() => this.react(5)}
+                            highlight={this.state.reactIndex === 5}
                         />
                     </div>
                 </div>

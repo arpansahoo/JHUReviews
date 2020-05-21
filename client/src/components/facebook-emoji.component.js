@@ -4,7 +4,7 @@ import React from 'react'
 import reactCSS, { hover } from 'reactcss'
 import active from './active'
 
-export const FacebookEmoji = ({ icon, label, number, onSelect, hover }) => {
+export const FacebookEmoji = ({ icon, label, number, onSelect, hover, highlight }) => {
   const styles = reactCSS({
     'default': {
       wrap: {
@@ -40,6 +40,7 @@ export const FacebookEmoji = ({ icon, label, number, onSelect, hover }) => {
         left: '33px',
         fontWeight: 'bold',
         fontSize: "0.75em",
+        color: highlight ? "#007bff":"black"
       }
     },
     'hover': {

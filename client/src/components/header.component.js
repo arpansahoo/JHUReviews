@@ -1,19 +1,76 @@
 import React, { Component } from 'react';
 import { Navbar, Nav, Image, Spinner } from 'react-bootstrap';
 import ContactModal from './contact-modal.component';
+import LoginModal from './login-modal.component';
 import logo from "../images/logo1.png"
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 export default class Header extends Component {
     constructor() {
         super();
+        var isSignedIn = false;
+        if (localStorage.getItem('loggedIn') === "true") 
+            isSignedIn = true
+
         this.state = {
-            showModal: false
+            showModal: false,
+            showLoginModal: false,
+            isSignedIn: isSignedIn,
+            logout: false,
+            uid: null,
+            uiConfig: {
+                signInFlow: 'popup',
+                signInOptions: [
+                    'microsoft.com'
+                ],
+                callbacks: {
+                    signInSuccessWithAuthResult: () => false
+                }
+            }
         }
+    }
+
+    login(user) {
+        var id = null;
+        if (user)
+            id = user.uid
+        this.setState({isSignedIn: !!user, uid: id})
+        if (!!user) {
+            localStorage.setItem('loggedIn', true)
+        } else {
+            localStorage.setItem('loggedIn', false)
+        }
+    }
+
+    componentDidMount() {
+        this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+            (user) => this.login(user)
+        );
+    }
+
+    // Make sure we un-register Firebase observers when the component unmounts.
+    componentWillUnmount() {
+        this.unregisterAuthObserver();
     }
 
     handleToggleModal() {
         this.setState({
             showModal: !this.state.showModal
+        })
+    }
+
+    logout() {
+        firebase.auth().signOut()
+        this.setState({
+            logout: true,
+        })
+    }
+
+    toggleLoginModal() {
+        this.setState({
+            showLoginModal: !this.state.showLoginModal,
+            logout: false
         })
     }
 
@@ -37,20 +94,21 @@ export default class Header extends Component {
                     </Nav>
                     <Nav>
                         <Nav.Link active={this.state.showModal === true} onClick={() => this.handleToggleModal()}>About</Nav.Link>
-                        {/* {(this.props.displayName !== null && this.props.displayName.length > 0) &&
-                            <Nav.Link style={{color:"rgba(0,0,0,.5)"}} disabled>
-                                Hi, {this.props.displayName.substring(0, this.props.displayName.indexOf(" "))}!
+                        {this.state.isSignedIn && 
+                            <Nav.Link onClick={() => this.logout()}>
+                                Logout
                             </Nav.Link>
                         }
-                        {(this.props.displayName === null || this.props.displayName.length === 0) &&
-                            <Nav.Link>
-                                Sign in
+                        {!this.state.isSignedIn && 
+                            <Nav.Link onClick={() => this.toggleLoginModal()} >
+                                Login
                             </Nav.Link>
-                        } */}
+                        }
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
             <ContactModal show={this.state.showModal} onHide={() => this.handleToggleModal()} />
+            <LoginModal title="Login to JHUReviews" show={this.state.showLoginModal && this.state.uid === null && !this.state.logout} onHide={() => this.toggleLoginModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
         </>)
     }
 }
