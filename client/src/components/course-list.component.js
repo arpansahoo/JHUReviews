@@ -150,9 +150,10 @@ export default class CourseList extends Component {
     }
 
     componentDidMount() {
-        //const url = "https://jhu-course-rating-api.herokuapp.com/courses"  
-        const url = 'http://localhost:4000/courses/1-20'
-        const url2 = 'http://localhost:4000/courses'
+        const url = "https://jhu-course-rating-api.herokuapp.com/courses/1-20"  
+        const url2 = "https://jhu-course-rating-api.herokuapp.com/courses"  
+        // const url = 'http://localhost:4000/courses/1-20'
+        // const url2 = 'http://localhost:4000/courses'
         this.setState({
             loading: true,
         })

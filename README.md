@@ -1,5 +1,5 @@
 <p align="center">
-  <img href="https://jhureviews.com" src="https://i.ibb.co/LxxCnbZ/social-preview.png" width="1080"/>
+  <img href="https://jhureviews.com" src="https://i.ibb.co/NZfyywD/social-preview.png" width="1080"/>
 </p>
 
 JHUReviews is a MERN (MongoDB, Express, React, Node) web app designed to help Johns Hopkins students evaluate courses they've taken and find high-quality courses. 

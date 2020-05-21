@@ -70,7 +70,8 @@ export default class ReviewForm extends Component {
         this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
             (user) => this.login(user)
         );
-        axios.get('http://localhost:4000/courses/'+this.props.match.params.id)
+        axios.get('https://jhu-course-rating-api.herokuapp.com/courses/'+this.props.match.params.id)
+        // axios.get('http://localhost:4000/courses/'+this.props.match.params.id)
             .then(response => {
                 this.setState({
                     number: response.data.num,
@@ -108,7 +109,8 @@ export default class ReviewForm extends Component {
             b: "0"
         }
 
-        axios.post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
+        axios.post('https://jhu-course-rating-api.herokuapp.com/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
+        // axios.post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
             .then(function(res) {
                 window.location.reload()
             })

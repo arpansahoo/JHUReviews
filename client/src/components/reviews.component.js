@@ -87,7 +87,8 @@ export default class Reviews extends Component {
         if (this._isMounted) 
             this.setState({isSignedIn: !!user, uid: id})
         if (!!user) {
-            axios.get('http://localhost:4000/courses/react-index/'+this.props.course._id+"/"+this.state.uid)
+            axios.get('https://jhu-course-rating-api.herokuapp.com/courses/react-index/'+this.props.course._id+"/"+this.state.uid)
+            // axios.get('http://localhost:4000/courses/react-index/'+this.props.course._id+"/"+this.state.uid)
                 .then(response => {
                     if (this._isMounted) {
                         this.setState({
@@ -113,7 +114,8 @@ export default class Reviews extends Component {
         this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
             (user) => this.login(user)
         );
-        axios.get('http://localhost:4000/courses/'+this.props.course._id)
+        axios.get('https://jhu-course-rating-api.herokuapp.com/courses/'+this.props.course._id)
+        // axios.get('http://localhost:4000/courses/'+this.props.course._id)
             .then(response => {
                 if (this._isMounted) {
                     this.setState({
@@ -177,7 +179,8 @@ export default class Reviews extends Component {
 
     react(num) {
         const here = this
-        axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
+        axios.post('https://jhu-course-rating-api.herokuapp.com/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
+        // axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
             .then(function(res) {
                 if (here._isMounted) {
                     here.setState({
