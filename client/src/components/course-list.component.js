@@ -186,9 +186,7 @@ export default class CourseList extends Component {
                         loading: false
                     })
                 })
-                .catch(function(error) {
-                    console.log(error)
-                })
+                .catch(function(error) {})
         }
     }
 
