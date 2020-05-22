@@ -276,15 +276,21 @@ export default class Reviews extends Component {
                 <div>
                     {props.course.rev.sort(function(a, b) {
                         var cmp = here.cmp(a.s, b.s)
+                        console.log(cmp)
                         if (cmp[0] < cmp[1]) {
                             return 1
                         } else {
-                            var a_rating = (Number.parseFloat(a.w) + Number.parseFloat(a.d) + Number.parseFloat(a.l) + Number.parseFloat(a.g) + Number.parseFloat(a.t)) / 5
-                            var b_rating = (Number.parseFloat(b.w) + Number.parseFloat(b.d) + Number.parseFloat(b.l) + Number.parseFloat(b.g) + Number.parseFloat(b.t)) / 5
-                            if (a_rating > b_rating) 
+                            if (cmp[0] === cmp[1]) {
+                                var a_rating = (Number.parseFloat(a.w) + Number.parseFloat(a.d) + Number.parseFloat(a.l) + Number.parseFloat(a.g) + Number.parseFloat(a.t)) / 5
+                                var b_rating = (Number.parseFloat(b.w) + Number.parseFloat(b.d) + Number.parseFloat(b.l) + Number.parseFloat(b.g) + Number.parseFloat(b.t)) / 5
+                                if (a_rating > b_rating) 
+                                    return -1
+                                else
+                                    return 1
+                            } else {
                                 return -1
-                            return 1
-                        }
+                            }
+                        } 
                     }).map((review, key) =>
                         <Review rev={review} key={key} />
                     )}
