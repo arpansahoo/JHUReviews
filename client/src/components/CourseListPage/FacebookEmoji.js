@@ -1,19 +1,21 @@
 /* eslint-disable no-shadow */
 
-import React from 'react'
-import reactCSS, { hover } from 'reactcss'
-import active from './active'
+import React from 'react';
+import reactCSS, { hover } from 'reactcss';
+import active from '../active';
 
-export const FacebookEmoji = ({ icon, label, number, onSelect, hover, highlight }) => {
+const FacebookEmoji = ({
+  icon, label, number, onSelect, hover, highlight
+}) => {
   const styles = reactCSS({
-    'default': {
+    default: {
       wrap: {
         padding: '5px',
         position: 'relative',
       },
       icon: {
         paddingBottom: '100%',
-        backgroundImage: `url(${ icon })`,
+        backgroundImage: `url(${icon})`,
         backgroundSize: '100% 100%',
         transformOrigin: 'bottom',
         cursor: 'pointer',
@@ -39,11 +41,11 @@ export const FacebookEmoji = ({ icon, label, number, onSelect, hover, highlight 
         top: '-13px',
         left: '39px',
         fontWeight: 'bold',
-        fontSize: "0.75em",
-        color: highlight ? "#007bff":"black",
+        fontSize: '0.75em',
+        color: highlight ? '#007bff' : 'black',
       }
     },
-    'hover': {
+    hover: {
       icon: {
         transform: 'scale(1.2)',
       },
@@ -52,19 +54,19 @@ export const FacebookEmoji = ({ icon, label, number, onSelect, hover, highlight 
         opacity: '1',
       },
     },
-  }, { hover })
+  }, { hover });
 
   const handleClick = () => {
-    onSelect && onSelect(label)
-  }
+    onSelect && onSelect(label);
+  };
 
   return (
-    <div style={ styles.wrap }>
-      <div style={ styles.label }>{ label }</div>
-      <div style={ styles.icon } onClick={ handleClick } />
-      <div style={ styles.number } >{ number }</div>
+    <div style={styles.wrap}>
+      <div style={styles.label}>{ label }</div>
+      <div style={styles.icon} onClick={handleClick} />
+      <div style={styles.number}>{ number }</div>
     </div>
-  )
-}
+  );
+};
 
-export default hover(active(FacebookEmoji))
+export default hover(active(FacebookEmoji));
