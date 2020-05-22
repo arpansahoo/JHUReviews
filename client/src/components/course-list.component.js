@@ -309,7 +309,7 @@ export default class CourseList extends Component {
                 findAllMatches: false,
                 minMatchCharLength: 1,
                 location: 0,
-                threshold: 0.4,
+                threshold: 0.3,
                 distance: 100,
                 useExtendedSearch: false,
                 keys: [
@@ -331,6 +331,7 @@ export default class CourseList extends Component {
                 pattern = pattern.replace("calc ", "calculus ")
                 pattern = pattern.replace("cog ", "cognitive ")
                 pattern = pattern.replace("neuro ", "neuroscience ")
+                pattern = pattern.replace("neuro:", "neuroscience:")
                 if (!pattern.includes("probability"))
                     pattern = pattern.replace("prob", "probability")
                 if (!pattern.includes("statistic"))
@@ -342,7 +343,7 @@ export default class CourseList extends Component {
                 pattern = pattern.replace("bio lab", "biology lab")
                 
                 if (pattern === "bbc")
-                    pattern = "brain, behavior, cognition"
+                    pattern = "brain, behavior, and cognition"
                 if (pattern === "orgo")
                     pattern = "organic"
                 if (pattern === "calc")
@@ -355,11 +356,11 @@ export default class CourseList extends Component {
             }
 
             if (pattern2.length > 0 && pattern.length === 0) {
-                options.keys = ["i"]; options.threshold = 0.4
+                options.keys = ["i"]; options.threshold = 0.3
                 const fuse2 = new Fuse(fuzzy, options);
                 fuzzy = fuse2.search(pattern2)
             } else if (pattern2.length > 0) {
-                options.keys = ["i"]; options.threshold = 0.4
+                options.keys = ["i"]; options.threshold = 0.3
                 var fuzzyClean = []
                 for (var j in fuzzy) 
                     fuzzyClean.push(fuzzy[j].item)

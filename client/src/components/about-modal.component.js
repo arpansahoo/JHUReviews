@@ -24,7 +24,7 @@ export default class ContactModal extends Component {
                     <p>
                         <b>Any questions or feedback?</b> Just email us at <a href="mailto:contact@jhureviews.com">contact@jhureviews.com</a>.
                     </p>
-                    <p>
+                    <p style={{marginTop:"-15px"}}>
                         <b>Like our emojis?</b> Download the <a href="https://apps.apple.com/app/id1512611054?app=messages">sticker pack</a> and follow Bleu the Bleu Jay on <a href="https://www.instagram.com/bleu_adventures/">Instagram</a>.
                     </p>
                 </Modal.Body>

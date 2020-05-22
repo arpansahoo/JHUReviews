@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar, Nav, Image, Spinner } from 'react-bootstrap';
-import ContactModal from './contact-modal.component';
+import AboutModal from './about-modal.component';
 import LoginModal from './login-modal.component';
 import logo from "../images/logo1.png"
 import firebase from 'firebase/app';
@@ -115,7 +115,7 @@ export default class Header extends Component {
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
-            <ContactModal show={this.state.showModal} onHide={() => this.handleToggleModal()} />
+            <AboutModal show={this.state.showModal} onHide={() => this.handleToggleModal()} />
             <LoginModal title="Login to JHUReviews" show={this.state.showLoginModal && this.state.uid === null && !this.state.logout} onHide={() => this.toggleLoginModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
         </>)
     }

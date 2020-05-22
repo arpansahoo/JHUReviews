@@ -30,3 +30,4 @@ config.js
 client/build
 client/src/firebase-config.js
 emoji.aep
+client/src/ga-config.js

@@ -9,9 +9,8 @@ import ReviewForm from "./components/submit-review.component";
 import Page404 from "./components/page404.component";
 
 import firebase from 'firebase/app';
-import 'firebase/auth';
-import config from './firebase-config';
-firebase.initializeApp(config);
+import firebaseConfig from './firebase-config';
+firebase.initializeApp(firebaseConfig);
 
 class App extends Component {
   render() {
