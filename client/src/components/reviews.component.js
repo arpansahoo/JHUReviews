@@ -26,7 +26,7 @@ class Review extends Component {
     render() {
         var semester = this.props.rev.s
         if (semester === "S20") {
-            semester = "Spring 2020"
+            semester = "Spring 2019"
         } else if (semester === "F19") {
             semester = "Fall 2019"
         } else if (semester === "S19") {
