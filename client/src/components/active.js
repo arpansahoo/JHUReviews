@@ -16,4 +16,4 @@ export const active = Component => {
   }
 }
 
-export default active
+export default active;

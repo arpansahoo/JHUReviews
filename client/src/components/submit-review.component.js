@@ -8,7 +8,6 @@ import history from "../history";
 import Header from "./header.component";
 
 import firebase from 'firebase/app';
-import 'firebase/auth';
 
 export default class ReviewForm extends Component {
     constructor(props) {
