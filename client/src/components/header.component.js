@@ -44,6 +44,23 @@ export default class Header extends Component {
         }
     }
 
+    componentDidMount() {
+        this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+            (user) => this.login(user)
+        );
+    }
+
+    // Make sure we un-register Firebase observers when the component unmounts.
+    componentWillUnmount() {
+        this.unregisterAuthObserver();
+    }
+
+    handleToggleModal() {
+        this.setState({
+            showModal: !this.state.showModal
+        })
+    }
+
     logout() {
         firebase.auth().signOut()
         this.setState({
@@ -56,23 +73,6 @@ export default class Header extends Component {
                 history.push('/')
             window.location.reload()
         }
-    }
-
-    componentDidMount() {
-        this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
-            (user) => this.login(user)
-        );
-    }
-
-    // Make sure we un-register Firebase observers when the component unmounts.
-    componentWillUnmount() {
-        this.unregisterAuthObserver();
-    }
-
-    toggleAboutModal() {
-        this.setState({
-            showModal: !this.state.showModal
-        })
     }
 
     toggleLoginModal() {
@@ -101,7 +101,7 @@ export default class Header extends Component {
                     <Nav className="mr-auto">
                     </Nav>
                     <Nav>
-                        <Nav.Link active={this.state.showModal === true} onClick={() => this.toggleAboutModal()}>About</Nav.Link>
+                        <Nav.Link active={this.state.showModal === true} onClick={() => this.handleToggleModal()}>About</Nav.Link>
                         {this.state.isSignedIn && 
                             <Nav.Link onClick={() => this.logout()}>
                                 Logout
@@ -115,8 +115,8 @@ export default class Header extends Component {
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
-            <AboutModal show={this.state.showModal} onHide={() => this.toggleAboutModal()} />
-            <LoginModal title="Login to JHUReviews" show={this.state.showLoginModal && !this.state.isSignedIn && !this.state.logout} onHide={() => this.toggleLoginModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
+            <AboutModal show={this.state.showModal} onHide={() => this.handleToggleModal()} />
+            <LoginModal title="Login to JHUReviews" show={this.state.showLoginModal && this.state.uid === null && !this.state.logout} onHide={() => this.toggleLoginModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
         </>)
     }
 }

@@ -25,10 +25,8 @@ class Review extends Component {
 
     render() {
         var semester = this.props.rev.s
-        if (semester == null) 
-            semester = "S20"
         if (semester === "S20") {
-            semester = "Spring 2020"
+            semester = "Spring 2019"
         } else if (semester === "F19") {
             semester = "Fall 2019"
         } else if (semester === "S19") {
@@ -124,12 +122,25 @@ export default class Reviews extends Component {
         this._isMounted = false;
     }
 
-    toggleModal() {
+    handleToggleModal() {
         if (this._isMounted) {
             this.setState({
                 showModal: !this.state.showModal,
                 submitReview: false
             })
+        }
+    }
+
+    reviewToggleModal() {
+        if (this.state.uid === null && this._isMounted) {
+            this.setState({
+                showModal: !this.state.showModal,
+                submitReview: true,
+                submitReact: false
+            })
+        } else {
+            this.props.history.push("/submit-review/"+this.props.course._id+"/"+this.props.page)
+            window.location.reload()
         }
     }
 
@@ -156,57 +167,45 @@ export default class Reviews extends Component {
         </>)
     }
 
-    review() {
-        if (!this.state.isSignedIn && this._isMounted) {
-            this.setState({
-                showModal: !this.state.showModal,
-                submitReview: true,
-                submitReact: false
-            })
-        } else {
-            this.props.history.push("/submit-review/"+this.props.course._id+"/"+this.props.page)
-            window.location.reload()
-        }
-    }
-
     react(num) {
         const here = this
         var same = this.state.reactIndex === num
         var index = -1
         if (!same)
             index = num
-
-        if (!this.state.isSignedIn && this._isMounted) {
-            this.setState({
-                showModal: !this.state.showModal,
-                submitReview: false,
-                submitReact: true
+        axios.post('https://jhu-course-rating-api.herokuapp.com/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
+        // axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
+            .then(function(res) {
+                if (here._isMounted) {
+                    here.setState({
+                        reactions: res.data,
+                        reactIndex: index,
+                        submitReact: true,
+                        submitReview: false
+                    })
+                }
             })
-        } else {
-            axios.post('https://jhu-course-rating-api.herokuapp.com/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
-            // axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
-                .then(function(res) {
-                    if (here._isMounted) {
-                        here.setState({
-                            reactions: res.data,
-                            reactIndex: index,
-                            submitReact: true,
-                            submitReview: false
-                        })
-                    }
-                })
-                .catch(function (error) {})
-        }
+            .catch(function (error) {
+                if (here._isMounted) {
+                    here.setState({
+                        showModal: true,
+                        submitReact: true,
+                        submitReview: false
+                    })
+                }
+            })
     }
 
     render() {
         const props = this.props
+        var course = props.course
+        var page = props.page
         var here = this
 
         if (props.course.rev.length > 0) {
             return (<>     
-                <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && !this.state.isSignedIn} onHide={() => this.toggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
-                <h5 style={{paddingTop: "5px"}}>Reactions</h5>
+                <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && this.state.uid === null} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
+                <h5>Reactions</h5>
                 <div className="flex-wrapper" style={{marginTop: "-5px", marginBottom:"-2px", marginLeft:"-4px"}}>
                     <div style={{width: "48px", marginRight: "15px"}}>
                         <FacebookEmoji
@@ -266,31 +265,26 @@ export default class Reviews extends Component {
 
                 <h5>Average Stats</h5>
                 { this.stats() }  
-
                 <div className="flex-wrapper">
                     <h5 style={{paddingTop: "15px"}}>Reviews</h5>
                     <div>
-                        <Button onClick={() => this.review()} variant="outline-primary" size="sm" style={{marginTop: "11.7px", marginLeft:"10px"}}>Submit a Review</Button>
+                        {/* <Link to={"/submit-review/"+course._id+"/"+page}> */}
+                        <Button onClick={() => this.reviewToggleModal() }variant="outline-primary" size="sm" style={{marginTop: "11.7px", marginLeft:"10px"}}>Submit a Review</Button>
+                        {/* </Link>  */}
                     </div>
                 </div>
                 <div>
                     {props.course.rev.sort(function(a, b) {
                         var cmp = here.cmp(a.s, b.s)
-                        console.log(cmp)
                         if (cmp[0] < cmp[1]) {
                             return 1
                         } else {
-                            if (cmp[0] === cmp[1]) {
-                                var a_rating = (Number.parseFloat(a.w) + Number.parseFloat(a.d) + Number.parseFloat(a.l) + Number.parseFloat(a.g) + Number.parseFloat(a.t)) / 5
-                                var b_rating = (Number.parseFloat(b.w) + Number.parseFloat(b.d) + Number.parseFloat(b.l) + Number.parseFloat(b.g) + Number.parseFloat(b.t)) / 5
-                                if (a_rating > b_rating) 
-                                    return -1
-                                else
-                                    return 1
-                            } else {
+                            var a_rating = (Number.parseFloat(a.w) + Number.parseFloat(a.d) + Number.parseFloat(a.l) + Number.parseFloat(a.g) + Number.parseFloat(a.t)) / 5
+                            var b_rating = (Number.parseFloat(b.w) + Number.parseFloat(b.d) + Number.parseFloat(b.l) + Number.parseFloat(b.g) + Number.parseFloat(b.t)) / 5
+                            if (a_rating > b_rating) 
                                 return -1
-                            }
-                        } 
+                            return 1
+                        }
                     }).map((review, key) =>
                         <Review rev={review} key={key} />
                     )}
@@ -299,10 +293,11 @@ export default class Reviews extends Component {
         }
         // no reviews yet, display prompt to submit first review 
         return (<>
-                <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && !this.state.isSignedIn} onHide={() => this.toggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
-                <h5 style={{paddingTop: "5px"}}>Reviews</h5>
+                <h4 style={{paddingTop: "5px"}}>Reviews</h4>
                 <p>No one has reviewed this course yet. Be the first!</p>
-                <Button onClick={() => this.review()} variant="outline-primary" size="sm" style={{marginTop: "-5px", marginBottom: "10px"}} >Submit a Review</Button>
+                <Link to={"/submit-review/"+course._id+"/"+page}>
+                    <Button variant="outline-primary" size="sm" style={{marginTop: "-5px", marginBottom: "10px"}} >Submit a Review</Button>
+                </Link>
         </>)
     }
 
