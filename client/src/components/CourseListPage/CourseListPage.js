@@ -36,12 +36,12 @@ const calculateMeanCourseStats = (courses) => {
           overallQualityRatings.push(Number.parseFloat(review.w));
         }
         // New review
-      } else if (Number.parseFloat(review.b) === '0') {
-        workloadRatings.append(Number.parseFloat(review.w));
-        difficultyRatings.append(Number.parseFloat(review.d));
-        gradingRatings.append(Number.parseFloat(review.g));
-        learningRatings.append(Number.parseFloat(review.l));
-        teacherRatings.append(Number.parseFloat(review.t));
+      } else if (review.b === '0') {
+        workloadRatings.push(Number.parseFloat(review.w));
+        difficultyRatings.push(Number.parseFloat(review.d));
+        gradingRatings.push(Number.parseFloat(review.g));
+        learningRatings.push(Number.parseFloat(review.l));
+        teacherRatings.push(Number.parseFloat(review.t));
       }
     });
 

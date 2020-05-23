@@ -24,11 +24,15 @@ const Review = (props) => {
   } else if (semester === 'S18') {
     semester = 'Spring 2018';
   }
+
+  const prefix = props.rev.b === '1' ? 'Official Course Evaluation:  '
+                                     : 'Student Review:  ';
+
   return (
     <>
       <Card style={{ backgroundColor: '#f8f9fa', marginTop: '10px', marginBottom: '10px' }}>
         <Card.Body style={{ paddingTop: '15px', paddingBottom: '0px' }}>
-          <b style={{ fontSize: '0.95em' }}>
+          <b style={{ fontSize: '1em' }}>
             {semester}
             {' '}
             | Instructor:
@@ -37,9 +41,9 @@ const Review = (props) => {
             {' '}
             | Rating:
             {' '}
-            {props.rev.d}
+            {Number(props.rev.d).toPrecision(3)}
           </b>
-          <p style={{ fontSize: '0.85em' }}>{props.rev.c.trim()}</p>
+          <p style={{ fontSize: '0.92em' }}><b>{prefix}</b>{props.rev.c.trim()}</p>
         </Card.Body>
       </Card>
     </>
@@ -47,7 +51,7 @@ const Review = (props) => {
 };
 
 
-const cmpSemesters = (aSem, bSem) => {
+const cmpReviews = (r1, r2) => {
   const numberSem = (sem) => {
     switch (sem) {
       case 'S18':
@@ -63,7 +67,13 @@ const cmpSemesters = (aSem, bSem) => {
     }
   };
 
-  return -(numberSem(aSem) - numberSem(bSem));
+  // If reviews are from different semesters, put newer one first
+  if (r1.s !== r2.s) {
+    return numberSem(r2.s) - numberSem(r1.s);
+  }
+
+  // If from same semester, put school-supplied reviews first
+  return r2.b - r1.b;
 };
 
 export default class Reviews extends Component {
@@ -313,8 +323,8 @@ export default class Reviews extends Component {
             </div>
           </div>
           <div>
-            {props.course.rev.sort((a, b) => cmpSemesters(a.s, b.s))
-              .map((review, key) => <Review rev={review} key={`review-${key}`} />)}
+            {props.course.rev.sort(cmpReviews)
+                             .map((review, key) => <Review rev={review} key={`review-${key}`} />)}
           </div>
         </>
       );
