@@ -96,7 +96,7 @@ const SearchFilter = (props) => (
                     onChange={(e) => { props.updateSearchFilters({ offeredInFall2020: e.target.checked }); }}
                     defaultChecked={props.filters.offeredInFall2020}
                     inline
-                    label="Offered in Fall '20"
+                    label="Offered in Fall '20 Only"
                     type={type}
                     id={`inline-${type}-8`}
                   />

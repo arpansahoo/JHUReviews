@@ -16,8 +16,7 @@ firebase.initializeApp(firebaseConfig);
 const App = () => (
   <Router>
     <Switch>
-      <Route path="/" exact component={() => <CourseListPage page={1} />} />
-      <Route path="/page-:active/" exact component={CourseListPage} />
+      <Route path="/" exact component={CourseListPage} />
       <Route path="/submit-review/:id/:page/" component={ReviewForm} />
       <Route component={Page404} />
     </Switch>

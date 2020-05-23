@@ -8,7 +8,6 @@ import history from "../history";
 import Header from "./header.component";
 
 import firebase from 'firebase/app';
-import 'firebase/auth';
 
 export default class ReviewForm extends Component {
     constructor(props) {
@@ -85,8 +84,8 @@ export default class ReviewForm extends Component {
     onSubmit(e) {
         e.preventDefault()
         var array = [this.state.text, this.state.workload, this.state.difficulty, this.state.learning, this.state.grading, this.state.instructor_quality, this.state.semester, this.state.instructor_name]
-        if (array[6] === "")
-            array[6] = "Spring 2020"
+        if (array[6] == null)
+            array[6] = "S20"
         for (let i = 0; i < array.length; i++) {
             if (array[i] === "")
                 array[i] = "3.00"
@@ -151,7 +150,7 @@ export default class ReviewForm extends Component {
 
     changeSemester(e) {
         var value = e.target.value
-        if (value === "Spring 2020" || value === "") {
+        if (value === "Spring 2020") {
             value = "S20"
         } else if (value === "Fall 2019") {
             value = "F19"

@@ -14,7 +14,7 @@ import LoginModal from '../login-modal.component.js';
 const Review = (props) => {
   let semester = props.rev.s;
   if (semester === 'S20') {
-    semester = 'Spring 2019';
+    semester = 'Spring 2020';
   } else if (semester === 'F19') {
     semester = 'Fall 2019';
   } else if (semester === 'S19') {

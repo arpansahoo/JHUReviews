@@ -52,57 +52,26 @@ const calculateMeanCourseStats = (courses) => {
   });
 };
 
-
-export default class CourseList extends Component {
+class CourseList extends Component {
   constructor(props) {
     super(props);
     this.changePage = this.changePage.bind(this);
     this.updateSearchFilters = this.updateSearchFilters.bind(this);
 
+    // Will use urlQueryString values to set filters if present
+    // if they are not present, will resort to default
+    const urlParams = new URLSearchParams(history.location.search);
     const filters = {
-      courseName: '',
-      instructorName: '',
-      includeHumanitiesAreaDesignation: true,
-      includeSocialSciencesAreaDesignation: true,
-      includeNaturalSciencesAreaDesignation: true,
-      includeEngineeringAreaDesignation: true,
-      includeQuantitativeAreaDesignation: true,
-      includeCoursesWithoutAreaDesignation: true,
-      writingIntensive: false,
-      offeredInFall2020: false
-    };
-
-    if (localStorage.getItem('course') !== null) { filters.courseName = localStorage.getItem('course'); }
-    if (localStorage.getItem('instructor') !== null) { filters.instructorName = localStorage.getItem('instructor'); }
-    if (localStorage.getItem('h') !== null) { filters.includeHumanitiesAreaDesignation = JSON.parse(localStorage.getItem('h')); }
-    if (localStorage.getItem('s') !== null) { filters.includeSocialSciencesAreaDesignation = JSON.parse(localStorage.getItem('s')); }
-    if (localStorage.getItem('n') !== null) { filters.includeNaturalSciencesAreaDesignation = JSON.parse(localStorage.getItem('n')); }
-    if (localStorage.getItem('e') !== null) { filters.includeEngineeringAreaDesignation = JSON.parse(localStorage.getItem('e')); }
-    if (localStorage.getItem('q') !== null) { filters.includeQuantitativeAreaDesignation = JSON.parse(localStorage.getItem('q')); }
-    if (localStorage.getItem('na') !== null) { filters.includeCoursesWithoutAreaDesignation = JSON.parse(localStorage.getItem('na')); }
-    if (localStorage.getItem('w') !== null) { filters.writingIntensive = JSON.parse(localStorage.getItem('w')); }
-    if (localStorage.getItem('offered') !== null) { filters.offeredInFall2020 = JSON.parse(localStorage.getItem('offered')); }
-
-
-    let active = 1;
-    if (this.props.match != null && this.props.match.params != null) {
-      const num = this.props.match.params.active;
-      try {
-        if (JSON.parse(num) > 0) { active = JSON.parse(num); }
-      } catch (e) {}
-    }
-    if (active > 1) {
-      if (localStorage.getItem('courses-length') != null) {
-        if ((active - 1) * 50 > JSON.parse(localStorage.getItem('courses-length'))) {
-          active = Math.ceil(JSON.parse(localStorage.getItem('courses-length')) / 50);
-        }
-      } else if ((active - 1) * 50 > 2481) { active = 50; }
-    }
-
-    if (active > 1) {
-      history.push(`/page-${active}`);
-    } else {
-      history.push('/');
+      courseName: urlParams.get('name') || '',
+      instructorName: urlParams.get('teacher') || '',
+      includeHumanitiesAreaDesignation: urlParams.get('h') !== '0',
+      includeSocialSciencesAreaDesignation: urlParams.get('s') !== '0',
+      includeNaturalSciencesAreaDesignation: urlParams.get('n') !== '0',
+      includeEngineeringAreaDesignation: urlParams.get('e') !== '0',
+      includeQuantitativeAreaDesignation: urlParams.get('q') !== '0',
+      includeCoursesWithoutAreaDesignation: urlParams.get('na') !== '0',
+      writingIntensive: urlParams.get('w') || false,
+      offeredInFall2020: urlParams.get('nextSem') || false
     }
 
     let courses = [];
@@ -112,7 +81,7 @@ export default class CourseList extends Component {
 
     this.state = {
       courses,
-      active,
+      activePage: urlParams.get('page') || 1,
       loading: true,
       filters,
     };
@@ -145,72 +114,56 @@ export default class CourseList extends Component {
   }
 
   changePage(num) {
-    this.setState({ active: num });
-    if (num > 1) {
-      history.push(`/page-${num}`);
-    } else {
-      history.push('/');
-    }
+    this.setState({ activePage: num });
+
+    const urlParams = new URLSearchParams(history.location.search);
+    history.push(`/?${urlParams.toString()}`);
   }
 
   updateSearchFilters(options) {
     const { filters } = this.state;
 
+    // Using a for in loop here to only view enumerable properties of filters
+    for (const prop in options) {
+      filters[prop] = options[prop];
+    }
+    this.setState({ filters });
+    this.changePage(1); // Reset back to first page
+
+    // Now we update url query string
+    const urlParams = new URLSearchParams(history.location.search);
     if (options.courseName !== undefined) {
-      filters.courseName = options.courseName;
-      localStorage.setItem('course', filters.courseName);
+      urlParams.set('name', options.courseName);
     }
-
-    if (options.offeredInFall2020 !== undefined) {
-      filters.offeredInFall2020 = options.offeredInFall2020;
-      localStorage.setItem('offered', filters.offeredInFall2020);
-    }
-
     if (options.instructorName !== undefined) {
-      filters.instructorName = options.instructorName;
-      localStorage.setItem('instructor', filters.instructorName);
+      urlParams.set('teacher', options.instructorName);
     }
-
+    if (options.offeredInFall2020 !== undefined) {
+      urlParams.set('nextSem', Number(options.offeredInFall2020));
+    }
     if (options.writingIntensive !== undefined) {
-      filters.writingIntensive = options.writingIntensive;
-      localStorage.setItem('w', filters.writingIntensive);
+      urlParams.set('w', Number(options.writingIntensive));
     }
-
     if (options.includeCoursesWithoutAreaDesignation !== undefined) {
-      filters.includeCoursesWithoutAreaDesignation = options.includeCoursesWithoutAreaDesignation;
-      localStorage.setItem('na', filters.includeCoursesWithoutAreaDesignation);
+      urlParams.set('na', Number(options.includeCoursesWithoutAreaDesignation));
     }
-
     if (options.includeHumanitiesAreaDesignation !== undefined) {
-      filters.includeHumanitiesAreaDesignation = options.includeHumanitiesAreaDesignation;
-      localStorage.setItem('h', filters.includeHumanitiesAreaDesignation);
+      urlParams.set('h', Number(options.includeHumanitiesAreaDesignation));
     }
-
     if (options.includeSocialSciencesAreaDesignation !== undefined) {
-      filters.includeSocialSciencesAreaDesignation = options.includeSocialSciencesAreaDesignation;
-      localStorage.setItem('s', filters.includeSocialSciencesAreaDesignation);
+      urlParams.set('s', Number(options.includeSocialSciencesAreaDesignation));
     }
-
     if (options.includeNaturalSciencesAreaDesignation !== undefined) {
-      filters.includeNaturalSciencesAreaDesignation = options.includeNaturalSciencesAreaDesignation;
-      localStorage.setItem('n', filters.includeNaturalSciencesAreaDesignation);
+      urlParams.set('n', Number(options.includeNaturalSciencesAreaDesignation));
     }
-
     if (options.includeEngineeringAreaDesignation !== undefined) {
-      filters.includeEngineeringAreaDesignation = options.includeEngineeringAreaDesignation;
-      localStorage.setItem('e', filters.includeEngineeringAreaDesignation);
+      urlParams.set('e', Number(options.includeEngineeringAreaDesignation));
     }
-
     if (options.includeQuantitativeAreaDesignation !== undefined) {
-      filters.includeQuantitativeAreaDesignation = options.includeQuantitativeAreaDesignation;
-      localStorage.setItem('q', filters.includeQuantitativeAreaDesignation);
+      urlParams.set('q', Number(options.includeQuantitativeAreaDesignation));
     }
 
-    this.setState({
-      active: 1,
-      filters
-    });
-    history.push('/');
+    history.push(`/?${urlParams.toString()}`);
   }
 
   search = (courseDatabase, filters) => {
@@ -249,7 +202,7 @@ export default class CourseList extends Component {
       };
 
       const fuse = new Fuse(courses, options);
-      courses = fuse.search(instructorName);
+      courses = fuse.search(instructorName).map(res => res.item);
     }
 
     // Finally filter and rank courses by courseName (if given)
@@ -276,18 +229,16 @@ export default class CourseList extends Component {
 
     // Then sort by length of course name so longer course titles with more words
     // that match more queries will be put lower
-    courses.sort((c1, c2) => c1.n.length - c2.n.length);
+    courses.sort((c1, c2) => Number(c1.num.slice(-3)) - Number(c2.num.slice(-3)));
 
     return courses;
   }
 
   render() {
-    const { active, courses, filters } = this.state;
+    const { activePage, courses, filters } = this.state;
 
     const matchingCourses = this.search(courses, filters);
-    const visibleCourses = matchingCourses.slice((active - 1) * 50, (active * 50));
-
-    localStorage.setItem('courses-length', matchingCourses.length);
+    const visibleCourses = matchingCourses.slice((activePage - 1) * 50, (activePage * 50));
 
     return (
       <>
@@ -302,7 +253,7 @@ export default class CourseList extends Component {
               />
             </div>
             <div className="flex-wrapper" style={{ float: 'right' }}>
-              <PaginationComponent page={active} changePage={this.changePage} length={matchingCourses.length} />
+              <PaginationComponent page={activePage} changePage={this.changePage} length={matchingCourses.length} />
             </div>
           </div>
           <table className="table table-responsive" style={{ marginTop: 20 }}>
@@ -326,14 +277,16 @@ export default class CourseList extends Component {
               </tr>
             </thead>
             <tbody>
-              {visibleCourses.map((currentCourse, i) => <Course course={currentCourse} active={active} key={`course-${active * 50 + i}`} />)}
+              {visibleCourses.map((currentCourse, i) => <Course course={currentCourse} activePage={activePage} key={`course-${activePage * 50 + i}`} />)}
             </tbody>
           </table>
           <div className="flex-wrapper" style={{ float: 'right' }}>
-            <PaginationComponent page={active} changePage={this.changePage} length={matchingCourses.length} />
+            <PaginationComponent page={activePage} changePage={this.changePage} length={matchingCourses.length} />
           </div>
         </div>
       </>
     );
   }
 }
+
+export default CourseList;
