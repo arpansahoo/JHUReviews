@@ -25,8 +25,6 @@ class Review extends Component {
 
     render() {
         var semester = this.props.rev.s
-        if (semester == null) 
-            semester = "S20"
         if (semester === "S20") {
             semester = "Spring 2020"
         } else if (semester === "F19") {
@@ -206,7 +204,7 @@ export default class Reviews extends Component {
         if (props.course.rev.length > 0) {
             return (<>     
                 <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && !this.state.isSignedIn} onHide={() => this.toggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
-                <h5 style={{paddingTop: "5px"}}>Reactions</h5>
+                <h5>Reactions</h5>
                 <div className="flex-wrapper" style={{marginTop: "-5px", marginBottom:"-2px", marginLeft:"-4px"}}>
                     <div style={{width: "48px", marginRight: "15px"}}>
                         <FacebookEmoji
@@ -266,7 +264,6 @@ export default class Reviews extends Component {
 
                 <h5>Average Stats</h5>
                 { this.stats() }  
-
                 <div className="flex-wrapper">
                     <h5 style={{paddingTop: "15px"}}>Reviews</h5>
                     <div>
@@ -293,8 +290,7 @@ export default class Reviews extends Component {
         }
         // no reviews yet, display prompt to submit first review 
         return (<>
-                <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && !this.state.isSignedIn} onHide={() => this.toggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
-                <h5 style={{paddingTop: "5px"}}>Reviews</h5>
+                <h4 style={{paddingTop: "5px"}}>Reviews</h4>
                 <p>No one has reviewed this course yet. Be the first!</p>
                 <Button onClick={() => this.review()} variant="outline-primary" size="sm" style={{marginTop: "-5px", marginBottom: "10px"}} >Submit a Review</Button>
         </>)
