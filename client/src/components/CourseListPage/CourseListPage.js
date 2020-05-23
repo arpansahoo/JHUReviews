@@ -6,8 +6,10 @@ import PaginationComponent from './PaginationComponent';
 import Popover from '../popover.component';
 import SearchFilter from './SearchFilter';
 import Header from '../header.component';
-import history from '../../history';
+import { createBrowserHistory } from 'history';
 import Course from './Course';
+
+const history = createBrowserHistory();
 
 const mean = (array) => {
   let sum = 0;
@@ -117,6 +119,11 @@ class CourseList extends Component {
     this.setState({ activePage: num });
 
     const urlParams = new URLSearchParams(history.location.search);
+    if (num === 1) {
+      urlParams.delete('page');
+    } else {
+      urlParams.set('page', num);
+    }
     history.push(`/?${urlParams.toString()}`);
   }
 
@@ -128,7 +135,7 @@ class CourseList extends Component {
       filters[prop] = options[prop];
     }
     this.setState({ filters });
-    this.changePage(1); // Reset back to first page
+    this.changePage(1); // Go back to page one
 
     // Now we update url query string
     const urlParams = new URLSearchParams(history.location.search);
@@ -167,6 +174,11 @@ class CourseList extends Component {
   }
 
   search = (courseDatabase, filters) => {
+    // Return empty array if hasn't loaded yet
+    if (!courseDatabase) {
+      return [];
+    }
+
     // First filter courses by tags and designations
     let courses = courseDatabase.filter((currentCourse) => {
       const areas = currentCourse.a.toUpperCase();
@@ -184,7 +196,29 @@ class CourseList extends Component {
       return valid;
     });
 
-    // Then filter and rank courses by fuzzy search on instructor name if given
+    // Then filter courses by courseName
+    let courseName = filters.courseName.trim().toLowerCase();
+    if (courseName) {
+      // some naive hardcoding for common abbreviations
+      courseName = courseName.replace('orgo', 'organic');
+      courseName = courseName.replace('stats', 'statistics');
+      courseName = courseName.replace('ifp', 'fiction/poetry');
+      if (courseName === 'bbc') { courseName = 'brain, behavior, and cognition'; }
+      if (courseName === 'csf') { courseName = 'computer system fundamentals'; }
+
+      // Filter to keep only matching courses
+      const queryKeywords = courseName.split(' ');
+      courses = courses.filter((currentCourse) =>
+        // Every keyword in search query must appear as a substring of course name or number
+        queryKeywords.every((keyword) => {
+          const matchesCourseName = currentCourse.n.trim().toLowerCase().includes(keyword);
+          const matchesCourseNum = currentCourse.num.toLowerCase().includes(keyword);
+          return matchesCourseName || matchesCourseNum;
+        })
+      );
+    }
+
+    // Filter and rank courses by fuzzy search on instructor name last since this is slowest
     const instructorName = filters.instructorName.toLowerCase().trim();
     if (instructorName) {
       const options = {
@@ -205,30 +239,7 @@ class CourseList extends Component {
       courses = fuse.search(instructorName).map(res => res.item);
     }
 
-    // Finally filter and rank courses by courseName (if given)
-    let courseName = filters.courseName.trim().toLowerCase();
-    if (!courseName) {
-      return courses;
-    }
-    // some naive hardcoding for common abbreviations
-    courseName = courseName.replace('orgo', 'organic');
-    courseName = courseName.replace('stats', 'statistics');
-    courseName = courseName.replace('ifp', 'fiction/poetry');
-    if (courseName === 'bbc') { courseName = 'brain, behavior, and cognition'; }
-    if (courseName === 'csf') { courseName = 'computer system fundamentals'; }
-
-    // Filter to keep only matching courses
-    const queryKeywords = courseName.split(' ');
-    courses = courses.filter((currentCourse) =>
-      // Every keyword in search query must appear as a substring of course name or number
-      queryKeywords.every((keyword) => {
-        const matchesCourseName = currentCourse.n.trim().toLowerCase().includes(keyword);
-        const matchesCourseNum = currentCourse.num.toLowerCase().includes(keyword);
-        return matchesCourseName || matchesCourseNum;
-      }));
-
-    // Then sort by length of course name so longer course titles with more words
-    // that match more queries will be put lower
+    // Then sort by course number so that lower level courses appear first
     courses.sort((c1, c2) => Number(c1.num.slice(-3)) - Number(c2.num.slice(-3)));
 
     return courses;
