@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import firebase from 'firebase/app';
@@ -17,7 +16,7 @@ const App = () => (
   <Router>
     <Switch>
       <Route path="/" exact component={CourseListPage} />
-      <Route path="/submit-review/:id/:page/" component={ReviewForm} />
+      <Route path="/submit-review/:id" component={ReviewForm} />
       <Route component={Page404} />
     </Switch>
   </Router>

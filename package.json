@@ -26,6 +26,7 @@
     "yarn": "1.17.x"
   },
   "devDependencies": {
-    "gh-pages": "^2.2.0"
+    "gh-pages": "^2.2.0",
+    "prettier-eslint": "^10.1.0"
   }
 }
