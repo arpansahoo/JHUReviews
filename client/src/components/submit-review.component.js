@@ -1,12 +1,10 @@
 import React, { Component, useState } from 'react';
-import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import {
   Form, Button, InputGroup, Col
 } from 'react-bootstrap';
 import firebase from 'firebase/app';
 import Popover from './popover.component';
-import history from '../history';
 import Header from './header.component';
 
 class ReviewForm extends Component {
@@ -55,7 +53,7 @@ class ReviewForm extends Component {
 
   componentDidMount() {
     this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => this.login(user));
-    if (!this.state.isSignedIn) this.props.history.push('/');
+    if (!this.state.isSignedIn) window.history.pushState(null, null, '/');
 
     axios
       .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.match.params.id}`)
@@ -111,7 +109,7 @@ class ReviewForm extends Component {
       // axios.post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
       .then((res) => {})
       .catch((error) => {})
-      .finally(() => this.props.history.goBack());
+      .finally(() => window.history.back());
   }
 
   render() {
@@ -213,7 +211,7 @@ function FormComponent(props) {
   const handleCancel = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    history.goBack();
+    window.history.back();
   };
 
   const handleSubmit = (event) => {
@@ -400,4 +398,4 @@ function FormComponent(props) {
   );
 }
 
-export default withRouter(ReviewForm);
+export default ReviewForm;

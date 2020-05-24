@@ -2,14 +2,11 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Fuse from 'fuse.js';
 
-import { createBrowserHistory } from 'history';
 import PaginationComponent from './PaginationComponent';
 import Popover from '../popover.component';
 import SearchFilter from './SearchFilter';
 import Header from '../header.component';
 import Course from './Course';
-
-const history = createBrowserHistory();
 
 const mean = (array) => {
   let sum = 0;
@@ -62,7 +59,7 @@ class CourseList extends Component {
 
     // Will use urlQueryString values to set filters if present
     // if they are not present, will resort to default
-    const urlParams = new URLSearchParams(history.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     const filters = {
       courseName: urlParams.get('name') || '',
       instructorName: urlParams.get('teacher') || '',
@@ -117,13 +114,13 @@ class CourseList extends Component {
   changePage(num) {
     this.setState({ activePage: num });
 
-    const urlParams = new URLSearchParams(history.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     if (num === 1) {
       urlParams.delete('page');
     } else {
       urlParams.set('page', num);
     }
-    history.push(`/?${urlParams.toString()}`);
+    window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   updateSearchFilters(options) {
@@ -137,7 +134,7 @@ class CourseList extends Component {
     this.changePage(1); // Go back to page one
 
     // Now we update url query string
-    const urlParams = new URLSearchParams(history.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     if (options.courseName !== undefined) {
       urlParams.set('name', options.courseName);
     }
@@ -172,7 +169,7 @@ class CourseList extends Component {
       urlParams.set('sort', options.sortBy);
     }
 
-    history.push(`/?${urlParams.toString()}`);
+    window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   search = (courseDatabase, filters) => {

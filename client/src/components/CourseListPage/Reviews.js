@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 // eslint-disable-next-line
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Card, Badge, Button } from 'react-bootstrap';
 import firebase from 'firebase/app';
@@ -8,6 +8,7 @@ import FacebookEmoji from './FacebookEmoji';
 import icons from './Icon';
 
 import 'firebase/auth';
+import history from '../../history';
 import LoginModal from '../login-modal.component.js';
 
 const Review = (props) => {
@@ -31,13 +32,8 @@ const Review = (props) => {
       <Card style={{ backgroundColor: '#f8f9fa', marginTop: '10px', marginBottom: '10px' }}>
         <Card.Body style={{ paddingTop: '15px', paddingBottom: '0px' }}>
           <b style={{ fontSize: '1em' }}>
-            {semester}
-            {' '}
-            | Instructor:
-            {props.rev.i.trim()}
-            {' '}
-            | Rating:
-            {' '}
+            {semester} | Instructor:
+            {props.rev.i.trim()} | Rating:
             {Number(props.rev.d).toPrecision(3)}
           </b>
           <p style={{ fontSize: '0.92em' }}>
@@ -145,8 +141,11 @@ export default class Reviews extends Component {
         .catch((error) => {});
     }
 
+    // Push to new url but keep current url in state
     if (this.state.submitReview && !this.state.submitReact) {
-      this.props.history.push(`/submit-review/${this.props.course._id}`);
+      this.props.history.push(`/submit-review/${this.props.course._id}`, {
+        previous: history.location.pathname + history.location.search
+      });
       window.location.reload();
     }
   }
@@ -180,10 +179,10 @@ export default class Reviews extends Component {
       const badgeColor = Number.isNaN(rating)
         ? 'dark'
         : rating < 3
-          ? 'danger'
-          : rating < 4
-            ? 'warning'
-            : 'success';
+        ? 'danger'
+        : rating < 4
+        ? 'warning'
+        : 'success';
 
       const formattedRating = Number.isNaN(rating) ? 'N/A' : rating.toPrecision(3);
 
