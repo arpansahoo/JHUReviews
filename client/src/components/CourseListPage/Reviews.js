@@ -193,12 +193,12 @@ export default class Reviews extends Component {
       const { course } = this.props;
 
       const statsBadge = (ratingName, rating) => {
-        const badgeColor = Number.isNaN(rating) ? 'dark'
+        const badgeColor = ( rating == null || Number.isNaN(rating) ) ? 'dark'
           : rating < 3 ? 'danger'
             : rating < 4 ? 'warning'
               : 'success';
 
-        const formattedRating = Number.isNaN(rating) ? 'N/A' : rating.toPrecision(3);
+        const formattedRating = ( rating == null || Number.isNaN(rating) ) ? 'N/A' : rating.toPrecision(3);
 
         return (
           <h5>
