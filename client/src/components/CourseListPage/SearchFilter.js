@@ -6,7 +6,7 @@ const SearchFilter = (props) => (
     <div className="header-wrapper">
 
       <div className="search-flex">
-        <InputGroup style={{ marginRight: '15px' }} className="mb-3">
+        <InputGroup style={{ marginRight: '20px' }} className="mb-3">
           <FormControl
             placeholder="Search for a course or department..."
             defaultValue={props.filters.courseName}
@@ -14,7 +14,7 @@ const SearchFilter = (props) => (
             onChange={(e) => { props.updateSearchFilters({ courseName: e.target.value }); }}
           />
         </InputGroup>
-        <InputGroup style={{ marginRight: '15px' }} className="mb-3">
+        <InputGroup className="mb-3">
           <FormControl
             placeholder="Search for an instructor..."
             defaultValue={props.filters.instructorName}
@@ -24,7 +24,7 @@ const SearchFilter = (props) => (
         </InputGroup>
       </div>
 
-      <div style={{ marginTop: '5px', marginLeft: '1px' }}>
+      <div style={{ marginTop: '5px', marginLeft: '1px'}}>
         <Form>
           {['checkbox'].map((type) => (
             <div key={`inline-${type}`} className="mb-3">

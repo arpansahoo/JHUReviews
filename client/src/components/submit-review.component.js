@@ -124,8 +124,8 @@ export default class ReviewForm extends Component {
         return (<>
             <Header submit={true} active="sp20" />
             <div className="site-container">
-                <div style={{paddingTop:"20px", paddingBottom:"30px"}}>
-                    <div style={{paddingBottom:"15px"}}>
+                <div style={{paddingTop:"20px"}}>
+                    <div style={{paddingBottom:"10px"}}>
                         <h2>You are submitting a review for:</h2>
                         <h5 style={{color:"#6c757d"}}>{this.state.number} {this.state.title}</h5>
                     </div>

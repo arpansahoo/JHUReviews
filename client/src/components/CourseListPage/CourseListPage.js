@@ -35,13 +35,13 @@ const calculateMeanCourseStats = (courses) => {
           overallQualityRatings.push(Number.parseFloat(review.w)); // change to .o once we fix data field
         }
         // New review
-      } else if (Number.parseFloat(review.b) === '0') {
+      } else if (review.b === '0') {
         overallQualityRatings.push(Number.parseFloat(review.w)); // change to .o once we fix data field
-        workloadRatings.append(Number.parseFloat(review.w)); 
-        difficultyRatings.append(Number.parseFloat(review.d));
-        gradingRatings.append(Number.parseFloat(review.g));
-        learningRatings.append(Number.parseFloat(review.l));
-        teacherRatings.append(Number.parseFloat(review.t));
+        workloadRatings.push(Number.parseFloat(review.w)); 
+        difficultyRatings.push(Number.parseFloat(review.d));
+        gradingRatings.push(Number.parseFloat(review.g));
+        learningRatings.push(Number.parseFloat(review.l));
+        teacherRatings.push(Number.parseFloat(review.t));
       }
     });
 
@@ -263,7 +263,7 @@ class CourseList extends Component {
               <PaginationComponent page={activePage} changePage={this.changePage} length={matchingCourses.length} />
             </div>
           </div>
-          <table className="table table-responsive" style={{ marginTop: 20 }}>
+          <table className="table table-responsive">
             <thead>
               <tr>
                 <th className="course-num">Course #</th>
@@ -278,7 +278,7 @@ class CourseList extends Component {
               {visibleCourses.map((currentCourse, i) => <Course course={currentCourse} activePage={activePage} key={`course-${activePage * 50 + i}`} />)}
             </tbody>
           </table>
-          <div className="flex-wrapper" style={{ float: 'right' }}>
+          <div className="flex-wrapper" style={{ marginTop: '-5px', float: 'right' }}>
             <PaginationComponent page={activePage} changePage={this.changePage} length={matchingCourses.length} />
           </div>
         </div>

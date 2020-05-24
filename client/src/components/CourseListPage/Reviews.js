@@ -304,9 +304,7 @@ export default class Reviews extends Component {
           <div className="flex-wrapper">
             <h5 style={{ paddingTop: '15px' }}>Reviews</h5>
             <div>
-              {/* <Link to={"/submit-review/"+course._id+"/"+page}> */}
               <Button onClick={() => this.review()} variant="outline-primary" size="sm" style={{ marginTop: '11.7px', marginLeft: '10px' }}>Submit a Review</Button>
-              {/* </Link>  */}
             </div>
           </div>
           <div>

@@ -82,7 +82,6 @@ export default class Header extends Component {
     render() {        
         return(<>
             <Navbar style={{marginBottom:"5px", backgroundColor:"white", boxShadow:"0 0 12px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.15)"}} sticky="top" collapseOnSelect expand="lg" variant="light">
-                
                 <Navbar.Brand href="/">
                     <div className="flex-wrapper">
                     <Image src={logo} style={{maxHeight:"30px", marginTop:"0px", marginRight:"5px"}} fluid />
@@ -92,6 +91,7 @@ export default class Header extends Component {
                     </Spinner>
                     </div>
                 </Navbar.Brand>
+                
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
 
                 <Navbar.Collapse id="responsive-navbar-nav">
