@@ -15,6 +15,9 @@
     <meta property="og:url" content="https://jhureviews.com/" />
     <meta property="og:image" content="https://i.ibb.co/NZfyywD/social-preview.png" />
 
+    <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" crossorigin="use-credentials" href="%PUBLIC_URL%/manifest.json" />
     
@@ -31,6 +34,25 @@
       gtag('js', new Date());
 
       gtag('config', 'UA-167314097-1');
+    </script>
+
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search) {
+          var q = {};
+          l.search.slice(1).split('&').forEach(function(v) {
+            var a = v.split('=');
+            q[a[0]] = a.slice(1).join('=').replace(/~and~/g, '&');
+          });
+          if (q.p !== undefined) {
+            window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + (q.p || '') +
+              (q.q ? ('?' + q.q) : '') +
+              l.hash
+            );
+          }
+        }
+      }(window.location))
     </script>
   </head>
   <body>

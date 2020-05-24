@@ -148,8 +148,8 @@ export default class Reviews extends Component {
       }
     }
 
-    reviewToggleModal() {
-      if (this.state.uid === null && this._isMounted) {
+    review() {
+      if (!this.state.isSignedIn && this._isMounted) {
         this.setState({
           showModal: !this.state.showModal,
           submitReview: true,
@@ -158,6 +158,34 @@ export default class Reviews extends Component {
       } else {
         this.props.history.push(`/submit-review/${this.props.course._id}/${this.props.page}`);
         window.location.reload();
+      }
+    }
+
+    react(num) {
+      const same = this.state.reactIndex === num;
+      let index = -1;
+      if (!same) { index = num; }
+
+      if (!this.state.isSignedIn && this._isMounted) {
+        this.setState({
+            showModal: !this.state.showModal,
+            submitReview: false,
+            submitReact: true
+        })
+      } else {
+          axios.post(`https://jhu-course-rating-api.herokuapp.com/courses/react/${this.props.course._id}/${num}/${this.state.uid}`)
+          // axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
+          .then((res) => {
+            if (this._isMounted) {
+              this.setState({
+                reactions: res.data,
+                reactIndex: index,
+                submitReact: true,
+                submitReview: false
+              });
+            }
+          })
+          .catch((error) => {});
       }
     }
 
@@ -195,48 +223,17 @@ export default class Reviews extends Component {
       );
     }
 
-    react(num) {
-      const same = this.state.reactIndex === num;
-      let index = -1;
-      if (!same) { index = num; }
-      axios.post(`https://jhu-course-rating-api.herokuapp.com/courses/react/${this.props.course._id}/${num}/${this.state.uid}`)
-        // axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
-        .then((res) => {
-          if (this._isMounted) {
-            this.setState({
-              reactions: res.data,
-              reactIndex: index,
-              submitReact: true,
-              submitReview: false
-            });
-          }
-        })
-        .catch((error) => {
-          if (this._isMounted) {
-            this.setState({
-              showModal: true,
-              submitReact: true,
-              submitReview: false
-            });
-          }
-        });
-    }
-
     render() {
       const { props } = this;
-      const { course } = props;
-      const { page } = props;
-
 
       if (props.course.rev.length === 0) {
       // no reviews yet, display prompt to submit first review
         return (
           <>
-            <h4 style={{ paddingTop: '5px' }}>Reviews</h4>
+            <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && !this.state.isSignedIn} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
+            <h5 style={{paddingTop: "5px"}}>Reviews</h5>
             <p>No one has reviewed this course yet. Be the first!</p>
-            <Link to={`/submit-review/${course._id}/${page}`}>
-              <Button variant="outline-primary" size="sm" style={{ marginTop: '-5px', marginBottom: '10px' }}>Submit a Review</Button>
-            </Link>
+            <Button onClick={() => this.review()} variant="outline-primary" size="sm" style={{marginTop: "-5px", marginBottom: "10px"}} >Submit a Review</Button>
           </>
         );
       }
@@ -244,7 +241,7 @@ export default class Reviews extends Component {
       return (
         <>
           <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && this.state.uid === null} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
-          <h5>Reactions</h5>
+          <h5 style={{paddingTop: "5px"}}>Reactions</h5>
           <div className="flex-wrapper" style={{ marginTop: '-5px', marginBottom: '-2px', marginLeft: '-4px' }}>
             <div style={{ width: '48px', marginRight: '15px' }}>
               <FacebookEmoji
@@ -308,7 +305,7 @@ export default class Reviews extends Component {
             <h5 style={{ paddingTop: '15px' }}>Reviews</h5>
             <div>
               {/* <Link to={"/submit-review/"+course._id+"/"+page}> */}
-              <Button onClick={() => this.reviewToggleModal()} variant="outline-primary" size="sm" style={{ marginTop: '11.7px', marginLeft: '10px' }}>Submit a Review</Button>
+              <Button onClick={() => this.review()} variant="outline-primary" size="sm" style={{ marginTop: '11.7px', marginLeft: '10px' }}>Submit a Review</Button>
               {/* </Link>  */}
             </div>
           </div>

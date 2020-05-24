@@ -44,6 +44,17 @@ export default class Header extends Component {
         }
     }
 
+    logout() {
+        firebase.auth().signOut()
+        this.setState({
+            logout: true,
+        })
+        if (this.props.submit) {
+            history.push('/')
+            window.location.reload()
+        }
+    }
+
     componentDidMount() {
         this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
             (user) => this.login(user)
@@ -59,20 +70,6 @@ export default class Header extends Component {
         this.setState({
             showModal: !this.state.showModal
         })
-    }
-
-    logout() {
-        firebase.auth().signOut()
-        this.setState({
-            logout: true,
-        })
-        if (this.props.submit) {
-            if (this.props.page > 1)
-                history.push('/page-' + this.props.page)
-            else 
-                history.push('/')
-            window.location.reload()
-        }
     }
 
     toggleLoginModal() {
@@ -116,7 +113,7 @@ export default class Header extends Component {
                 </Navbar.Collapse>
             </Navbar>
             <AboutModal show={this.state.showModal} onHide={() => this.handleToggleModal()} />
-            <LoginModal title="Login to JHUReviews" show={this.state.showLoginModal && this.state.uid === null && !this.state.logout} onHide={() => this.toggleLoginModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
+            <LoginModal title="Login to JHUReviews" show={this.state.showLoginModal && !this.state.isSignedIn && !this.state.logout} onHide={() => this.toggleLoginModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
         </>)
     }
 }

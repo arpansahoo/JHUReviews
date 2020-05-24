@@ -1,6 +1,5 @@
 import React from 'react';
 import { InputGroup, FormControl, Form } from 'react-bootstrap';
-import Popover from '../popover.component';
 
 const SearchFilter = (props) => (
   <>
@@ -79,9 +78,6 @@ const SearchFilter = (props) => (
                     type={type}
                     id={`inline-${type}-7`}
                   />
-                  <div style={{ marginLeft: '-12px', marginRight: '10px' }}>
-                    <Popover title="What's this?" scaleOne="Unchecking this option hides courses with no area designation" />
-                  </div>
                 </div>
                 <div className="flex-wrapper">
                   <Form.Check

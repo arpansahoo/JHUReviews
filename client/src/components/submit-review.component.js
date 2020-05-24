@@ -14,13 +14,14 @@ export default class ReviewForm extends Component {
         super(props);
 
         this.changeText = this.changeText.bind(this);
+        this.changeSemester = this.changeSemester.bind(this);
+        this.changeInstructorName = this.changeInstructorName.bind(this);
+        this.changeOverall = this.changeOverall.bind(this);
         this.changeWorkload = this.changeWorkload.bind(this);
         this.changeDifficulty = this.changeDifficulty.bind(this);
         this.changeLearning = this.changeLearning.bind(this);
         this.changeGrading = this.changeGrading.bind(this);
         this.changeInstructorQuality = this.changeInstructorQuality.bind(this);
-        this.changeSemester = this.changeSemester.bind(this);
-        this.changeInstructorName = this.changeInstructorName.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
 
         var isSignedIn = false;
@@ -28,9 +29,11 @@ export default class ReviewForm extends Component {
             isSignedIn = true
 
         this.state = {
+            semester: '',
             number: '',
             title: '',
             text: '',
+            overall: '',
             workload: '',
             difficulty: '',
             learning: '',
@@ -83,23 +86,24 @@ export default class ReviewForm extends Component {
     
     onSubmit(e) {
         e.preventDefault()
-        var array = [this.state.text, this.state.workload, this.state.difficulty, this.state.learning, this.state.grading, this.state.instructor_quality, this.state.semester, this.state.instructor_name]
-        if (array[6] == null) 
-            array[6] = "S20"
-        for (let i = 0; i < array.length; i++) {
+        var array = [this.state.text, this.state.semester, this.state.instructor_name, this.state.overall, this.state.workload, this.state.difficulty, this.state.learning, this.state.grading, this.state.instructor_quality]
+        if (array[1] === "")
+            array[1] = "S20"
+        for (let i = 3; i < array.length; i++) {
             if (array[i] === "")
                 array[i] = "3.00"
         }
         
         const obj = {
-            s: array[6],
-            i: array[7],
             c: array[0],
-            w: array[1],
-            d: array[2],
-            l: array[3],
-            g: array[4],
-            t: array[5],
+            s: array[1],
+            i: array[2],
+            o: array[3],
+            w: array[4],
+            d: array[5],
+            l: array[6],
+            g: array[7],
+            t: array[8],            
             b: "0"
         }
 
@@ -118,7 +122,7 @@ export default class ReviewForm extends Component {
 
     render() {
         return (<>
-            <Header submit={true} active="sp20" page={this.props.match.params.page} />
+            <Header submit={true} active="sp20" />
             <div className="site-container">
                 <div style={{paddingTop:"20px", paddingBottom:"30px"}}>
                     <div style={{paddingBottom:"15px"}}>
@@ -128,13 +132,14 @@ export default class ReviewForm extends Component {
                     <FormComponent
                         page={this.props.match.params.page}
                         changeText={this.changeText} 
+                        changeSemester={this.changeSemester}
+                        changeInstructorName={this.changeInstructorName}
+                        changeOverall={this.changeOverall}
                         changeWorkload={this.changeWorkload}
                         changeDifficulty={this.changeDifficulty}
                         changeGrading={this.changeGrading}
                         changeLearning={this.changeLearning}
                         changeInstructorQuality={this.changeInstructorQuality}
-                        changeSemester={this.changeSemester}
-                        changeInstructorName={this.changeInstructorName}
                         onSubmit={this.onSubmit}
                     />
                 </div>
@@ -169,6 +174,12 @@ export default class ReviewForm extends Component {
     changeText(e) {
         this.setState({
             text: e.target.value.trim()
+        });
+    }
+
+    changeOverall(e) {
+        this.setState({
+            overall: e.target.value
         });
     }
 
@@ -251,7 +262,7 @@ function FormComponent(props) {
                     </Form.Label>
                     <Form.Control 
                         as="textarea" 
-                        placeholder="Type your instructor's name" 
+                        placeholder="Enter name" 
                         rows="1" 
                         required
                         maxLength={50}
@@ -264,6 +275,21 @@ function FormComponent(props) {
             </Form.Row>
 
             <Form.Row>
+                <Form.Group as={Col} controlId="validationCustomUsername">
+                    <Form.Label>
+                        <Popover name="Overall Quality" title="Overall Quality" scaleOne="1 = This course should be destroyed" scaleTwo="5 = Absolutely loved this course" />
+                    </Form.Label>
+                    <InputGroup>
+                        <Form.Control as="select" defaultValue="3" required onChange={props.changeOverall}>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </Form.Control>
+                        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    </InputGroup>
+                </Form.Group>
                 <Form.Group as={Col} controlId="validationCustomUsername">
                     <Form.Label>
                         <Popover name="Workload" title="Workload" scaleOne="1 = Enough work for 3 classes" scaleTwo="5 = A whole lot of nothing" />
@@ -279,6 +305,9 @@ function FormComponent(props) {
                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                     </InputGroup>
                 </Form.Group>
+            </Form.Row>
+
+            <Form.Row>
                 <Form.Group as={Col}  controlId="validationCustomUsername">
                     <Form.Label>
                         <Popover name="Difficulty" title="Difficulty" scaleOne="1 = Were the lectures in English??" scaleTwo="5 = Me and all my bois aced it" />

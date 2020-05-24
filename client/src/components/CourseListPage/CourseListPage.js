@@ -3,7 +3,6 @@ import axios from 'axios';
 import Fuse from 'fuse.js';
 
 import PaginationComponent from './PaginationComponent';
-import Popover from '../popover.component';
 import SearchFilter from './SearchFilter';
 import Header from '../header.component';
 import { createBrowserHistory } from 'history';
@@ -33,11 +32,12 @@ const calculateMeanCourseStats = (courses) => {
       if (review.b === '1') {
         // Old reviews are worth 5 new reviews
         for (let j = 0; j < 5; j += 1) {
-          overallQualityRatings.push(Number.parseFloat(review.w));
+          overallQualityRatings.push(Number.parseFloat(review.w)); // change to .o once we fix data field
         }
         // New review
       } else if (Number.parseFloat(review.b) === '0') {
-        workloadRatings.append(Number.parseFloat(review.w));
+        overallQualityRatings.push(Number.parseFloat(review.w)); // change to .o once we fix data field
+        workloadRatings.append(Number.parseFloat(review.w)); 
         difficultyRatings.append(Number.parseFloat(review.d));
         gradingRatings.append(Number.parseFloat(review.g));
         learningRatings.append(Number.parseFloat(review.l));
@@ -90,29 +90,25 @@ class CourseList extends Component {
   }
 
   componentDidMount() {
-    const url = 'https://jhu-course-rating-api.herokuapp.com/courses/1-20';
-    const url2 = 'https://jhu-course-rating-api.herokuapp.com/courses';
-    // const url = 'http://localhost:4000/courses/1-20';
-    // const url2 = 'http://localhost:4000/courses';
+    const url = 'https://jhu-course-rating-api.herokuapp.com/courses';
+    // const url= 'http://localhost:4000/courses';
 
-    if (true) { // this.state.courses.length === 0) {
-      this.setState({
-        loading: true,
-      });
+    this.setState({
+      loading: true,
+    });
 
-      axios.get(url2)
-        .then((response) => {
-          const courses = response.data;
-          calculateMeanCourseStats(courses);
+    axios.get(url)
+      .then((response) => {
+        const courses = response.data;
+        calculateMeanCourseStats(courses);
 
-          localStorage.setItem('courses', JSON.stringify(response.data));
+        localStorage.setItem('courses', JSON.stringify(response.data));
 
-          this.setState({
-            courses,
-            loading: false
-          });
+        this.setState({
+          courses,
+          loading: false
         });
-    }
+      });
   }
 
   changePage(num) {
@@ -275,16 +271,7 @@ class CourseList extends Component {
                 <th>Areas</th>
                 <th>Writing</th>
                 <th>Credits</th>
-                <th>
-                  <div className="flex-wrapper">
-                    <Popover
-                      name="Rating"
-                      title="Average Course Rating (out of 5)"
-                      scaleOne="Based on five components: Workload, Difficulty, Grading, Learning, & Instructor Quality"
-                      position="bottom"
-                    />
-                  </div>
-                </th>
+                <th>Rating</th>
               </tr>
             </thead>
             <tbody>

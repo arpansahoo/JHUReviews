@@ -15,6 +15,8 @@ class Course extends React.Component {
   }
 
   render() {
+    if (isNaN(this.props.course.overallQuality)) 
+      this.props.course.overallQuality = "0.00"
     const rating = Number(this.props.course.overallQuality);
     let color = 'dark';
     if (rating < 1) {
@@ -55,7 +57,7 @@ class Course extends React.Component {
           <td style={{ paddingLeft: '14px' }}>{this.props.course.a}</td>
           <td style={{ paddingLeft: '15px' }}>{this.props.course.w}</td>
           <td style={{ paddingLeft: '15px' }}>{this.props.course.c}</td>
-          <td style={{ paddingLeft: '15px' }}><Badge variant={color} style={{ fontSize: '15px', padding: '5px', fontWeight: '400' }}>{rating.toPrecision(3)}</Badge></td>
+          <td style={{ paddingLeft: '15px' }}><Badge variant={color} style={{ fontSize: '15px', padding: '5px', fontWeight: '400' }}>{rating > 0 ? rating.toPrecision(3) : "N/A"}</Badge></td>
         </tr>
 
         {(this.state.open)
