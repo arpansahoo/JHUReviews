@@ -6,10 +6,7 @@ import PaginationComponent from './PaginationComponent';
 import Popover from '../popover.component';
 import SearchFilter from './SearchFilter';
 import Header from '../header.component';
-import { createBrowserHistory } from 'history';
 import Course from './Course';
-
-const history = createBrowserHistory();
 
 const mean = (array) => {
   let sum = 0;
@@ -36,12 +33,12 @@ const calculateMeanCourseStats = (courses) => {
           overallQualityRatings.push(Number.parseFloat(review.w));
         }
         // New review
-      } else if (Number.parseFloat(review.b) === '0') {
-        workloadRatings.append(Number.parseFloat(review.w));
-        difficultyRatings.append(Number.parseFloat(review.d));
-        gradingRatings.append(Number.parseFloat(review.g));
-        learningRatings.append(Number.parseFloat(review.l));
-        teacherRatings.append(Number.parseFloat(review.t));
+      } else if (review.b === '0') {
+        workloadRatings.push(Number.parseFloat(review.w));
+        difficultyRatings.push(Number.parseFloat(review.d));
+        gradingRatings.push(Number.parseFloat(review.g));
+        learningRatings.push(Number.parseFloat(review.l));
+        teacherRatings.push(Number.parseFloat(review.t));
       }
     });
 
@@ -62,7 +59,7 @@ class CourseList extends Component {
 
     // Will use urlQueryString values to set filters if present
     // if they are not present, will resort to default
-    const urlParams = new URLSearchParams(history.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     const filters = {
       courseName: urlParams.get('name') || '',
       instructorName: urlParams.get('teacher') || '',
@@ -73,8 +70,9 @@ class CourseList extends Component {
       includeQuantitativeAreaDesignation: urlParams.get('q') !== '0',
       includeCoursesWithoutAreaDesignation: urlParams.get('na') !== '0',
       writingIntensive: urlParams.get('w') || false,
-      offeredInFall2020: urlParams.get('nextSem') || false
-    }
+      offeredInFall2020: urlParams.get('nextSem') || false,
+      sortBy: urlParams.get('sort') || 0
+    };
 
     let courses = [];
     try {
@@ -85,46 +83,44 @@ class CourseList extends Component {
       courses,
       activePage: urlParams.get('page') || 1,
       loading: true,
-      filters,
+      filters
     };
   }
 
   componentDidMount() {
-    const url = 'https://jhu-course-rating-api.herokuapp.com/courses/1-20';
-    const url2 = 'https://jhu-course-rating-api.herokuapp.com/courses';
-    // const url = 'http://localhost:4000/courses/1-20';
-    // const url2 = 'http://localhost:4000/courses';
+    const url = 'https://jhu-course-rating-api.herokuapp.com/courses';
+    // const url = 'http://localhost:4000/courses';
 
-    if (true) { // this.state.courses.length === 0) {
+    if (true) {
+      // this.state.courses.length === 0) {
       this.setState({
-        loading: true,
+        loading: true
       });
 
-      axios.get(url2)
-        .then((response) => {
-          const courses = response.data;
-          calculateMeanCourseStats(courses);
+      axios.get(url).then((response) => {
+        const courses = response.data;
+        calculateMeanCourseStats(courses);
 
-          localStorage.setItem('courses', JSON.stringify(response.data));
+        localStorage.setItem('courses', JSON.stringify(courses));
 
-          this.setState({
-            courses,
-            loading: false
-          });
+        this.setState({
+          courses,
+          loading: false
         });
+      });
     }
   }
 
   changePage(num) {
     this.setState({ activePage: num });
 
-    const urlParams = new URLSearchParams(history.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     if (num === 1) {
       urlParams.delete('page');
     } else {
       urlParams.set('page', num);
     }
-    history.push(`/?${urlParams.toString()}`);
+    window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   updateSearchFilters(options) {
@@ -138,7 +134,7 @@ class CourseList extends Component {
     this.changePage(1); // Go back to page one
 
     // Now we update url query string
-    const urlParams = new URLSearchParams(history.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     if (options.courseName !== undefined) {
       urlParams.set('name', options.courseName);
     }
@@ -169,8 +165,11 @@ class CourseList extends Component {
     if (options.includeQuantitativeAreaDesignation !== undefined) {
       urlParams.set('q', Number(options.includeQuantitativeAreaDesignation));
     }
+    if (options.sortBy !== undefined) {
+      urlParams.set('sort', options.sortBy);
+    }
 
-    history.push(`/?${urlParams.toString()}`);
+    window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   search = (courseDatabase, filters) => {
@@ -184,14 +183,18 @@ class CourseList extends Component {
       const areas = currentCourse.a.toUpperCase();
 
       let valid = (filters.includeHumanitiesAreaDesignation && areas.includes('H'))
-               || (filters.includeSocialSciencesAreaDesignation && areas.includes('S'))
-               || (filters.includeNaturalSciencesAreaDesignation && areas.includes('N'))
-               || (filters.includeEngineeringAreaDesignation && areas.includes('E'))
-               || (filters.includeQuantitativeAreaDesignation && areas.includes('Q'))
-               || (filters.includeCoursesWithoutAreaDesignation && areas === 'N/A');
+        || (filters.includeSocialSciencesAreaDesignation && areas.includes('S'))
+        || (filters.includeNaturalSciencesAreaDesignation && areas.includes('N'))
+        || (filters.includeEngineeringAreaDesignation && areas.includes('E'))
+        || (filters.includeQuantitativeAreaDesignation && areas.includes('Q'))
+        || (filters.includeCoursesWithoutAreaDesignation && areas === 'N/A');
 
-      if (filters.writingIntensive && currentCourse.w === 'N') { valid = false; }
-      if (filters.offeredInFall2020 && currentCourse.o === '0') { valid = false; }
+      if (filters.writingIntensive && currentCourse.w === 'N') {
+        valid = false;
+      }
+      if (filters.offeredInFall2020 && currentCourse.o === '0') {
+        valid = false;
+      }
 
       return valid;
     });
@@ -203,19 +206,26 @@ class CourseList extends Component {
       courseName = courseName.replace('orgo', 'organic');
       courseName = courseName.replace('stats', 'statistics');
       courseName = courseName.replace('ifp', 'fiction/poetry');
-      if (courseName === 'bbc') { courseName = 'brain, behavior, and cognition'; }
-      if (courseName === 'csf') { courseName = 'computer system fundamentals'; }
+      if (courseName === 'bbc') {
+        courseName = 'brain, behavior, and cognition';
+      }
+      if (courseName === 'csf') {
+        courseName = 'computer system fundamentals';
+      }
 
       // Filter to keep only matching courses
       const queryKeywords = courseName.split(' ');
       courses = courses.filter((currentCourse) =>
         // Every keyword in search query must appear as a substring of course name or number
         queryKeywords.every((keyword) => {
-          const matchesCourseName = currentCourse.n.trim().toLowerCase().includes(keyword);
+          const matchesCourseName = currentCourse.n
+            .trim()
+            .toLowerCase()
+            .includes(keyword);
           const matchesCourseNum = currentCourse.num.toLowerCase().includes(keyword);
-          return matchesCourseName || matchesCourseNum;
-        })
-      );
+          const matchesCourseDept = currentCourse.d && currentCourse.d.toLowerCase().includes(keyword);
+          return matchesCourseName || matchesCourseNum || matchesCourseDept;
+        }));
     }
 
     // Filter and rank courses by fuzzy search on instructor name last since this is slowest
@@ -236,20 +246,30 @@ class CourseList extends Component {
       };
 
       const fuse = new Fuse(courses, options);
-      courses = fuse.search(instructorName).map(res => res.item);
+      courses = fuse.search(instructorName).map((res) => res.item);
     }
 
-    // Then sort by course number so that lower level courses appear first
-    courses.sort((c1, c2) => Number(c1.num.slice(-3)) - Number(c2.num.slice(-3)));
+    courses.sort((c1, c2) => {
+      switch (this.state.filters.sortBy) {
+        // sortBy === 1 means sort by quality rating with higher quality courses first
+        case 1:
+          return c2.overallQuality - c1.overallQuality;
+
+        // sortBy === 0 (default) means sort by course number where lower level courses appear first
+        case 0:
+        default:
+          return Number(c1.num.slice(-3)) - Number(c2.num.slice(-3));
+      }
+    });
 
     return courses;
-  }
+  };
 
   render() {
     const { activePage, courses, filters } = this.state;
 
     const matchingCourses = this.search(courses, filters);
-    const visibleCourses = matchingCourses.slice((activePage - 1) * 50, (activePage * 50));
+    const visibleCourses = matchingCourses.slice((activePage - 1) * 50, activePage * 50);
 
     return (
       <>
@@ -258,13 +278,14 @@ class CourseList extends Component {
         <div className="site-container">
           <div>
             <div>
-              <SearchFilter
-                filters={filters}
-                updateSearchFilters={this.updateSearchFilters}
-              />
+              <SearchFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
             </div>
             <div className="flex-wrapper" style={{ float: 'right' }}>
-              <PaginationComponent page={activePage} changePage={this.changePage} length={matchingCourses.length} />
+              <PaginationComponent
+                page={activePage}
+                changePage={this.changePage}
+                length={matchingCourses.length}
+              />
             </div>
           </div>
           <table className="table table-responsive" style={{ marginTop: 20 }}>
@@ -288,11 +309,21 @@ class CourseList extends Component {
               </tr>
             </thead>
             <tbody>
-              {visibleCourses.map((currentCourse, i) => <Course course={currentCourse} activePage={activePage} key={`course-${activePage * 50 + i}`} />)}
+              {visibleCourses.map((currentCourse, i) => (
+                <Course
+                  course={currentCourse}
+                  activePage={activePage}
+                  key={`course-${activePage * 50 + i}`}
+                />
+              ))}
             </tbody>
           </table>
           <div className="flex-wrapper" style={{ float: 'right' }}>
-            <PaginationComponent page={activePage} changePage={this.changePage} length={matchingCourses.length} />
+            <PaginationComponent
+              page={activePage}
+              changePage={this.changePage}
+              length={matchingCourses.length}
+            />
           </div>
         </div>
       </>

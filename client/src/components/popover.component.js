@@ -14,7 +14,7 @@ const PopoverComponent = (props) => (
             <p style={{ margin: '0' }}>{props.scaleTwo}</p>
           </Popover.Content>
         </Popover>
-                      )}
+      )}
     >
       <p style={{ margin: '0', color: '#007bff' }}>(?)</p>
     </OverlayTrigger>
