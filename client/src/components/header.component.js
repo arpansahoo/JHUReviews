@@ -67,10 +67,7 @@ export default class Header extends Component {
             logout: true,
         })
         if (this.props.submit) {
-            if (this.props.page > 1)
-                history.push('/page-' + this.props.page)
-            else 
-                history.push('/')
+            history.push('/')
             window.location.reload()
         }
     }

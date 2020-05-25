@@ -2,7 +2,7 @@ import React from 'react';
 import { Pagination } from 'react-bootstrap';
 
 const PaginationComponent = props => {
-    let active = Number.parseInt(props.page);
+    let active = props.page;
     let length = props.length;
     var last = Math.ceil(props.length / 50)
 

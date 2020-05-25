@@ -69,9 +69,9 @@ class CourseList extends Component {
       includeEngineeringAreaDesignation: urlParams.get('e') !== '0',
       includeQuantitativeAreaDesignation: urlParams.get('q') !== '0',
       includeCoursesWithoutAreaDesignation: urlParams.get('na') !== '0',
-      writingIntensive: urlParams.get('w') || false,
-      offeredInFall2020: urlParams.get('nextSem') || false,
-      sortBy: urlParams.get('sort') || 0
+      writingIntensive: Number.parseInt(urlParams.get('w')) || false,
+      offeredInFall2020: Number.parseInt(urlParams.get('nextSem')) || false,
+      sortBy: Number.parseInt(urlParams.get('sort')) || 0
     };
 
     let courses = [];
@@ -81,7 +81,7 @@ class CourseList extends Component {
 
     this.state = {
       courses,
-      activePage: urlParams.get('page') || 1,
+      activePage: Number.parseInt(urlParams.get('page')) || 1,
       loading: true,
       filters
     };
@@ -96,6 +96,31 @@ class CourseList extends Component {
 
     axios.get(url).then((response) => {
       const courses = response.data;
+
+      // some elements of instructors array are long commma separated strings
+      // so we separate them into individual elements, so fuse can find them better
+      for (let i = 0; i < courses.length; i++) {
+        var fixedInstructors = []
+        const instructors = courses[i].i
+        for (let j = 0; j < instructors.length; j++) {
+          const str = instructors[j]
+          if (str.indexOf(",") === -1) {
+            fixedInstructors.push(str)
+          } else {
+            var indices = [];
+            for (let i = 0; i < str.length; i++) {
+                if (str.charAt(i) === ",") indices.push(i);
+            }
+            for (let i = 0; i < indices.length; i++) {
+                const substring = str.substring(indices[i-1] + 2, indices[i])
+                fixedInstructors.push(substring)
+            }
+            fixedInstructors.push(str.substring(indices[indices.length - 1] + 2))
+          }
+          courses[i].instructors = fixedInstructors
+        }
+      }
+      
       calculateMeanCourseStats(courses);
 
       localStorage.setItem('courses', JSON.stringify(courses));
@@ -117,7 +142,10 @@ class CourseList extends Component {
     } else {
       urlParams.set('page', num);
     }
-    window.history.pushState(null, null, `/?${urlParams.toString()}`);
+    if (urlParams.toString().length === 0) 
+      window.history.pushState(null, null, `/`);
+    else 
+      window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   updateSearchFilters(options) {
@@ -133,40 +161,54 @@ class CourseList extends Component {
     // Now we update url query string
     const urlParams = new URLSearchParams(window.location.search);
     if (options.courseName !== undefined) {
-      urlParams.set('name', options.courseName);
+      if (options.courseName.length === 0) urlParams.delete('name');
+      else urlParams.set('name', options.courseName);
     }
     if (options.instructorName !== undefined) {
-      urlParams.set('teacher', options.instructorName);
+      if (options.instructorName.length === 0) urlParams.delete('teacher');
+      else urlParams.set('teacher', options.instructorName);
     }
     if (options.offeredInFall2020 !== undefined) {
-      urlParams.set('nextSem', Number(options.offeredInFall2020));
+      if (!options.offeredInFall2020) urlParams.delete('nextSem');
+      else urlParams.set('nextSem', Number(options.offeredInFall2020));
     }
     if (options.writingIntensive !== undefined) {
-      urlParams.set('w', Number(options.writingIntensive));
+      if (!options.writingIntensive) urlParams.delete('w');
+      else urlParams.set('w', Number(options.writingIntensive));
     }
     if (options.includeCoursesWithoutAreaDesignation !== undefined) {
-      urlParams.set('na', Number(options.includeCoursesWithoutAreaDesignation));
+      if (options.includeCoursesWithoutAreaDesignation) urlParams.delete('na');
+      else urlParams.set('na', Number(options.includeCoursesWithoutAreaDesignation));
     }
     if (options.includeHumanitiesAreaDesignation !== undefined) {
-      urlParams.set('h', Number(options.includeHumanitiesAreaDesignation));
+      if (options.includeHumanitiesAreaDesignation) urlParams.delete('h');
+      else urlParams.set('h', Number(options.includeHumanitiesAreaDesignation));
     }
     if (options.includeSocialSciencesAreaDesignation !== undefined) {
-      urlParams.set('s', Number(options.includeSocialSciencesAreaDesignation));
+      if (options.includeSocialSciencesAreaDesignation) urlParams.delete('s');
+      else urlParams.set('s', Number(options.includeSocialSciencesAreaDesignation));
     }
     if (options.includeNaturalSciencesAreaDesignation !== undefined) {
-      urlParams.set('n', Number(options.includeNaturalSciencesAreaDesignation));
+      if (options.includeNaturalSciencesAreaDesignation) urlParams.delete('n');
+      else urlParams.set('n', Number(options.includeNaturalSciencesAreaDesignation));
     }
     if (options.includeEngineeringAreaDesignation !== undefined) {
-      urlParams.set('e', Number(options.includeEngineeringAreaDesignation));
+      if (options.includeEngineeringAreaDesignation) urlParams.delete('e');
+      else urlParams.set('e', Number(options.includeEngineeringAreaDesignation));
     }
     if (options.includeQuantitativeAreaDesignation !== undefined) {
-      urlParams.set('q', Number(options.includeQuantitativeAreaDesignation));
+      if (options.includeQuantitativeAreaDesignation) urlParams.delete('q');
+      else urlParams.set('q', Number(options.includeQuantitativeAreaDesignation));
     }
     if (options.sortBy !== undefined) {
-      urlParams.set('sort', options.sortBy);
+      if (options.sortBy === 0) urlParams.delete('sort');
+      else urlParams.set('sort', options.sortBy);
     }
 
-    window.history.pushState(null, null, `/?${urlParams.toString()}`);
+    if (urlParams.toString().length === 0) 
+      window.history.pushState(null, null, `/`);
+    else 
+      window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   search = (courseDatabase, filters) => {
@@ -236,10 +278,10 @@ class CourseList extends Component {
         findAllMatches: false,
         minMatchCharLength: 1,
         location: 0,
-        threshold: 0.3,
+        threshold: 0.25,
         distance: 100,
         useExtendedSearch: false,
-        keys: ['i']
+        keys: ['instructors']
       };
 
       const fuse = new Fuse(courses, options);
@@ -251,7 +293,7 @@ class CourseList extends Component {
         c1.overallQuality = 0.00
       if (c2.overallQuality == null || isNaN(c2.overallQuality)) 
         c2.overallQuality = 0.00
-      switch (Number.parseInt(this.state.filters.sortBy)) {
+      switch (this.state.filters.sortBy) {
         // sortBy === 1 means sort by quality rating with higher quality courses first
         case 1:
           return c2.overallQuality - c1.overallQuality;
@@ -305,7 +347,7 @@ class CourseList extends Component {
                 <Course
                   course={currentCourse}
                   activePage={activePage}
-                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${filters.courseName.trim().toLowerCase()}`}
+                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${Math.random()}`}
                 />
               ))}
             </tbody>
