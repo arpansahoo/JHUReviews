@@ -301,7 +301,7 @@ class CourseList extends Component {
                 <Course
                   course={currentCourse}
                   activePage={activePage}
-                  key={`course-${activePage * 50 + i}`}
+                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${filters.courseName.trim().toLowerCase()}`}
                 />
               ))}
             </tbody>
