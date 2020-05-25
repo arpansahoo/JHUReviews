@@ -1,12 +1,11 @@
 import React from 'react';
 import { InputGroup, FormControl, Form } from 'react-bootstrap';
-import Popover from '../popover.component';
 
 const SearchFilter = (props) => (
   <>
     <div className="header-wrapper">
       <div className="search-flex">
-        <InputGroup style={{ marginRight: '15px' }} className="mb-3">
+        <InputGroup style={{ marginRight: '20px' }} className="mb-3">
           <FormControl
             placeholder="Search for a course or department..."
             defaultValue={props.filters.courseName}
@@ -16,7 +15,7 @@ const SearchFilter = (props) => (
             }}
           />
         </InputGroup>
-        <InputGroup style={{ marginRight: '15px' }} className="mb-3">
+        <InputGroup className="mb-3">
           <FormControl
             placeholder="Search for an instructor..."
             defaultValue={props.filters.instructorName}
@@ -106,12 +105,6 @@ const SearchFilter = (props) => (
                     type={type}
                     id={`inline-${type}-7`}
                   />
-                  <div style={{ marginLeft: '-12px', marginRight: '10px' }}>
-                    <Popover
-                      title="What's this?"
-                      scaleOne="Unchecking this option hides courses with no area designation"
-                    />
-                  </div>
                 </div>
                 <div className="flex-wrapper">
                   <Form.Check

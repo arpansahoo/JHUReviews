@@ -116,7 +116,7 @@ export default class Header extends Component {
                 </Navbar.Collapse>
             </Navbar>
             <AboutModal show={this.state.showModal} onHide={() => this.handleToggleModal()} />
-            <LoginModal title="Login to JHUReviews" show={this.state.showLoginModal && this.state.uid === null && !this.state.logout} onHide={() => this.toggleLoginModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
+            <LoginModal title="Login to JHUReviews" show={this.state.showLoginModal && !this.state.isSignedIn && !this.state.logout} onHide={() => this.toggleLoginModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
         </>)
     }
 }

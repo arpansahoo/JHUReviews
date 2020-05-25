@@ -3,7 +3,6 @@ import axios from 'axios';
 import Fuse from 'fuse.js';
 
 import PaginationComponent from './PaginationComponent';
-import Popover from '../popover.component';
 import SearchFilter from './SearchFilter';
 import Header from '../header.component';
 import Course from './Course';
@@ -30,10 +29,11 @@ const calculateMeanCourseStats = (courses) => {
       if (review.b === '1') {
         // Old reviews are worth 5 new reviews
         for (let j = 0; j < 5; j += 1) {
-          overallQualityRatings.push(Number.parseFloat(review.w));
+          overallQualityRatings.push(Number.parseFloat(review.o));
         }
         // New review
       } else if (review.b === '0') {
+        overallQualityRatings.push(Number.parseFloat(review.o)); 
         workloadRatings.push(Number.parseFloat(review.w));
         difficultyRatings.push(Number.parseFloat(review.d));
         gradingRatings.push(Number.parseFloat(review.g));
@@ -90,25 +90,22 @@ class CourseList extends Component {
   componentDidMount() {
     const url = 'https://jhu-course-rating-api.herokuapp.com/courses';
     // const url = 'http://localhost:4000/courses';
+    this.setState({
+      loading: true
+    });
 
-    if (true) {
-      // this.state.courses.length === 0) {
+    axios.get(url).then((response) => {
+      const courses = response.data;
+      calculateMeanCourseStats(courses);
+
+      localStorage.setItem('courses', JSON.stringify(courses));
+
       this.setState({
-        loading: true
+        courses,
+        loading: false
       });
-
-      axios.get(url).then((response) => {
-        const courses = response.data;
-        calculateMeanCourseStats(courses);
-
-        localStorage.setItem('courses', JSON.stringify(courses));
-
-        this.setState({
-          courses,
-          loading: false
-        });
-      });
-    }
+    })
+    .catch((error) => {})
   }
 
   changePage(num) {
@@ -288,7 +285,7 @@ class CourseList extends Component {
               />
             </div>
           </div>
-          <table className="table table-responsive" style={{ marginTop: 20 }}>
+          <table className="table table-responsive">
             <thead>
               <tr>
                 <th className="course-num">Course #</th>
@@ -296,16 +293,7 @@ class CourseList extends Component {
                 <th>Areas</th>
                 <th>Writing</th>
                 <th>Credits</th>
-                <th>
-                  <div className="flex-wrapper">
-                    <Popover
-                      name="Rating"
-                      title="Average Course Rating (out of 5)"
-                      scaleOne="Based on five components: Workload, Difficulty, Grading, Learning, & Instructor Quality"
-                      position="bottom"
-                    />
-                  </div>
-                </th>
+                <th>Rating</th>
               </tr>
             </thead>
             <tbody>
@@ -318,7 +306,7 @@ class CourseList extends Component {
               ))}
             </tbody>
           </table>
-          <div className="flex-wrapper" style={{ float: 'right' }}>
+          <div className="flex-wrapper" style={{ marginTop: '-5px', float: 'right' }}>
             <PaginationComponent
               page={activePage}
               changePage={this.changePage}

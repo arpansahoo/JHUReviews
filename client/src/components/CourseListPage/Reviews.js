@@ -34,7 +34,7 @@ const Review = (props) => {
           <b style={{ fontSize: '1em' }}>
             {semester} | Instructor:
             {props.rev.i.trim()} | Rating:
-            {Number(props.rev.d).toPrecision(3)}
+            {Number(props.rev.o).toPrecision(3)}
           </b>
           <p style={{ fontSize: '0.92em' }}>
             <b>{prefix}</b>
@@ -159,8 +159,8 @@ export default class Reviews extends Component {
     }
   }
 
-  reviewToggleModal() {
-    if (this.state.uid === null && this._isMounted) {
+  review() {
+    if (!this.state.isSignedIn && this._isMounted) {
       this.setState({
         showModal: !this.state.showModal,
         submitReview: true,
@@ -176,7 +176,7 @@ export default class Reviews extends Component {
     const { course } = this.props;
 
     const statsBadge = (ratingName, rating) => {
-      const badgeColor = Number.isNaN(rating)
+      const badgeColor = ( rating == null || Number.isNaN(rating) )
         ? 'dark'
         : rating < 3
         ? 'danger'
@@ -184,7 +184,7 @@ export default class Reviews extends Component {
         ? 'warning'
         : 'success';
 
-      const formattedRating = Number.isNaN(rating) ? 'N/A' : rating.toPrecision(3);
+      const formattedRating = ( rating == null || Number.isNaN(rating) ) ? 'N/A' : rating.toPrecision(3);
 
       return (
         <h5>
@@ -246,15 +246,14 @@ export default class Reviews extends Component {
 
   render() {
     const { props } = this;
-    const { course } = props;
 
     if (props.course.rev.length === 0) {
       // no reviews yet, display prompt to submit first review
       return (
         <>
-          <h4 style={{ paddingTop: '5px' }}>Reviews</h4>
+          <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && !this.state.isSignedIn} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
+          <h5 style={{paddingTop: "5px"}}>Reviews</h5>
           <p>No one has reviewed this course yet. Be the first!</p>
-          <Link to={`/submit-review/${course._id}`}>
             <Button
               variant="outline-primary"
               size="sm"
@@ -262,7 +261,6 @@ export default class Reviews extends Component {
             >
               Submit a Review
             </Button>
-          </Link>
         </>
       );
     }
@@ -276,7 +274,7 @@ export default class Reviews extends Component {
           uiconfig={this.state.uiConfig}
           firebaseauth={firebase.auth()}
         />
-        <h5>Reactions</h5>
+        <h5 style={{paddingTop: "5px"}}>Reactions</h5>
         <div
           className="flex-wrapper"
           style={{ marginTop: '-5px', marginBottom: '-2px', marginLeft: '-4px' }}
@@ -343,7 +341,7 @@ export default class Reviews extends Component {
           <h5 style={{ paddingTop: '15px' }}>Reviews</h5>
           <div>
             <Button
-              onClick={() => this.reviewToggleModal()}
+              onClick={() => this.review()}
               variant="outline-primary"
               size="sm"
               style={{ marginTop: '11.7px', marginLeft: '10px' }}
