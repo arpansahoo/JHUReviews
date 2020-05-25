@@ -69,8 +69,8 @@ class CourseList extends Component {
       includeEngineeringAreaDesignation: urlParams.get('e') !== '0',
       includeQuantitativeAreaDesignation: urlParams.get('q') !== '0',
       includeCoursesWithoutAreaDesignation: urlParams.get('na') !== '0',
-      writingIntensive: Number.parseInt(urlParams.get('w')) || false,
-      offeredInFall2020: Number.parseInt(urlParams.get('nextSem')) || false,
+      writingIntensive: urlParams.get('w') || false,
+      offeredInFall2020: urlParams.get('nextSem') || false,
       sortBy: Number.parseInt(urlParams.get('sort')) || 0
     };
 
@@ -319,11 +319,11 @@ class CourseList extends Component {
         <Header loading={this.state.loading} />
         <br />
         <div className="site-container">
-          <div>
+          <div style={{paddingTop:"5px"}}>
             <div>
               <SearchFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
             </div>
-            <div className="flex-wrapper" style={{ float: 'right' }}>
+            <div style={{ float: 'right' }}>
               <PaginationComponent
                 page={activePage}
                 changePage={this.changePage}

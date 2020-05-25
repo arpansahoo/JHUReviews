@@ -3,9 +3,9 @@ import { InputGroup, FormControl, Form } from 'react-bootstrap';
 
 const SearchFilter = (props) => (
   <>
-    <div className="header-wrapper">
+    <div className="pagination-wrapper">
       <div className="search-flex">
-        <InputGroup style={{ marginRight: '20px' }} className="mb-3">
+        <InputGroup style={{ marginRight: '20px', marginTop: '-5px'}} className="mb-3">
           <FormControl
             placeholder="Search for a course or department..."
             defaultValue={props.filters.courseName}
@@ -15,7 +15,7 @@ const SearchFilter = (props) => (
             }}
           />
         </InputGroup>
-        <InputGroup className="mb-3">
+        <InputGroup style={{ marginTop: '-5px' }} className="mb-3">
           <FormControl
             placeholder="Search for an instructor..."
             defaultValue={props.filters.instructorName}
@@ -27,11 +27,12 @@ const SearchFilter = (props) => (
         </InputGroup>
       </div>
 
-      <div style={{ marginTop: '5px', marginLeft: '1px' }}>
+      <div style={{ marginLeft: '1px' }}>
         <Form>
           {['checkbox'].map((type) => (
             <div key={`inline-${type}`} className="mb-3">
               <div className="filter-wrapper">
+                
                 <div className="flex-wrapper">
                   <Form.Check
                     onChange={(e) => {
@@ -106,6 +107,7 @@ const SearchFilter = (props) => (
                     id={`inline-${type}-7`}
                   />
                 </div>
+                
                 <div className="flex-wrapper">
                   <Form.Check
                     onChange={(e) => {
@@ -123,23 +125,26 @@ const SearchFilter = (props) => (
                     }}
                     defaultChecked={props.filters.offeredInFall2020}
                     inline
-                    label="Offered in Fall '20 Only"
+                    label="Offered in Fall '20"
                     type={type}
                     id={`inline-${type}-8`}
                   />
-                </div>
-                <div className="flex-wrapper">
-                  <Form.Control
-                    as="select"
-                    onChange={(e) => {
-                      props.updateSearchFilters({ sortBy: e.target.selectedIndex });
-                    }}
-                    defaultValue={props.filters.sortBy}
-                  >
-                    <option value={0}>Sort By: Course Level</option>
-                    <option value={1}>Sort By: Rating</option>
-                  </Form.Control>
-                </div>
+                </div>                
+              </div> 
+
+              <div style={{maxWidth:"190px", marginLeft:"-8px", marginTop:"5px"}}>
+                <Form.Control
+                  label="Sort by:"
+                  style={{padding:"0px", border:"0px", color:"#212529"}}
+                  as="select"
+                  onChange={(e) => {
+                    props.updateSearchFilters({ sortBy: e.target.selectedIndex });
+                  }}
+                  defaultValue={props.filters.sortBy}
+                >
+                  <option value={0}>Sort By: Course Level</option>
+                  <option value={1}>Sort By: Rating</option>
+                </Form.Control>
               </div>
             </div>
           ))}

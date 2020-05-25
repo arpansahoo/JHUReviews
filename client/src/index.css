@@ -34,14 +34,18 @@ code {
 
 .course-name {
   width: 100%;
-  min-width: 200px;
+  min-width: 350px;
 }
 
 .hidden {
   visibility: hidden;
 }
 
-.header-wrapper {
+.search-flex {
+  display: flex;
+}
+
+.pagination-wrapper {
   width: 100%;
   margin-bottom: -50px !important;
 }
@@ -50,26 +54,8 @@ code {
   display: inline-flex;
 }
 
-.search-flex {
-  display: flex;
-}
-
-@media only screen and (max-width: 1050px) {
-  .header-wrapper {
-    margin-bottom: -5px !important;
-  }
+@media only screen and (max-width: 700px) {
   .filter-wrapper {
-    margin-top: -10px !important;
-  }
-}
-
-@media only screen and (max-width: 750px) {
-  .header-wrapper {
-    margin-bottom: -7px !important;
-  }
-
-  .filter-wrapper {
-    margin-top: -5px !important;
     display: block;
   }
 

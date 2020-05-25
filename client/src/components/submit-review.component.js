@@ -60,7 +60,7 @@ class ReviewForm extends Component {
 
     axios
       .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.match.params.id}`)
-      // axios.get('http://localhost:4000/courses/'+this.props.match.params.id)
+      // .get('http://localhost:4000/courses/'+this.props.match.params.id)
       .then((response) => {
         this.setState({
           number: response.data.num,
@@ -111,7 +111,7 @@ class ReviewForm extends Component {
         `https://jhu-course-rating-api.herokuapp.com/courses/add-review/${this.props.match.params.id}/${this.state.uid}`,
         obj
       )
-      // axios.post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
+      // .post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
       .then((res) => {})
       .catch((error) => {})
       .finally(() => window.history.back());
