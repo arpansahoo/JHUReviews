@@ -142,7 +142,10 @@ class CourseList extends Component {
     } else {
       urlParams.set('page', num);
     }
-    window.history.pushState(null, null, `/?${urlParams.toString()}`);
+    if (urlParams.toString().length === 0) 
+      window.history.pushState(null, null, `/`);
+    else 
+      window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   updateSearchFilters(options) {
@@ -158,40 +161,54 @@ class CourseList extends Component {
     // Now we update url query string
     const urlParams = new URLSearchParams(window.location.search);
     if (options.courseName !== undefined) {
-      urlParams.set('name', options.courseName);
+      if (options.courseName.length === 0) urlParams.delete('name');
+      else urlParams.set('name', options.courseName);
     }
     if (options.instructorName !== undefined) {
-      urlParams.set('teacher', options.instructorName);
+      if (options.instructorName.length === 0) urlParams.delete('teacher');
+      else urlParams.set('teacher', options.instructorName);
     }
     if (options.offeredInFall2020 !== undefined) {
-      urlParams.set('nextSem', Number(options.offeredInFall2020));
+      if (!options.offeredInFall2020) urlParams.delete('nextSem');
+      else urlParams.set('nextSem', Number(options.offeredInFall2020));
     }
     if (options.writingIntensive !== undefined) {
-      urlParams.set('w', Number(options.writingIntensive));
+      if (!options.writingIntensive) urlParams.delete('w');
+      else urlParams.set('w', Number(options.writingIntensive));
     }
     if (options.includeCoursesWithoutAreaDesignation !== undefined) {
-      urlParams.set('na', Number(options.includeCoursesWithoutAreaDesignation));
+      if (options.includeCoursesWithoutAreaDesignation) urlParams.delete('na');
+      else urlParams.set('na', Number(options.includeCoursesWithoutAreaDesignation));
     }
     if (options.includeHumanitiesAreaDesignation !== undefined) {
-      urlParams.set('h', Number(options.includeHumanitiesAreaDesignation));
+      if (options.includeHumanitiesAreaDesignation) urlParams.delete('h');
+      else urlParams.set('h', Number(options.includeHumanitiesAreaDesignation));
     }
     if (options.includeSocialSciencesAreaDesignation !== undefined) {
-      urlParams.set('s', Number(options.includeSocialSciencesAreaDesignation));
+      if (options.includeSocialSciencesAreaDesignation) urlParams.delete('s');
+      else urlParams.set('s', Number(options.includeSocialSciencesAreaDesignation));
     }
     if (options.includeNaturalSciencesAreaDesignation !== undefined) {
-      urlParams.set('n', Number(options.includeNaturalSciencesAreaDesignation));
+      if (options.includeNaturalSciencesAreaDesignation) urlParams.delete('n');
+      else urlParams.set('n', Number(options.includeNaturalSciencesAreaDesignation));
     }
     if (options.includeEngineeringAreaDesignation !== undefined) {
-      urlParams.set('e', Number(options.includeEngineeringAreaDesignation));
+      if (options.includeEngineeringAreaDesignation) urlParams.delete('e');
+      else urlParams.set('e', Number(options.includeEngineeringAreaDesignation));
     }
     if (options.includeQuantitativeAreaDesignation !== undefined) {
-      urlParams.set('q', Number(options.includeQuantitativeAreaDesignation));
+      if (options.includeQuantitativeAreaDesignation) urlParams.delete('q');
+      else urlParams.set('q', Number(options.includeQuantitativeAreaDesignation));
     }
     if (options.sortBy !== undefined) {
-      urlParams.set('sort', options.sortBy);
+      if (options.sortBy === 0) urlParams.delete('sort');
+      else urlParams.set('sort', options.sortBy);
     }
 
-    window.history.pushState(null, null, `/?${urlParams.toString()}`);
+    if (urlParams.toString().length === 0) 
+      window.history.pushState(null, null, `/`);
+    else 
+      window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   search = (courseDatabase, filters) => {
