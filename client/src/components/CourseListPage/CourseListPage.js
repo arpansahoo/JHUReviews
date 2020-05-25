@@ -204,7 +204,7 @@ class CourseList extends Component {
       courseName = courseName.replace('stats', 'statistics');
       courseName = courseName.replace('ifp', 'fiction/poetry');
       if (courseName === 'bbc') {
-        courseName = 'brain, behavior, and cognition';
+        courseName = 'brain, behavior and cognition';
       }
       if (courseName === 'csf') {
         courseName = 'computer system fundamentals';
@@ -247,7 +247,11 @@ class CourseList extends Component {
     }
 
     courses.sort((c1, c2) => {
-      switch (this.state.filters.sortBy) {
+      if (c1.overallQuality == null || isNaN(c1.overallQuality)) 
+        c1.overallQuality = 0.00
+      if (c2.overallQuality == null || isNaN(c2.overallQuality)) 
+        c2.overallQuality = 0.00
+      switch (Number.parseInt(this.state.filters.sortBy)) {
         // sortBy === 1 means sort by quality rating with higher quality courses first
         case 1:
           return c2.overallQuality - c1.overallQuality;
