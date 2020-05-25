@@ -243,7 +243,7 @@ function FormComponent(props) {
   return (
     <Form noValidate validated={validated} onSubmit={handleSubmit}>
       <Form.Row>
-        <Form.Group as={Col} controlId="validationCustomUsername">
+        <Form.Group style={{marginRight:"10px"}} as={Col} controlId="validationCustomUsername">
           <Form.Label>Semester</Form.Label>
           <InputGroup>
             <Form.Control
@@ -278,7 +278,7 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group as={Col} controlId="validationCustomUsername">
+        <Form.Group style={{marginRight:"10px"}} as={Col} controlId="validationCustomUsername">
             <Form.Label>
                 <Popover name="Overall Quality" title="Overall Quality" scaleOne="1 = This course should be destroyed" scaleTwo="5 = Absolutely loved this course" />
             </Form.Label>
@@ -316,7 +316,7 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group as={Col} controlId="validationCustomUsername">
+        <Form.Group style={{marginRight:"10px"}} as={Col} controlId="validationCustomUsername">
           <Form.Label>
             <Popover
               name="Difficulty"
@@ -359,7 +359,7 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group as={Col} controlId="validationCustomUsername">
+        <Form.Group style={{marginRight:"10px"}} as={Col} controlId="validationCustomUsername">
           <Form.Label>
             <Popover
               name="Learning"

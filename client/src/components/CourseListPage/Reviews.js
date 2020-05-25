@@ -255,6 +255,7 @@ export default class Reviews extends Component {
           <h5 style={{paddingTop: "5px"}}>Reviews</h5>
           <p>No one has reviewed this course yet. Be the first!</p>
             <Button
+              onClick={() => this.review()}
               variant="outline-primary"
               size="sm"
               style={{ marginTop: '-5px', marginBottom: '10px' }}
