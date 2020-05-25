@@ -96,6 +96,31 @@ class CourseList extends Component {
 
     axios.get(url).then((response) => {
       const courses = response.data;
+
+      // some elements of instructors array are long commma separated strings
+      // so we separate them into individual elements, so fuse can find them better
+      for (let i = 0; i < courses.length; i++) {
+        var fixedInstructors = []
+        const instructors = courses[i].i
+        for (let j = 0; j < instructors.length; j++) {
+          const str = instructors[j]
+          if (str.indexOf(",") === -1) {
+            fixedInstructors.push(str)
+          } else {
+            var indices = [];
+            for (let i = 0; i < str.length; i++) {
+                if (str.charAt(i) === ",") indices.push(i);
+            }
+            for (let i = 0; i < indices.length; i++) {
+                const substring = str.substring(indices[i-1] + 2, indices[i])
+                fixedInstructors.push(substring)
+            }
+            fixedInstructors.push(str.substring(indices[indices.length - 1] + 2))
+          }
+          courses[i].instructors = fixedInstructors
+        }
+      }
+      
       calculateMeanCourseStats(courses);
 
       localStorage.setItem('courses', JSON.stringify(courses));
@@ -169,27 +194,6 @@ class CourseList extends Component {
     window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
-  separateStr = (str) => {
-    var array = []
-    if (str.indexOf(",") === -1) {
-      array.push(str)
-    } else {
-      var indices = [];
-      for (let i = 0; i < str.length; i++) {
-          if (str.charAt(i) === ",") indices.push(i);
-      }
-      var boolean = false
-      for (let i = 0; i < indices.length; i++) {
-          if (!boolean) {
-              const substring = str.substring(indices[i] + 2, indices[i + 1]) + " " + str.substring(indices[i - 1] + 2, indices[i])
-              array.push(substring) 
-          } 
-          boolean = !boolean
-      }
-    }
-    return array
-  }
-
   search = (courseDatabase, filters) => {
     // Return empty array if hasn't loaded yet
     if (!courseDatabase) {
@@ -260,19 +264,8 @@ class CourseList extends Component {
         threshold: 0.25,
         distance: 100,
         useExtendedSearch: false,
-        keys: ['i']
+        keys: ['instructors']
       };
-
-      // some elements of instructors array are long commma separated strings
-      // so we separate them into individual elements, so fuse can find them better
-      for (let i = 0; i < courses.length; i++) {
-        var fixedInstructors = []
-        const instructors = courses[i].i
-        for (let j = 0; j < instructors.length; j++) {
-          fixedInstructors.push( this.separateStr( instructors[j].toString() ) )
-        }
-        courses[i].i = fixedInstructors
-      }
 
       const fuse = new Fuse(courses, options);
       courses = fuse.search(instructorName).map((res) => res.item);
