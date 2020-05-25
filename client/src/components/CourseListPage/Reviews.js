@@ -37,7 +37,7 @@ const Review = (props) => {
             {' '}
             | Rating:
             {' '}
-            {props.rev.d}
+            {props.rev.o}
           </b>
           <p style={{ fontSize: '0.85em' }}>{props.rev.c.trim()}</p>
         </Card.Body>

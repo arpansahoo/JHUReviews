@@ -32,11 +32,11 @@ const calculateMeanCourseStats = (courses) => {
       if (review.b === '1') {
         // Old reviews are worth 5 new reviews
         for (let j = 0; j < 5; j += 1) {
-          overallQualityRatings.push(Number.parseFloat(review.w)); // change to .o once we fix data field
+          overallQualityRatings.push(Number.parseFloat(review.o)); 
         }
         // New review
       } else if (review.b === '0') {
-        overallQualityRatings.push(Number.parseFloat(review.w)); // change to .o once we fix data field
+        overallQualityRatings.push(Number.parseFloat(review.o)); 
         workloadRatings.push(Number.parseFloat(review.w)); 
         difficultyRatings.push(Number.parseFloat(review.d));
         gradingRatings.push(Number.parseFloat(review.g));
