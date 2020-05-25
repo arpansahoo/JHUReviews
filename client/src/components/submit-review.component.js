@@ -120,7 +120,7 @@ class ReviewForm extends Component {
   render() {
     return (
       <>
-        <Header submit active="sp20" />
+        <Header submit />
         <div className="site-container">
           <div style={{ paddingTop: '20px' }}>
             <div style={{ paddingBottom: '10px' }}>
@@ -421,10 +421,12 @@ function FormComponent(props) {
         </Form.Group>
       </Form.Row>
 
-      <Button type="submit">Submit</Button>
-      <Button variant="danger" onClick={handleCancel} type="cancel" style={{ marginLeft: '15px' }}>
-        Cancel
-      </Button>
+      <div style={{marginTop:"5px"}}>
+        <Button type="submit">Submit</Button>
+        <Button variant="danger" onClick={handleCancel} type="cancel" style={{ marginLeft: '15px' }}>
+          Cancel
+        </Button>
+      </div>
     </Form>
   );
 }

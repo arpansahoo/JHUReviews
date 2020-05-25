@@ -69,9 +69,9 @@ class CourseList extends Component {
       includeEngineeringAreaDesignation: urlParams.get('e') !== '0',
       includeQuantitativeAreaDesignation: urlParams.get('q') !== '0',
       includeCoursesWithoutAreaDesignation: urlParams.get('na') !== '0',
-      writingIntensive: urlParams.get('w') || false,
-      offeredInFall2020: urlParams.get('nextSem') || false,
-      sortBy: urlParams.get('sort') || 0
+      writingIntensive: Number.parseInt(urlParams.get('w')) || false,
+      offeredInFall2020: Number.parseInt(urlParams.get('nextSem')) || false,
+      sortBy: Number.parseInt(urlParams.get('sort')) || 0
     };
 
     let courses = [];
@@ -81,7 +81,7 @@ class CourseList extends Component {
 
     this.state = {
       courses,
-      activePage: urlParams.get('page') || 1,
+      activePage: Number.parseInt(urlParams.get('page')) || 1,
       loading: true,
       filters
     };
@@ -169,6 +169,27 @@ class CourseList extends Component {
     window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
+  separateStr = (str) => {
+    var array = []
+    if (str.indexOf(",") === -1) {
+      array.push(str)
+    } else {
+      var indices = [];
+      for (let i = 0; i < str.length; i++) {
+          if (str.charAt(i) === ",") indices.push(i);
+      }
+      var boolean = false
+      for (let i = 0; i < indices.length; i++) {
+          if (!boolean) {
+              const substring = str.substring(indices[i] + 2, indices[i + 1]) + " " + str.substring(indices[i - 1] + 2, indices[i])
+              array.push(substring) 
+          } 
+          boolean = !boolean
+      }
+    }
+    return array
+  }
+
   search = (courseDatabase, filters) => {
     // Return empty array if hasn't loaded yet
     if (!courseDatabase) {
@@ -236,11 +257,22 @@ class CourseList extends Component {
         findAllMatches: false,
         minMatchCharLength: 1,
         location: 0,
-        threshold: 0.3,
+        threshold: 0.25,
         distance: 100,
         useExtendedSearch: false,
         keys: ['i']
       };
+
+      // some elements of instructors array are long commma separated strings
+      // so we separate them into individual elements, so fuse can find them better
+      for (let i = 0; i < courses.length; i++) {
+        var fixedInstructors = []
+        const instructors = courses[i].i
+        for (let j = 0; j < instructors.length; j++) {
+          fixedInstructors.push( this.separateStr( instructors[j].toString() ) )
+        }
+        courses[i].i = fixedInstructors
+      }
 
       const fuse = new Fuse(courses, options);
       courses = fuse.search(instructorName).map((res) => res.item);
@@ -251,7 +283,7 @@ class CourseList extends Component {
         c1.overallQuality = 0.00
       if (c2.overallQuality == null || isNaN(c2.overallQuality)) 
         c2.overallQuality = 0.00
-      switch (Number.parseInt(this.state.filters.sortBy)) {
+      switch (this.state.filters.sortBy) {
         // sortBy === 1 means sort by quality rating with higher quality courses first
         case 1:
           return c2.overallQuality - c1.overallQuality;
@@ -305,7 +337,7 @@ class CourseList extends Component {
                 <Course
                   course={currentCourse}
                   activePage={activePage}
-                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${filters.courseName.trim().toLowerCase()}`}
+                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${Math.random()}`}
                 />
               ))}
             </tbody>
