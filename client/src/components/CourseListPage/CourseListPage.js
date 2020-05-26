@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Fuse from 'fuse.js';
 
 import PaginationComponent from './PaginationComponent';
 import SearchFilter from './SearchFilter';
@@ -34,7 +33,7 @@ const calculateMeanCourseStats = (courses) => {
         }
         // New review
       } else if (review.b === '0') {
-        overallQualityRatings.push(Number.parseFloat(review.o)); 
+        overallQualityRatings.push(Number.parseFloat(review.o));
         workloadRatings.push(Number.parseFloat(review.w));
         difficultyRatings.push(Number.parseFloat(review.d));
         gradingRatings.push(Number.parseFloat(review.g));
@@ -51,6 +50,49 @@ const calculateMeanCourseStats = (courses) => {
     currentCourse.teacherRating = mean(teacherRatings);
   });
 };
+
+const CourseListTable = (props) => (props.isMobile ? (
+  <table className="table">
+    <thead>
+      <tr>
+        <th>Course</th>
+        <th>Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+      {props.visibleCourses.map((currentCourse, i) => (
+        <Course
+          course={currentCourse}
+          activePage={props.activePage}
+          key={`course-${currentCourse.num}`}
+          isMobile
+        />
+      ))}
+    </tbody>
+  </table>
+) : (
+  <table className="table table-responsive">
+    <thead>
+      <tr>
+        <th className="course-num">Course #</th>
+        <th className="course-name">Course Name</th>
+        <th>Areas</th>
+        <th>Writing</th>
+        <th>Credits</th>
+        <th>Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+      {props.visibleCourses.map((currentCourse, i) => (
+        <Course
+          course={currentCourse}
+          activePage={props.activePage}
+          key={`course-${currentCourse.num}`}
+        />
+      ))}
+    </tbody>
+  </table>
+));
 
 class CourseList extends Component {
   constructor(props) {
@@ -77,7 +119,7 @@ class CourseList extends Component {
 
     let courses = [];
     try {
-      courses = JSON.parse(localStorage.getItem('courses'));
+      courses = JSON.parse(sessionStorage.getItem('courses'));
     } catch (e) {}
 
     this.state = {
@@ -95,43 +137,45 @@ class CourseList extends Component {
       loading: true
     });
 
-    axios.get(url).then((response) => {
-      const courses = response.data;
+    axios
+      .get(url)
+      .then((response) => {
+        const courses = response.data;
 
-      // some elements of instructors array are long commma separated strings
-      // so we separate them into individual elements, so fuse can find them better
-      for (let i = 0; i < courses.length; i++) {
-        var fixedInstructors = []
-        const instructors = courses[i].i
-        for (let j = 0; j < instructors.length; j++) {
-          const str = instructors[j]
-          if (str.indexOf(",") === -1) {
-            fixedInstructors.push(str)
-          } else {
-            var indices = [];
-            for (let i = 0; i < str.length; i++) {
-                if (str.charAt(i) === ",") indices.push(i);
+        // some elements of instructors array are long commma separated strings
+        // so we separate them into individual elements, so fuse can find them better
+        for (let i = 0; i < courses.length; i++) {
+          const fixedInstructors = [];
+          const instructors = courses[i].i;
+          for (let j = 0; j < instructors.length; j++) {
+            const str = instructors[j];
+            if (str.indexOf(',') === -1) {
+              fixedInstructors.push(str);
+            } else {
+              const indices = [];
+              for (let i = 0; i < str.length; i++) {
+                if (str.charAt(i) === ',') indices.push(i);
+              }
+              for (let i = 0; i < indices.length; i++) {
+                const substring = str.substring(indices[i - 1] + 2, indices[i]);
+                fixedInstructors.push(substring);
+              }
+              fixedInstructors.push(str.substring(indices[indices.length - 1] + 2));
             }
-            for (let i = 0; i < indices.length; i++) {
-                const substring = str.substring(indices[i-1] + 2, indices[i])
-                fixedInstructors.push(substring)
-            }
-            fixedInstructors.push(str.substring(indices[indices.length - 1] + 2))
+            courses[i].instructors = fixedInstructors;
           }
-          courses[i].instructors = fixedInstructors
         }
-      }
-      
-      calculateMeanCourseStats(courses);
 
-      localStorage.setItem('courses', JSON.stringify(courses));
+        calculateMeanCourseStats(courses);
 
-      this.setState({
-        courses,
-        loading: false
-      });
-    })
-    .catch((error) => {})
+        sessionStorage.setItem('courses', JSON.stringify(courses));
+
+        this.setState({
+          courses,
+          loading: false
+        });
+      })
+      .catch((error) => {});
   }
 
   changePage(num) {
@@ -143,10 +187,8 @@ class CourseList extends Component {
     } else {
       urlParams.set('page', num);
     }
-    if (urlParams.toString().length === 0) 
-      window.history.pushState(null, null, `/`);
-    else 
-      window.history.pushState(null, null, `/?${urlParams.toString()}`);
+    if (urlParams.toString().length === 0) window.history.pushState(null, null, '/');
+    else window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   updateSearchFilters(options) {
@@ -206,10 +248,8 @@ class CourseList extends Component {
       else urlParams.set('sort', options.sortBy);
     }
 
-    if (urlParams.toString().length === 0) 
-      window.history.pushState(null, null, `/`);
-    else 
-      window.history.pushState(null, null, `/?${urlParams.toString()}`);
+    if (urlParams.toString().length === 0) window.history.pushState(null, null, '/');
+    else window.history.pushState(null, null, `/?${urlParams.toString()}`);
   }
 
   search = (courseDatabase, filters) => {
@@ -264,36 +304,26 @@ class CourseList extends Component {
             .includes(keyword);
           const matchesCourseNum = currentCourse.num.toLowerCase().includes(keyword);
           const matchesCourseDept = currentCourse.d && currentCourse.d.toLowerCase().includes(keyword);
-          return matchesCourseName || matchesCourseNum || matchesCourseDept;
+          return matchesCourseName || matchesCourseNum;
         }));
     }
 
-    // Filter and rank courses by fuzzy search on instructor name last since this is slowest
+    // Filter courses by fuzzy search on instructor name
     const instructorName = filters.instructorName.toLowerCase().trim();
+    courses.forEach((course) => {
+      course.instructorNames = course.instructors.join(' ');
+    });
     if (instructorName) {
-      const options = {
-        isCaseSensitive: false,
-        includeScore: false,
-        shouldSort: true,
-        includeMatches: false,
-        findAllMatches: false,
-        minMatchCharLength: 1,
-        location: 0,
-        threshold: 0.25,
-        distance: 100,
-        useExtendedSearch: false,
-        keys: ['instructors']
-      };
-
-      const fuse = new Fuse(courses, options);
-      courses = fuse.search(instructorName).map((res) => res.item);
+      // Filter to keep only matching courses
+      const queryKeywords = instructorName.split(' ');
+      courses = courses.filter((currentCourse) =>
+        // Every keyword in search query must appear as a substring of an instructor name
+        queryKeywords.every((keyword) => currentCourse.instructorNames.toLowerCase().includes(keyword)));
     }
 
     courses.sort((c1, c2) => {
-      if (c1.overallQuality == null || isNaN(c1.overallQuality)) 
-        c1.overallQuality = 0.00
-      if (c2.overallQuality == null || isNaN(c2.overallQuality)) 
-        c2.overallQuality = 0.00
+      if (c1.overallQuality == null || isNaN(c1.overallQuality)) c1.overallQuality = 0.0;
+      if (c2.overallQuality == null || isNaN(c2.overallQuality)) c2.overallQuality = 0.0;
       switch (this.state.filters.sortBy) {
         // sortBy === 1 means sort by quality rating with higher quality courses first
         case 1:
@@ -311,7 +341,6 @@ class CourseList extends Component {
 
   render() {
     const { activePage, courses, filters } = this.state;
-    const urlParams = new URLSearchParams(window.location.search);
     const matchingCourses = this.search(courses, filters);
     const visibleCourses = matchingCourses.slice((activePage - 1) * 50, activePage * 50);
 
@@ -320,14 +349,13 @@ class CourseList extends Component {
         <Header loading={this.state.loading} />
         <br />
         <div className="site-container">
-          
-          <div style={{ paddingTop: "5px" }}>
-            <div style={{ marginBottom: "0px" }}>
+          <div style={{ paddingTop: '5px' }}>
+            <div style={{ marginBottom: '0px' }}>
               <SearchFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
             </div>
 
-            <div className="sort-wrapper" style={{ marginTop: "10px", marginBottom: "-5px" }}>
-              <div style={{ width: "100%" }}>
+            <div className="sort-wrapper" style={{ marginTop: '10px', marginBottom: '-5px' }}>
+              <div style={{ width: '100%' }}>
                 <SortFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
               </div>
               <div style={{ float: 'right' }}>
@@ -338,30 +366,14 @@ class CourseList extends Component {
                 />
               </div>
             </div>
-
           </div>
 
-          <table className="table table-responsive">
-            <thead>
-              <tr>
-                <th className="course-num">Course #</th>
-                <th className="course-name">Course Name</th>
-                <th>Areas</th>
-                <th>Writing</th>
-                <th>Credits</th>
-                <th>Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleCourses.map((currentCourse, i) => (
-                <Course
-                  course={currentCourse}
-                  activePage={activePage}
-                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${urlParams}`}
-                />
-              ))}
-            </tbody>
-          </table>
+          <CourseListTable
+            isMobile={window.innerWidth < 600}
+            visibleCourses={visibleCourses}
+            activePage={activePage}
+          />
+
           <div className="flex-wrapper" style={{ marginTop: '-10px', float: 'right' }}>
             <PaginationComponent
               page={activePage}

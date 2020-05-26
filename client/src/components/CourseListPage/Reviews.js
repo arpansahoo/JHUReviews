@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-// eslint-disable-next-line
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Card, Badge, Button } from 'react-bootstrap';
+import {
+  Card, Badge, Button
+} from 'react-bootstrap';
 import firebase from 'firebase/app';
 import FacebookEmoji from './FacebookEmoji';
 import icons from './Icon';
 
 import 'firebase/auth';
-import history from '../../history';
+import { history } from '../../util';
 import LoginModal from '../login-modal.component.js';
 
 const Review = (props) => {
@@ -25,18 +25,30 @@ const Review = (props) => {
     semester = 'Spring 2018';
   }
 
-  const prefix = props.rev.b === '1' ? 'Official Course Evaluation:  ' : 'Student Review:  ';
+  const prefix = props.rev.b === '1' ? 'Official Evaluation:  ' : 'Student Review:  ';
+
+  const sep = props.isMobile ? <br /> : ' | ';
 
   return (
     <>
       <Card style={{ backgroundColor: '#f8f9fa', marginTop: '10px', marginBottom: '10px' }}>
-        <Card.Body style={{ paddingTop: '15px', paddingBottom: '0px' }}>
+        <Card.Body
+          style={{
+            marginTop: '-5px',
+            marginBottom: '-17px'
+          }}
+        >
           <b style={{ fontSize: '1em' }}>
-            {semester} | Instructor:
-            {props.rev.i.trim()} | Rating:
-            {Number(props.rev.o).toPrecision(3)}
+            {semester}
+            {sep}
+            Instructor:
+            {` ${props.rev.i.trim()}`}
+            {sep}
+            Rating:
+            {` ${Number(props.rev.o).toPrecision(3)}`}
           </b>
-          <p style={{ fontSize: '0.92em' }}>
+          <br />
+          <p style={{ textAlign: props.isMobile ? 'justify' : 'left', fontSize: '0.92em' }}>
             <b>{prefix}</b>
             {props.rev.c.trim()}
           </p>
@@ -68,7 +80,105 @@ const cmpReviews = (r1, r2) => {
   }
 
   // If from same semester, put school-supplied reviews first
-  return r2.b - r1.b;
+  if (r1.b !== r2.b) {
+    return r2.b - r1.b;
+  }
+
+  // If both are student reviews, put higher ratings first
+  return Number.parseFloat(r2.o) - Number.parseFloat(r1.o);
+};
+
+const Reactions = (props) => {
+  const love = (
+    <FacebookEmoji
+      icon={icons.find('facebook', 'love')}
+      label="love"
+      number={props.reactions[0]}
+      onSelect={() => props.react(0)}
+      highlight={props.reactIndex === 0}
+    />
+  );
+
+  const wow = (
+    <FacebookEmoji
+      icon={icons.find('facebook', 'wow')}
+      number={props.reactions[1]}
+      label="interesting"
+      onSelect={() => props.react(1)}
+      highlight={props.reactIndex === 1}
+    />
+  );
+
+  const sad = (
+    <FacebookEmoji
+      icon={icons.find('facebook', 'sad')}
+      number={props.reactions[2]}
+      label="sad"
+      onSelect={() => props.react(2)}
+      highlight={props.reactIndex === 2}
+    />
+  );
+
+  const angry = (
+    <FacebookEmoji
+      icon={icons.find('facebook', 'angry')}
+      number={props.reactions[3]}
+      label="angry"
+      onSelect={() => props.react(3)}
+      highlight={props.reactIndex === 3}
+    />
+  );
+
+  const like = (
+    <FacebookEmoji
+      icon={icons.find('facebook', 'like')}
+      number={props.reactions[4]}
+      label="like"
+      onSelect={() => props.react(4)}
+      highlight={props.reactIndex === 4}
+    />
+  );
+
+  const dislike = (
+    <FacebookEmoji
+      icon={icons.find('facebook', 'dislike')}
+      number={props.reactions[5]}
+      label="dislike"
+      onSelect={() => props.react(5)}
+      highlight={props.reactIndex === 5}
+    />
+  );
+
+  if (props.isMobile) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ width: '15%', paddingRight: '1%' }}>{love}</div>
+        <div style={{ width: '15%', paddingRight: '1%' }}>{wow}</div>
+        <div style={{ width: '15%', paddingRight: '1%' }}>{sad}</div>
+        <div style={{ width: '15%', paddingRight: '1%' }}>{angry}</div>
+        <div style={{ width: '15%', paddingRight: '1%' }}>{like}</div>
+        <div style={{ width: '15%', paddingRight: '1%' }}>{dislike}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        marginTop: '-5px',
+        marginBottom: '-2px',
+        marginLeft: '-4px'
+      }}
+    >
+      <div style={{ width: '48px', marginRight: '15px' }}>{love}</div>
+      <div style={{ width: '48px', marginRight: '15px' }}>{wow}</div>
+      <div style={{ width: '48px', marginRight: '15px' }}>{sad}</div>
+      <div style={{ width: '48px', marginRight: '15px' }}>{angry}</div>
+      <div style={{ width: '48px', marginRight: '15px' }}>{like}</div>
+      <div style={{ width: '48px', marginRight: '15px' }}>{dislike}</div>
+    </div>
+  );
 };
 
 export default class Reviews extends Component {
@@ -178,22 +288,35 @@ export default class Reviews extends Component {
   stats() {
     const { course } = this.props;
 
-    const statsBadge = (ratingName, rating) => {
-      const badgeColor = ( rating == null || Number.isNaN(rating) )
-        ? 'dark'
-        : rating < 3
-        ? 'danger'
-        : rating < 4
-        ? 'warning'
-        : 'success';
+    const statsBadge = (ratingName, rating, flipColorScale) => {
+      let badgeColor;
+      if (rating == null || Number.isNaN(rating)) {
+        badgeColor = 'dark';
+      } else if ((!flipColorScale && rating < 3) || (flipColorScale && rating > 4)) {
+        badgeColor = 'danger';
+      } else if ((!flipColorScale && rating < 4) || (flipColorScale && rating >= 3)) {
+        badgeColor = 'warning';
+      } else if ((!flipColorScale && rating >= 4) || (flipColorScale && rating < 3)) {
+        badgeColor = 'success';
+      }
 
-      const formattedRating = ( rating == null || Number.isNaN(rating) ) ? 'N/A' : rating.toPrecision(3);
+      const formattedRating = rating == null || Number.isNaN(rating) ? 'N/A' : rating.toPrecision(3);
 
       return (
-        <h5>
+        <h5
+          style={{
+            marginRight: '10px',
+            width: this.props.isMobile ? '38%' : 'auto'
+          }}
+        >
           <Badge
             variant={badgeColor}
-            style={{ padding: '8px', marginRight: '10px', fontWeight: '400' }}
+            style={{
+              textAlign: 'left',
+              padding: '8px',
+              fontWeight: '400',
+              width: '100%'
+            }}
           >
             {`${ratingName}: ${formattedRating}`}
           </Badge>
@@ -203,12 +326,12 @@ export default class Reviews extends Component {
 
     return (
       <>
-        <div className="flex-wrapper">
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {statsBadge('Overall', course.overallQuality)}
-          {statsBadge('Workload', course.workload)}
-          {statsBadge('Difficulty', course.difficulty)}
-          {statsBadge('Grading', course.grading)}
-          {statsBadge('Learning', course.learning)}
+          {statsBadge('Workload', course.workload, true)}
+          {statsBadge('Difficulty', course.difficulty, true)}
+          {statsBadge('Grading', course.grading, true)}
+          {statsBadge('Gainz', course.learning)}
           {statsBadge('Instructor', course.teacherRating)}
         </div>
       </>
@@ -252,17 +375,23 @@ export default class Reviews extends Component {
       // no reviews yet, display prompt to submit first review
       return (
         <>
-          <LoginModal title="Oops, you're not logged in!" show={this.state.showModal && !this.state.isSignedIn} onHide={() => this.handleToggleModal()} uiconfig={this.state.uiConfig} firebaseauth={firebase.auth()} />
-          <h5 style={{paddingTop: "5px"}}>Reviews</h5>
+          <LoginModal
+            title="Oops, you're not logged in!"
+            show={this.state.showModal && !this.state.isSignedIn}
+            onHide={() => this.handleToggleModal()}
+            uiconfig={this.state.uiConfig}
+            firebaseauth={firebase.auth()}
+          />
+          <h5 style={{ paddingTop: '5px' }}>Reviews</h5>
           <p>No one has reviewed this course yet. Be the first!</p>
-            <Button
-              onClick={() => this.review()}
-              variant="outline-primary"
-              size="sm"
-              style={{ marginTop: '-5px', marginBottom: '10px' }}
-            >
-              Submit a Review
-            </Button>
+          <Button
+            onClick={() => this.review()}
+            variant="outline-primary"
+            size="sm"
+            style={{ marginTop: '-5px', marginBottom: '10px' }}
+          >
+            Submit a Review
+          </Button>
         </>
       );
     }
@@ -276,66 +405,14 @@ export default class Reviews extends Component {
           uiconfig={this.state.uiConfig}
           firebaseauth={firebase.auth()}
         />
-        <h5 style={{paddingTop: "5px"}}>Reactions</h5>
-        <div
-          className="flex-wrapper"
-          style={{ marginTop: '-5px', marginBottom: '-2px', marginLeft: '-4px' }}
-        >
-          <div style={{ width: '48px', marginRight: '15px' }}>
-            <FacebookEmoji
-              icon={icons.find('facebook', 'love')}
-              label="love"
-              number={this.state.reactions[0]}
-              onSelect={() => this.react(0)}
-              highlight={this.state.reactIndex === 0}
-            />
-          </div>
-          <div style={{ width: '48px', marginRight: '15px' }}>
-            <FacebookEmoji
-              icon={icons.find('facebook', 'wow')}
-              number={this.state.reactions[1]}
-              label="interesting"
-              onSelect={() => this.react(1)}
-              highlight={this.state.reactIndex === 1}
-            />
-          </div>
-          <div style={{ width: '48px', marginRight: '15px' }}>
-            <FacebookEmoji
-              icon={icons.find('facebook', 'sad')}
-              number={this.state.reactions[2]}
-              label="sad"
-              onSelect={() => this.react(2)}
-              highlight={this.state.reactIndex === 2}
-            />
-          </div>
-          <div style={{ width: '48px', marginRight: '15px' }}>
-            <FacebookEmoji
-              icon={icons.find('facebook', 'angry')}
-              number={this.state.reactions[3]}
-              label="angry"
-              onSelect={() => this.react(3)}
-              highlight={this.state.reactIndex === 3}
-            />
-          </div>
-          <div style={{ width: '48px', marginRight: '15px' }}>
-            <FacebookEmoji
-              icon={icons.find('facebook', 'like')}
-              number={this.state.reactions[4]}
-              label="like"
-              onSelect={() => this.react(4)}
-              highlight={this.state.reactIndex === 4}
-            />
-          </div>
-          <div style={{ width: '48px', marginRight: '15px' }}>
-            <FacebookEmoji
-              icon={icons.find('facebook', 'dislike')}
-              number={this.state.reactions[5]}
-              label="dislike"
-              onSelect={() => this.react(5)}
-              highlight={this.state.reactIndex === 5}
-            />
-          </div>
-        </div>
+        <h5 style={{ paddingTop: '5px' }}>Reactions</h5>
+
+        <Reactions
+          react={this.react.bind(this)}
+          reactions={this.state.reactions}
+          reactIndex={this.state.reactIndex}
+          isMobile={this.props.isMobile}
+        />
 
         <h5>Average Stats</h5>
         {this.stats()}
@@ -353,9 +430,12 @@ export default class Reviews extends Component {
           </div>
         </div>
         <div>
-          {this.state.reviews.sort(cmpReviews).map((review, key) => (
-            <Review rev={review} key={`review-${key}`} />
-          ))}
+          {this.state.reviews
+            .sort(cmpReviews)
+            .filter((rev) => rev.c)
+            .map((review, key) => (
+              <Review rev={review} key={`review-${key}`} isMobile={this.props.isMobile} />
+            ))}
         </div>
       </>
     );
