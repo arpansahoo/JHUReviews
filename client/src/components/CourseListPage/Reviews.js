@@ -76,11 +76,13 @@ export default class Reviews extends Component {
 
   constructor(props) {
     super(props);
+    const reviews = props.course.rev;
     const reactions = props.course.e;
     const reactIndex = -1;
 
     this.state = {
       showModal: false,
+      reviews,
       reactions,
       reactIndex,
       isSignedIn: false,
@@ -100,11 +102,12 @@ export default class Reviews extends Component {
     this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => this.login(user));
     axios
       .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.course._id}`)
-      // axios.get('http://localhost:4000/courses/'+this.props.course._id)
+      // .get('http://localhost:4000/courses/'+this.props.course._id)
       .then((response) => {
         if (this._isMounted) {
           this.setState({
-            reactions: response.data.e
+            reactions: response.data.e,
+            reviews: response.data.rev
           });
         }
       })
@@ -130,7 +133,7 @@ export default class Reviews extends Component {
         .get(
           `https://jhu-course-rating-api.herokuapp.com/courses/react-index/${this.props.course._id}/${this.state.uid}`
         )
-        // axios.get('http://localhost:4000/courses/react-index/'+this.props.course._id+"/"+this.state.uid)
+        // .get('http://localhost:4000/courses/react-index/'+this.props.course._id+"/"+this.state.uid)
         .then((response) => {
           if (this._isMounted) {
             this.setState({
@@ -222,7 +225,7 @@ export default class Reviews extends Component {
       .post(
         `https://jhu-course-rating-api.herokuapp.com/courses/react/${this.props.course._id}/${num}/${this.state.uid}`
       )
-      // axios.post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
+      // .post('http://localhost:4000/courses/react/'+this.props.course._id+"/"+num+"/"+this.state.uid)
       .then((res) => {
         if (this._isMounted) {
           this.setState({
@@ -245,9 +248,7 @@ export default class Reviews extends Component {
   }
 
   render() {
-    const { props } = this;
-
-    if (props.course.rev.length === 0) {
+    if (this.state.reviews.length === 0) {
       // no reviews yet, display prompt to submit first review
       return (
         <>
@@ -352,7 +353,7 @@ export default class Reviews extends Component {
           </div>
         </div>
         <div>
-          {props.course.rev.sort(cmpReviews).map((review, key) => (
+          {this.state.reviews.sort(cmpReviews).map((review, key) => (
             <Review rev={review} key={`review-${key}`} />
           ))}
         </div>

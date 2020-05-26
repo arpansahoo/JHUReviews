@@ -4,6 +4,7 @@ import Fuse from 'fuse.js';
 
 import PaginationComponent from './PaginationComponent';
 import SearchFilter from './SearchFilter';
+import SortFilter from './SortFilter';
 import Header from '../header.component';
 import Course from './Course';
 
@@ -69,8 +70,8 @@ class CourseList extends Component {
       includeEngineeringAreaDesignation: urlParams.get('e') !== '0',
       includeQuantitativeAreaDesignation: urlParams.get('q') !== '0',
       includeCoursesWithoutAreaDesignation: urlParams.get('na') !== '0',
-      writingIntensive: Number.parseInt(urlParams.get('w')) || false,
-      offeredInFall2020: Number.parseInt(urlParams.get('nextSem')) || false,
+      writingIntensive: urlParams.get('w') || false,
+      offeredInFall2020: urlParams.get('nextSem') || false,
       sortBy: Number.parseInt(urlParams.get('sort')) || 0
     };
 
@@ -310,7 +311,7 @@ class CourseList extends Component {
 
   render() {
     const { activePage, courses, filters } = this.state;
-
+    const urlParams = new URLSearchParams(window.location.search);
     const matchingCourses = this.search(courses, filters);
     const visibleCourses = matchingCourses.slice((activePage - 1) * 50, activePage * 50);
 
@@ -319,18 +320,27 @@ class CourseList extends Component {
         <Header loading={this.state.loading} />
         <br />
         <div className="site-container">
-          <div>
-            <div>
+          
+          <div style={{ paddingTop: "5px" }}>
+            <div style={{ marginBottom: "0px" }}>
               <SearchFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
             </div>
-            <div className="flex-wrapper" style={{ float: 'right' }}>
-              <PaginationComponent
-                page={activePage}
-                changePage={this.changePage}
-                length={matchingCourses.length}
-              />
+
+            <div className="sort-wrapper" style={{ marginTop: "10px", marginBottom: "-5px" }}>
+              <div style={{ width: "100%" }}>
+                <SortFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
+              </div>
+              <div style={{ float: 'right' }}>
+                <PaginationComponent
+                  page={activePage}
+                  changePage={this.changePage}
+                  length={matchingCourses.length}
+                />
+              </div>
             </div>
+
           </div>
+
           <table className="table table-responsive">
             <thead>
               <tr>
@@ -347,12 +357,12 @@ class CourseList extends Component {
                 <Course
                   course={currentCourse}
                   activePage={activePage}
-                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${Math.random()}`}
+                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${urlParams}`}
                 />
               ))}
             </tbody>
           </table>
-          <div className="flex-wrapper" style={{ marginTop: '-5px', float: 'right' }}>
+          <div className="flex-wrapper" style={{ marginTop: '-10px', float: 'right' }}>
             <PaginationComponent
               page={activePage}
               changePage={this.changePage}

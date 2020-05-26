@@ -8,7 +8,7 @@ const PaginationComponent = props => {
 
     if (active < 8) {
         return(<>
-            <Pagination size="sm" style={{paddingTop: "5px"}}>
+            <Pagination size="sm">
             <Pagination.First disabled={active === 1} onClick={() => props.changePage(1)}/>
             <Pagination.Prev disabled={active === 1} onClick={() => props.changePage(active - 1)}/>
 
@@ -27,7 +27,7 @@ const PaginationComponent = props => {
     }
     else if (active < last - 6) {
         return(<>
-            <Pagination size="sm" style={{paddingTop: "5px"}}>
+            <Pagination size="sm">
             <Pagination.First disabled={active === 1} onClick={() => props.changePage(1)}/>
             <Pagination.Prev disabled={active === 1} onClick={() => props.changePage(active - 1)}/>
 
@@ -47,7 +47,7 @@ const PaginationComponent = props => {
         </>);
     } else {
         return(<>
-            <Pagination size="sm" style={{paddingTop: "5px"}}>
+            <Pagination size="sm">
             <Pagination.First disabled={active === 1} onClick={() => props.changePage(1)}/>
             <Pagination.Prev disabled={active === 1} onClick={() => props.changePage(active - 1)}/>
 

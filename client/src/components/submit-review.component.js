@@ -26,16 +26,18 @@ class ReviewForm extends Component {
     if (localStorage.getItem('loggedIn') === 'true') isSignedIn = true;
 
     this.state = {
-      semester: '',
       number: '',
       title: '',
-      text: '',
+      instructors: [],
+      semester: '',
+      instructor_name: '',
       overall: '',
       workload: '',
       difficulty: '',
+      grading: '',
       learning: '',
       instructor_quality: '',
-      grading: '',
+      text: '',
       isSignedIn,
       uid: null,
       uiConfig: {
@@ -60,11 +62,12 @@ class ReviewForm extends Component {
 
     axios
       .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.match.params.id}`)
-      // axios.get('http://localhost:4000/courses/'+this.props.match.params.id)
+      // .get('http://localhost:4000/courses/'+this.props.match.params.id)
       .then((response) => {
         this.setState({
           number: response.data.num,
-          title: response.data.n
+          title: response.data.n,
+          instructors: response.data.i.reverse()
         });
       })
       .catch((error) => {});
@@ -89,6 +92,7 @@ class ReviewForm extends Component {
       this.state.instructor_quality]
 
     if (array[1] === "") array[1] = 'S20';
+    if (array[2] === "") array[2] = this.state.instructors[0]
     for (let i = 3; i < array.length; i++) {
       if (array[i] === '') array[i] = '3.00';
     }
@@ -111,7 +115,7 @@ class ReviewForm extends Component {
         `https://jhu-course-rating-api.herokuapp.com/courses/add-review/${this.props.match.params.id}/${this.state.uid}`,
         obj
       )
-      // axios.post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
+      // .post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
       .then((res) => {})
       .catch((error) => {})
       .finally(() => window.history.back());
@@ -123,7 +127,7 @@ class ReviewForm extends Component {
         <Header submit />
         <div className="site-container">
           <div style={{ paddingTop: '20px' }}>
-            <div style={{ paddingBottom: '10px' }}>
+            <div style={{ paddingBottom: '5px' }}>
               <h2>You are submitting a review for:</h2>
               <h5 style={{ color: '#6c757d' }}>
                 {this.state.number}
@@ -132,6 +136,7 @@ class ReviewForm extends Component {
               </h5>
             </div>
             <FormComponent
+              instructors={this.state.instructors}
               page={this.props.match.params.page}
               changeText={this.changeText}
               changeSemester={this.changeSemester}
@@ -258,22 +263,19 @@ function FormComponent(props) {
               <option>Fall 2019</option>
               <option>Spring 2020</option>
             </Form.Control>
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </InputGroup>
         </Form.Group>
         <Form.Group as={Col} controlId="validationCustom05">
           <Form.Label>Instructor Name</Form.Label>
-          <Form.Control
-            as="textarea"
-            placeholder="Enter name"
-            rows="1"
-            required
-            maxLength={50}
-            onChange={props.changeInstructorName}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please provide your instructor's name.
-          </Form.Control.Feedback>
+          <InputGroup>
+            <Form.Control
+              as="select"
+              required
+              onChange={props.changeInstructorName}
+            >
+              {props.instructors.map(instructor => { return <option>{instructor}</option> })}
+            </Form.Control>
+          </InputGroup>
         </Form.Group>
       </Form.Row>
 
@@ -290,7 +292,6 @@ function FormComponent(props) {
                     <option>4</option>
                     <option>5</option>
                 </Form.Control>
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </InputGroup>
         </Form.Group>
         <Form.Group as={Col} controlId="validationCustomUsername">
@@ -310,7 +311,6 @@ function FormComponent(props) {
               <option>4</option>
               <option>5</option>
             </Form.Control>
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </InputGroup>
         </Form.Group>
       </Form.Row>
@@ -333,7 +333,6 @@ function FormComponent(props) {
               <option>4</option>
               <option>5</option>
             </Form.Control>
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </InputGroup>
         </Form.Group>
         <Form.Group as={Col} controlId="validationCustomUsername">
@@ -353,7 +352,6 @@ function FormComponent(props) {
               <option>4</option>
               <option>5</option>
             </Form.Control>
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </InputGroup>
         </Form.Group>
       </Form.Row>
@@ -376,7 +374,6 @@ function FormComponent(props) {
               <option>4</option>
               <option>5</option>
             </Form.Control>
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </InputGroup>
         </Form.Group>
         <Form.Group as={Col} controlId="validationCustomUsername">
@@ -401,7 +398,6 @@ function FormComponent(props) {
               <option>4</option>
               <option>5</option>
             </Form.Control>
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </InputGroup>
         </Form.Group>
       </Form.Row>
