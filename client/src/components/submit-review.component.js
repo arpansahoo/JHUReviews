@@ -80,19 +80,20 @@ class ReviewForm extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    var array = [
-      this.state.text, 
-      this.state.semester, 
-      this.state.instructor_name, 
-      this.state.overall, 
-      this.state.workload, 
-      this.state.difficulty, 
-      this.state.learning, 
-      this.state.grading, 
-      this.state.instructor_quality]
+    const array = [
+      this.state.text,
+      this.state.semester,
+      this.state.instructor_name,
+      this.state.overall,
+      this.state.workload,
+      this.state.difficulty,
+      this.state.learning,
+      this.state.grading,
+      this.state.instructor_quality
+    ];
 
-    if (array[1] === "") array[1] = 'S20';
-    if (array[2] === "") array[2] = this.state.instructors[0]
+    if (array[1] === '') array[1] = 'S20';
+    if (array[2] === '') array[2] = this.state.instructors[0];
     for (let i = 3; i < array.length; i++) {
       if (array[i] === '') array[i] = '3.00';
     }
@@ -106,7 +107,7 @@ class ReviewForm extends Component {
       d: array[5],
       l: array[6],
       g: array[7],
-      t: array[8],   
+      t: array[8],
       b: '0'
     };
 
@@ -154,7 +155,6 @@ class ReviewForm extends Component {
       </>
     );
   }
-  
 
   changeInstructorName(e) {
     this.setState({
@@ -188,9 +188,9 @@ class ReviewForm extends Component {
 
   changeOverall(e) {
     this.setState({
-        overall: e.target.value
+      overall: e.target.value
     });
-  }  
+  }
 
   changeWorkload(e) {
     this.setState({
@@ -248,7 +248,7 @@ function FormComponent(props) {
   return (
     <Form noValidate validated={validated} onSubmit={handleSubmit}>
       <Form.Row>
-        <Form.Group style={{marginRight:"10px"}} as={Col} controlId="validationCustomUsername">
+        <Form.Group style={{ marginRight: '10px' }} as={Col} controlId="validationCustomUsername">
           <Form.Label>Semester</Form.Label>
           <InputGroup>
             <Form.Control
@@ -268,31 +268,34 @@ function FormComponent(props) {
         <Form.Group as={Col} controlId="validationCustom05">
           <Form.Label>Instructor Name</Form.Label>
           <InputGroup>
-            <Form.Control
-              as="select"
-              required
-              onChange={props.changeInstructorName}
-            >
-              {props.instructors.map(instructor => { return <option>{instructor}</option> })}
+            <Form.Control as="select" required onChange={props.changeInstructorName}>
+              {props.instructors.map((instructor) => (
+                <option key={instructor}>{instructor}</option>
+              ))}
             </Form.Control>
           </InputGroup>
         </Form.Group>
       </Form.Row>
 
       <Form.Row>
-        <Form.Group style={{marginRight:"10px"}} as={Col} controlId="validationCustomUsername">
-            <Form.Label>
-                <Popover name="Overall Quality" title="Overall Quality" scaleOne="1 = This course should be destroyed" scaleTwo="5 = Absolutely loved this course" />
-            </Form.Label>
-            <InputGroup>
-                <Form.Control as="select" defaultValue="3" required onChange={props.changeOverall}>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                </Form.Control>
-            </InputGroup>
+        <Form.Group style={{ marginRight: '10px' }} as={Col} controlId="validationCustomUsername">
+          <Form.Label>
+            <Popover
+              name="Overall Quality"
+              title="Overall Quality"
+              scaleOne="1 = This course should be destroyed"
+              scaleTwo="5 = Absolutely loved this course"
+            />
+          </Form.Label>
+          <InputGroup>
+            <Form.Control as="select" defaultValue="3" required onChange={props.changeOverall}>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </Form.Control>
+          </InputGroup>
         </Form.Group>
         <Form.Group as={Col} controlId="validationCustomUsername">
           <Form.Label>
@@ -316,7 +319,7 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group style={{marginRight:"10px"}} as={Col} controlId="validationCustomUsername">
+        <Form.Group style={{ marginRight: '10px' }} as={Col} controlId="validationCustomUsername">
           <Form.Label>
             <Popover
               name="Difficulty"
@@ -357,11 +360,11 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group style={{marginRight:"10px"}} as={Col} controlId="validationCustomUsername">
+        <Form.Group style={{ marginRight: '10px' }} as={Col} controlId="validationCustomUsername">
           <Form.Label>
             <Popover
-              name="Learning"
-              title="Learning"
+              name="Gainz"
+              title="Amount Learned"
               scaleOne="1 = I only have two brain cells left"
               scaleTwo="5 = I'm a big 200iq brain now"
             />
@@ -404,12 +407,11 @@ function FormComponent(props) {
 
       <Form.Row>
         <Form.Group as={Col} controlId="validationCustom05">
-          <Form.Label>Review</Form.Label>
+          <Form.Label>Review (Optional)</Form.Label>
           <Form.Control
             as="textarea"
             placeholder="Type your thoughts about the course..."
             rows="3"
-            required
             maxLength={550}
             onChange={props.changeText}
           />
@@ -417,9 +419,14 @@ function FormComponent(props) {
         </Form.Group>
       </Form.Row>
 
-      <div style={{marginTop:"5px"}}>
+      <div style={{ marginTop: '5px' }}>
         <Button type="submit">Submit</Button>
-        <Button variant="danger" onClick={handleCancel} type="cancel" style={{ marginLeft: '15px' }}>
+        <Button
+          variant="danger"
+          onClick={handleCancel}
+          type="cancel"
+          style={{ marginLeft: '15px' }}
+        >
           Cancel
         </Button>
       </div>

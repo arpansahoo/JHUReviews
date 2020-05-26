@@ -5,7 +5,7 @@ const SearchFilter = (props) => (
   <>
     <div>
       <div className="search-flex">
-        <InputGroup style={{ marginRight: '20px', marginTop: '-5px'}} className="mb-3">
+        <InputGroup style={{ marginRight: '20px', marginTop: '-5px' }} className="mb-3">
           <FormControl
             placeholder="Search for a course or department..."
             defaultValue={props.filters.courseName}
@@ -32,7 +32,6 @@ const SearchFilter = (props) => (
           {['checkbox'].map((type) => (
             <div key={`inline-${type}`} className="mb-3">
               <div className="filter-wrapper">
-                
                 <div className="flex-wrapper">
                   <Form.Check
                     onChange={(e) => {
@@ -107,7 +106,7 @@ const SearchFilter = (props) => (
                     id={`inline-${type}-7`}
                   />
                 </div>
-                
+
                 <div className="flex-wrapper">
                   <Form.Check
                     onChange={(e) => {
@@ -129,9 +128,8 @@ const SearchFilter = (props) => (
                     type={type}
                     id={`inline-${type}-8`}
                   />
-                </div>     
-
-              </div> 
+                </div>
+              </div>
             </div>
           ))}
         </Form>
