@@ -3,7 +3,7 @@ import { InputGroup, FormControl, Form } from 'react-bootstrap';
 
 const SearchFilter = (props) => (
   <>
-    <div className="pagination-wrapper">
+    <div>
       <div className="search-flex">
         <InputGroup style={{ marginRight: '20px', marginTop: '-5px'}} className="mb-3">
           <FormControl
@@ -129,23 +129,9 @@ const SearchFilter = (props) => (
                     type={type}
                     id={`inline-${type}-8`}
                   />
-                </div>                
-              </div> 
+                </div>     
 
-              <div style={{maxWidth:"190px", marginLeft:"-8px", marginTop:"5px"}}>
-                <Form.Control
-                  label="Sort by:"
-                  style={{padding:"0px", border:"0px", color:"#212529"}}
-                  as="select"
-                  onChange={(e) => {
-                    props.updateSearchFilters({ sortBy: e.target.selectedIndex });
-                  }}
-                  defaultValue={props.filters.sortBy}
-                >
-                  <option value={0}>Sort By: Course Level</option>
-                  <option value={1}>Sort By: Rating</option>
-                </Form.Control>
-              </div>
+              </div> 
             </div>
           ))}
         </Form>

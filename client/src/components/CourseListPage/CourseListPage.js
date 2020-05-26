@@ -4,6 +4,7 @@ import Fuse from 'fuse.js';
 
 import PaginationComponent from './PaginationComponent';
 import SearchFilter from './SearchFilter';
+import SortFilter from './SortFilter';
 import Header from '../header.component';
 import Course from './Course';
 
@@ -319,18 +320,27 @@ class CourseList extends Component {
         <Header loading={this.state.loading} />
         <br />
         <div className="site-container">
-          <div style={{paddingTop:"5px"}}>
-            <div>
+          
+          <div style={{ paddingTop: "5px" }}>
+            <div style={{ marginBottom: "0px" }}>
               <SearchFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
             </div>
-            <div style={{ float: 'right' }}>
-              <PaginationComponent
-                page={activePage}
-                changePage={this.changePage}
-                length={matchingCourses.length}
-              />
+
+            <div className="filter-wrapper" style={{ marginTop: "10px", marginBottom: "-5px" }}>
+              <div style={{ width: "100%" }}>
+                <SortFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
+              </div>
+              <div style={{ float: 'right' }}>
+                <PaginationComponent
+                  page={activePage}
+                  changePage={this.changePage}
+                  length={matchingCourses.length}
+                />
+              </div>
             </div>
+
           </div>
+
           <table className="table table-responsive">
             <thead>
               <tr>
@@ -352,7 +362,7 @@ class CourseList extends Component {
               ))}
             </tbody>
           </table>
-          <div className="flex-wrapper" style={{ marginTop: '-5px', float: 'right' }}>
+          <div className="flex-wrapper" style={{ marginTop: '-10px', float: 'right' }}>
             <PaginationComponent
               page={activePage}
               changePage={this.changePage}
