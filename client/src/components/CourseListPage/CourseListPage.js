@@ -119,7 +119,7 @@ class CourseList extends Component {
 
     let courses = [];
     try {
-      courses = JSON.parse(localStorage.getItem('courses'));
+      courses = JSON.parse(sessionStorage.getItem('courses'));
     } catch (e) {}
 
     this.state = {
@@ -168,7 +168,7 @@ class CourseList extends Component {
 
         calculateMeanCourseStats(courses);
 
-        localStorage.setItem('courses', JSON.stringify(courses));
+        sessionStorage.setItem('courses', JSON.stringify(courses));
 
         this.setState({
           courses,

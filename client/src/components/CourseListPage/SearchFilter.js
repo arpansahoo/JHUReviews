@@ -9,7 +9,6 @@ const SearchFilter = (props) => (
           <FormControl
             placeholder="Search for a course or department..."
             defaultValue={props.filters.courseName}
-            id="basic-url1"
             onChange={(e) => {
               props.updateSearchFilters({ courseName: e.target.value });
             }}
@@ -19,7 +18,6 @@ const SearchFilter = (props) => (
           <FormControl
             placeholder="Search for an instructor..."
             defaultValue={props.filters.instructorName}
-            id="basic-url3"
             onChange={(e) => {
               props.updateSearchFilters({ instructorName: e.target.value });
             }}
