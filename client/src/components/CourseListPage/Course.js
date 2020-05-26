@@ -32,12 +32,12 @@ class Course extends React.Component {
       <>
         {this.state.open && (
           <Button variant="link" style={{ padding: '0' }} onClick={() => this.handleClick(false)}>
-            <p style={{ margin: '0', marginTop: '-2px' }}>[-]</p>
+            <p style={{ margin: '0', marginTop: this.props.isMobile ? '-4.5px' : '-2px' }}>[-]</p>
           </Button>
         )}
         {!this.state.open && (
           <Button variant="link" style={{ padding: '0' }} onClick={() => this.handleClick(true)}>
-            <p style={{ margin: '0', marginTop: '-2px' }}>[+]</p>
+            <p style={{ margin: '0', marginTop: this.props.isMobile ? '-4.5px' : '-2px' }}>[+]</p>
           </Button>
         )}
       </>

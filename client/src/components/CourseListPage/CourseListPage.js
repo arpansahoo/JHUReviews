@@ -55,7 +55,7 @@ const CourseListTable = (props) => (props.isMobile ? (
   <table className="table">
     <thead>
       <tr>
-        <th>Course</th>
+        <th className="mobile-course-name">Course</th>
         <th>Rating</th>
       </tr>
     </thead>
@@ -126,11 +126,15 @@ class CourseList extends Component {
       courses,
       activePage: Number.parseInt(urlParams.get('page')) || 1,
       loading: true,
-      filters
+      filters,
+      resize: false
     };
   }
 
   componentDidMount() {
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions.bind(this));
+
     const url = 'https://jhu-course-rating-api.herokuapp.com/courses';
     // const url = 'http://localhost:4000/courses';
     this.setState({
@@ -176,6 +180,18 @@ class CourseList extends Component {
         });
       })
       .catch((error) => {});
+  }
+
+  updateDimensions() {
+    if(window.innerWidth < 600) {
+      this.setState({ resize: true });
+    } else {
+      this.setState({ resize: true });
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
 
   changePage(num) {
@@ -374,7 +390,7 @@ class CourseList extends Component {
             activePage={activePage}
           />
 
-          <div className="flex-wrapper" style={{ marginTop: '-10px', float: 'right' }}>
+          <div className="flex-wrapper" style={{ marginTop: '-5px', float: 'right' }}>
             <PaginationComponent
               page={activePage}
               changePage={this.changePage}

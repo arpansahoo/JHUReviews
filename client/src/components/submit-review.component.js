@@ -283,7 +283,7 @@ function FormComponent(props) {
             <Popover
               name="Overall Quality"
               title="Overall Quality"
-              scaleOne="1 = This course should be destroyed"
+              scaleOne="1 = Despised this course"
               scaleTwo="5 = Absolutely loved this course"
             />
           </Form.Label>
@@ -302,8 +302,8 @@ function FormComponent(props) {
             <Popover
               name="Workload"
               title="Workload"
-              scaleOne="1 = Enough work for 3 classes"
-              scaleTwo="5 = A whole lot of nothing"
+              scaleOne="1 = A whole lot of nothing"
+              scaleTwo="5 = Enough work for 3 classes"
             />
           </Form.Label>
           <InputGroup>
@@ -324,8 +324,8 @@ function FormComponent(props) {
             <Popover
               name="Difficulty"
               title="Difficulty"
-              scaleOne="1 = Were the lectures in English??"
-              scaleTwo="5 = Me and all my bois aced it"
+              scaleOne="1 = Me and all my bois aced it"
+              scaleTwo="5 = Hardest course I've ever taken"
             />
           </Form.Label>
           <InputGroup>
@@ -343,8 +343,8 @@ function FormComponent(props) {
             <Popover
               name="Grading"
               title="Grading"
-              scaleOne="1 = Prof had no mercy on my soul"
-              scaleTwo="5 = Was it possible to not get an A??"
+              scaleOne="1 = Was it possible to NOT get an A??"
+              scaleTwo="5 = Prof had no mercy on my soul"
             />
           </Form.Label>
           <InputGroup>
@@ -365,7 +365,7 @@ function FormComponent(props) {
             <Popover
               name="Gainz"
               title="Amount Learned"
-              scaleOne="1 = I only have two brain cells left"
+              scaleOne="1 = Learned zilch :("
               scaleTwo="5 = I'm a big 200iq brain now"
             />
           </Form.Label>
