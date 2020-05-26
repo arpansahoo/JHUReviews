@@ -311,7 +311,7 @@ class CourseList extends Component {
 
   render() {
     const { activePage, courses, filters } = this.state;
-
+    const urlParams = new URLSearchParams(window.location.search);
     const matchingCourses = this.search(courses, filters);
     const visibleCourses = matchingCourses.slice((activePage - 1) * 50, activePage * 50);
 
@@ -357,7 +357,7 @@ class CourseList extends Component {
                 <Course
                   course={currentCourse}
                   activePage={activePage}
-                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${Math.random()}`}
+                  key={`course-${(activePage - 1) * 50 + i}${currentCourse.num}${urlParams}`}
                 />
               ))}
             </tbody>
