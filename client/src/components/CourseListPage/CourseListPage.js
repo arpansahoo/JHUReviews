@@ -326,7 +326,7 @@ class CourseList extends Component {
               <SearchFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
             </div>
 
-            <div className="filter-wrapper" style={{ marginTop: "10px", marginBottom: "-5px" }}>
+            <div className="sort-wrapper" style={{ marginTop: "10px", marginBottom: "-5px" }}>
               <div style={{ width: "100%" }}>
                 <SortFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
               </div>

@@ -49,6 +49,10 @@ code {
   display: flex;
 }
 
+.sort-wrapper {
+  display: flex;
+}
+
 @media only screen and (max-width: 700px) {
   .filter-wrapper {
     display: block;
@@ -59,3 +63,8 @@ code {
   }
 }
 
+@media only screen and (max-width: 550px) {
+  .sort-wrapper {
+    display: block;
+  }
+}
