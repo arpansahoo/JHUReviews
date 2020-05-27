@@ -35,7 +35,7 @@ const Review = (props) => {
         <Card.Body
           style={{
             marginTop: '-5px',
-            marginBottom: '-22px',
+            marginBottom: '-23px',
             marginRight: '-5px',
             marginLeft: '-5px'
           }}
@@ -152,7 +152,7 @@ const Reactions = (props) => {
 
   if (props.isMobile) {
     return (
-      <div style={{ display: 'flex', marginLeft: '-3px' }}>
+      <div style={{ display: 'flex' }}>
         <div style={{ width: '13%', marginRight: '11px' }}>{love}</div>
         <div style={{ width: '13%', marginRight: '11px'}}>{wow}</div>
         <div style={{ width: '13%', marginRight: '11px' }}>{sad}</div>
@@ -168,34 +168,84 @@ const Reactions = (props) => {
       style={{
         display: 'flex',
         marginTop: '-5px',
-        marginBottom: '-2px',
-        marginLeft: '-4px'
+        marginBottom: '-2px'
       }}
     >
-      <div style={{ width: '48px', marginRight: '15px' }}>{love}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{wow}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{sad}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{angry}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{like}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{dislike}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{love}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{wow}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{sad}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{angry}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{like}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{dislike}</div>
     </div>
   );
 };
 
+const mean = (array) => {
+  let sum = 0;
+  for (let i = 0; i < array.length; i += 1) {
+    sum += array[i];
+  }
+  return sum / array.length;
+};
+
+const calculateStats = (currentCourse) => {
+  const overallQualityRatings = [];
+  const workloadRatings = [];
+  const difficultyRatings = [];
+  const gradingRatings = [];
+  const learningRatings = [];
+  const teacherRatings = [];
+
+  currentCourse.rev.forEach((review) => {
+    // Old review (from pdf) which only contains overall quality rating
+    if (review.b === '1') {
+      // Old reviews are worth 5 new reviews
+      for (let j = 0; j < 5; j += 1) {
+        overallQualityRatings.push(Number.parseFloat(review.o));
+      }
+      // New review
+    } else if (review.b === '0') {
+      overallQualityRatings.push(Number.parseFloat(review.o));
+      workloadRatings.push(Number.parseFloat(review.w));
+      difficultyRatings.push(Number.parseFloat(review.d));
+      gradingRatings.push(Number.parseFloat(review.g));
+      learningRatings.push(Number.parseFloat(review.l));
+      teacherRatings.push(Number.parseFloat(review.t));
+    }
+  });
+
+  return {
+    overallQuality: mean(overallQualityRatings),
+    workload: mean(workloadRatings),
+    difficulty: mean(difficultyRatings),
+    grading: mean(gradingRatings),
+    learning: mean(learningRatings),
+    teacherRating: mean(teacherRatings)
+  }
+};
+
 export default class Reviews extends Component {
   _isMounted = false;
+  intervalID; 
 
   constructor(props) {
     super(props);
     const reviews = props.course.rev;
     const reactions = props.course.e;
     const reactIndex = -1;
-
+    const stats = calculateStats(props.course)
     this.state = {
       showModal: false,
       reviews,
       reactions,
       reactIndex,
+      overallQuality: stats.overallQuality,
+      workload: stats.workload,
+      difficulty: stats.difficulty,
+      grading: stats.grading,
+      learning: stats.learning,
+      teacherRating: stats.teacherRating,
       isSignedIn: false,
       uid: null,
       uiConfig: {
@@ -208,27 +258,40 @@ export default class Reviews extends Component {
     };
   }
 
+  getData() {
+    axios
+    .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.course._id}`)
+    // .get('http://localhost:4000/courses/'+this.props.course._id)
+    .then((response) => {
+      if (this._isMounted) {
+        const stats = calculateStats(response.data)
+        this.setState({
+          reactions: response.data.e,
+          reviews: response.data.rev,
+          overallQuality: stats.overallQuality,
+          workload: stats.workload,
+          difficulty: stats.difficulty,
+          grading: stats.grading,
+          learning: stats.learning,
+          teacherRating: stats.teacherRating
+        });
+        this.intervalID = setTimeout(this.getData.bind(this), 3000);
+      }
+    })
+    .catch((error) => {});
+  }
+
   componentDidMount() {
     this._isMounted = true;
     this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => this.login(user));
-    axios
-      .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.course._id}`)
-      // .get('http://localhost:4000/courses/'+this.props.course._id)
-      .then((response) => {
-        if (this._isMounted) {
-          this.setState({
-            reactions: response.data.e,
-            reviews: response.data.rev
-          });
-        }
-      })
-      .catch((error) => {});
+    this.getData();
   }
 
   // Make sure we un-register Firebase observers when the component unmounts.
   componentWillUnmount() {
     this.unregisterAuthObserver();
     this._isMounted = false;
+    clearTimeout(this.intervalID);
   }
 
   login(user) {
@@ -287,8 +350,6 @@ export default class Reviews extends Component {
   }
 
   stats() {
-    const { course } = this.props;
-
     const statsBadge = (ratingName, rating, flipColorScale) => {
       let badgeColor;
       if (rating == null || Number.isNaN(rating)) {
@@ -325,18 +386,20 @@ export default class Reviews extends Component {
       );
     };
 
-    return (
-      <>
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {statsBadge('Overall', course.overallQuality)}
-          {statsBadge('Workload', course.workload, true)}
-          {statsBadge('Difficulty', course.difficulty, true)}
-          {statsBadge('Grading', course.grading, true)}
-          {statsBadge('Gainz', course.learning)}
-          {statsBadge('Instructor', course.teacherRating)}
-        </div>
-      </>
-    );
+    if (this._isMounted) {
+      return (
+        <>
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            {statsBadge('Overall', this.state.overallQuality)}
+            {statsBadge('Workload', this.state.workload, true)}
+            {statsBadge('Difficulty', this.state.difficulty, true)}
+            {statsBadge('Grading', this.state.grading, true)}
+            {statsBadge('Gainz', this.state.learning)}
+            {statsBadge('Instructor', this.state.teacherRating)}
+          </div>
+        </>
+      );
+    }
   }
 
   react(num) {

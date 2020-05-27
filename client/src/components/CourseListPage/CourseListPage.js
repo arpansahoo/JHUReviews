@@ -15,15 +15,10 @@ const mean = (array) => {
   return sum / array.length;
 };
 
-const calculateMeanCourseStats = (courses) => {
+const calculateCourseStats = (courses) => {
   courses.forEach((currentCourse) => {
     const overallQualityRatings = [];
-    const workloadRatings = [];
-    const difficultyRatings = [];
-    const gradingRatings = [];
-    const learningRatings = [];
-    const teacherRatings = [];
-
+    
     currentCourse.rev.forEach((review) => {
       // Old review (from pdf) which only contains overall quality rating
       if (review.b === '1') {
@@ -34,20 +29,10 @@ const calculateMeanCourseStats = (courses) => {
         // New review
       } else if (review.b === '0') {
         overallQualityRatings.push(Number.parseFloat(review.o));
-        workloadRatings.push(Number.parseFloat(review.w));
-        difficultyRatings.push(Number.parseFloat(review.d));
-        gradingRatings.push(Number.parseFloat(review.g));
-        learningRatings.push(Number.parseFloat(review.l));
-        teacherRatings.push(Number.parseFloat(review.t));
       }
     });
 
     currentCourse.overallQuality = mean(overallQualityRatings);
-    currentCourse.workload = mean(workloadRatings);
-    currentCourse.difficulty = mean(difficultyRatings);
-    currentCourse.grading = mean(gradingRatings);
-    currentCourse.learning = mean(learningRatings);
-    currentCourse.teacherRating = mean(teacherRatings);
   });
 };
 
@@ -95,6 +80,8 @@ const CourseListTable = (props) => (props.isMobile ? (
 ));
 
 class CourseList extends Component {
+  intervalID; 
+
   constructor(props) {
     super(props);
     this.changePage = this.changePage.bind(this);
@@ -131,14 +118,11 @@ class CourseList extends Component {
     };
   }
 
-  componentDidMount() {
-    this.updateDimensions();
-    window.addEventListener("resize", this.updateDimensions.bind(this));
-
+  getData() {
     const url = 'https://jhu-course-rating-api.herokuapp.com/courses';
     // const url = 'http://localhost:4000/courses';
     this.setState({
-      loading: true
+      loading: this.state.loading
     });
 
     axios
@@ -170,7 +154,7 @@ class CourseList extends Component {
           }
         }
 
-        calculateMeanCourseStats(courses);
+        calculateCourseStats(courses);
 
         sessionStorage.setItem('courses', JSON.stringify(courses));
 
@@ -178,6 +162,7 @@ class CourseList extends Component {
           courses,
           loading: false
         });
+        this.intervalID = setTimeout(this.getData.bind(this), 5000);
       })
       .catch((error) => {});
   }
@@ -190,8 +175,15 @@ class CourseList extends Component {
     }
   }
 
+  componentDidMount() {
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions.bind(this));
+    this.getData();
+  }
+
   componentWillUnmount() {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
+    clearTimeout(this.intervalID);
   }
 
   changePage(num) {
@@ -220,11 +212,11 @@ class CourseList extends Component {
     // Now we update url query string
     const urlParams = new URLSearchParams(window.location.search);
     if (options.courseName !== undefined) {
-      if (options.courseName.length === 0) urlParams.delete('name');
+      if (options.courseName.trim().length === 0) urlParams.delete('name');
       else urlParams.set('name', options.courseName.trim());
     }
     if (options.instructorName !== undefined) {
-      if (options.instructorName.length === 0) urlParams.delete('teacher');
+      if (options.instructorName.trim().length === 0) urlParams.delete('teacher');
       else urlParams.set('teacher', options.instructorName.trim());
     }
     if (options.offeredInFall2020 !== undefined) {

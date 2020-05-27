@@ -19,7 +19,7 @@ const FacebookEmoji = ({
         backgroundSize: '100% 100%',
         transformOrigin: 'bottom',
         cursor: 'pointer',
-        transition: '200ms transform cubic-bezier(0.23, 1, 0.32, 1)',
+        transition: '200ms transform cubic-bezier(0.23, 1, 0.32, 1)'
       },
       label: {
         position: 'absolute',
