@@ -183,7 +183,7 @@ class CourseList extends Component {
   }
 
   updateDimensions() {
-    if(window.innerWidth < 600) {
+    if(window.innerWidth < 620) {
       this.setState({ resize: true });
     } else {
       this.setState({ resize: true });
@@ -385,7 +385,7 @@ class CourseList extends Component {
           </div>
 
           <CourseListTable
-            isMobile={window.innerWidth < 600}
+            isMobile={window.innerWidth < 620}
             visibleCourses={visibleCourses}
             activePage={activePage}
           />
