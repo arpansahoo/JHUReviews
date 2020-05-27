@@ -152,13 +152,13 @@ const Reactions = (props) => {
 
   if (props.isMobile) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginLeft: '-3px' }}>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{love}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{wow}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{sad}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{angry}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{like}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{dislike}</div>
+      <div style={{ display: 'flex', marginLeft: '-3px' }}>
+        <div style={{ width: '13%', marginRight: '11px' }}>{love}</div>
+        <div style={{ width: '13%', marginRight: '11px'}}>{wow}</div>
+        <div style={{ width: '13%', marginRight: '11px' }}>{sad}</div>
+        <div style={{ width: '13%', marginRight: '11px' }}>{angry}</div>
+        <div style={{ width: '13%', marginRight: '11px' }}>{like}</div>
+        <div style={{ width: '13%' }}>{dislike}</div>
       </div>
     );
   }

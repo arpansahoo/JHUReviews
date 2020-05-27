@@ -46,7 +46,7 @@ class Course extends React.Component {
     const reviews = this.state.open && (
       <tr>
         <td colSpan="100%">
-          <div>
+          <div style={{"overflow-y": "hidden", "overflow-x":"hidden"}}>
             <Reviews
               history={history}
               course={this.props.course}
