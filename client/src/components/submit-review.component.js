@@ -10,6 +10,7 @@ import Header from './header.component';
 class ReviewForm extends Component {
   constructor(props) {
     super(props);
+    if (window.history.state == null) { window.history.pushState(null, null, '/'); window.location.reload() }
 
     this.changeText = this.changeText.bind(this);
     this.changeSemester = this.changeSemester.bind(this);
@@ -58,7 +59,7 @@ class ReviewForm extends Component {
 
   componentDidMount() {
     this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => this.login(user));
-    if (!this.state.isSignedIn) window.history.pushState(null, null, '/');
+    if (!this.state.isSignedIn) { window.history.pushState(null, null, '/'); window.location.reload() }
 
     axios
       .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.match.params.id}`)

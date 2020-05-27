@@ -15,7 +15,7 @@ const mean = (array) => {
   return sum / array.length;
 };
 
-const calculateMeanCourseStats = (courses) => {
+const calculateCourseStats = (courses) => {
   courses.forEach((currentCourse) => {
     const overallQualityRatings = [];
     const workloadRatings = [];
@@ -170,7 +170,7 @@ class CourseList extends Component {
           }
         }
 
-        calculateMeanCourseStats(courses);
+        calculateCourseStats(courses);
 
         sessionStorage.setItem('courses', JSON.stringify(courses));
 
@@ -220,11 +220,11 @@ class CourseList extends Component {
     // Now we update url query string
     const urlParams = new URLSearchParams(window.location.search);
     if (options.courseName !== undefined) {
-      if (options.courseName.length === 0) urlParams.delete('name');
+      if (options.courseName.trim().length === 0) urlParams.delete('name');
       else urlParams.set('name', options.courseName.trim());
     }
     if (options.instructorName !== undefined) {
-      if (options.instructorName.length === 0) urlParams.delete('teacher');
+      if (options.instructorName.trim().length === 0) urlParams.delete('teacher');
       else urlParams.set('teacher', options.instructorName.trim());
     }
     if (options.offeredInFall2020 !== undefined) {

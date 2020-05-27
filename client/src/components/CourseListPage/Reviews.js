@@ -35,7 +35,7 @@ const Review = (props) => {
         <Card.Body
           style={{
             marginTop: '-5px',
-            marginBottom: '-22px',
+            marginBottom: '-23px',
             marginRight: '-5px',
             marginLeft: '-5px'
           }}
@@ -152,7 +152,7 @@ const Reactions = (props) => {
 
   if (props.isMobile) {
     return (
-      <div style={{ display: 'flex', marginLeft: '-3px' }}>
+      <div style={{ display: 'flex' }}>
         <div style={{ width: '13%', marginRight: '11px' }}>{love}</div>
         <div style={{ width: '13%', marginRight: '11px'}}>{wow}</div>
         <div style={{ width: '13%', marginRight: '11px' }}>{sad}</div>
@@ -169,15 +169,14 @@ const Reactions = (props) => {
         display: 'flex',
         marginTop: '-5px',
         marginBottom: '-2px',
-        marginLeft: '-4px'
       }}
     >
-      <div style={{ width: '48px', marginRight: '15px' }}>{love}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{wow}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{sad}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{angry}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{like}</div>
-      <div style={{ width: '48px', marginRight: '15px' }}>{dislike}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{love}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{wow}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{sad}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{angry}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{like}</div>
+      <div style={{ width: '52px', marginRight: '15px' }}>{dislike}</div>
     </div>
   );
 };
@@ -218,7 +217,6 @@ export default class Reviews extends Component {
         if (this._isMounted) {
           this.setState({
             reactions: response.data.e,
-            reviews: response.data.rev
           });
         }
       })
