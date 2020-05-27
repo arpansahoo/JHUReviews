@@ -12,6 +12,12 @@ const SearchFilter = (props) => (
             onChange={(e) => {
               props.updateSearchFilters({ courseName: e.target.value });
             }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && props.isMobile) {
+                // hide mobile keyboard after pressing enter
+                e.target.blur();
+              }
+            }}
           />
         </InputGroup>
         <InputGroup style={{ marginTop: '-5px' }} className="mb-3">
@@ -20,6 +26,12 @@ const SearchFilter = (props) => (
             defaultValue={props.filters.instructorName}
             onChange={(e) => {
               props.updateSearchFilters({ instructorName: e.target.value });
+            }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && props.isMobile) {
+                // hide mobile keyboard after pressing enter
+                e.target.blur();
+              }
             }}
           />
         </InputGroup>

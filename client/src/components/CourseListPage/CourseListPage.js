@@ -343,6 +343,7 @@ class CourseList extends Component {
     const { activePage, courses, filters } = this.state;
     const matchingCourses = this.search(courses, filters);
     const visibleCourses = matchingCourses.slice((activePage - 1) * 50, activePage * 50);
+    const isMobile = window.innerWidth < 600;
 
     return (
       <>
@@ -351,7 +352,11 @@ class CourseList extends Component {
         <div className="site-container">
           <div style={{ paddingTop: '5px' }}>
             <div style={{ marginBottom: '0px' }}>
-              <SearchFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
+              <SearchFilter
+                filters={filters}
+                updateSearchFilters={this.updateSearchFilters}
+                isMobile={isMobile}
+              />
             </div>
 
             <div className="sort-wrapper" style={{ marginTop: '10px', marginBottom: '-5px' }}>
@@ -369,7 +374,7 @@ class CourseList extends Component {
           </div>
 
           <CourseListTable
-            isMobile={window.innerWidth < 600}
+            isMobile={isMobile}
             visibleCourses={visibleCourses}
             activePage={activePage}
           />
