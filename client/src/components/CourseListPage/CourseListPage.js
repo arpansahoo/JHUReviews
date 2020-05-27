@@ -55,7 +55,7 @@ const CourseListTable = (props) => (props.isMobile ? (
   <table className="table">
     <thead>
       <tr>
-        <th className="mobile-course-name">Course</th>
+        <th className="course-name">Course</th>
         <th>Rating</th>
       </tr>
     </thead>
@@ -221,11 +221,11 @@ class CourseList extends Component {
     const urlParams = new URLSearchParams(window.location.search);
     if (options.courseName !== undefined) {
       if (options.courseName.length === 0) urlParams.delete('name');
-      else urlParams.set('name', options.courseName);
+      else urlParams.set('name', options.courseName.trim());
     }
     if (options.instructorName !== undefined) {
       if (options.instructorName.length === 0) urlParams.delete('teacher');
-      else urlParams.set('teacher', options.instructorName);
+      else urlParams.set('teacher', options.instructorName.trim());
     }
     if (options.offeredInFall2020 !== undefined) {
       if (!options.offeredInFall2020) urlParams.delete('nextSem');
