@@ -39,7 +39,7 @@ const FacebookEmoji = ({
       number: {
         position: 'relative',
         top: '-13px',
-        left: '39px',
+        left: '105%',
         fontWeight: 'bold',
         fontSize: '0.75em',
         color: highlight ? '#007bff' : 'black',
