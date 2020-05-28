@@ -31,14 +31,16 @@ const Review = (props) => {
 
   return (
     <>
-      <Card style={{ backgroundColor: '#f8f9fa', marginTop: '10px', marginBottom: '10px' }}>
+      <Card style={{ backgroundColor: '#f8f9fa', marginTop: '10px', marginBottom: props.isMobile ? '15px' : '10px' }}>
         <Card.Body
           style={{
             marginTop: '-5px',
-            marginBottom: '-17px'
+            marginBottom: '-22px',
+            marginRight: '-5px',
+            marginLeft: '-5px'
           }}
         >
-          <b style={{ fontSize: '1em' }}>
+          <h6 style={{ marginBottom: '2px' }}>
             {semester}
             {sep}
             Instructor:
@@ -46,10 +48,9 @@ const Review = (props) => {
             {sep}
             Rating:
             {` ${Number(props.rev.o).toPrecision(3)}`}
-          </b>
-          <br />
-          <p style={{ textAlign: props.isMobile ? 'justify' : 'left', fontSize: '0.92em' }}>
-            <b>{prefix}</b>
+          </h6>
+          <p style={{ textAlign: 'left', fontSize: '0.90em' }}>
+            <i>{prefix}</i>
             {props.rev.c.trim()}
           </p>
         </Card.Body>
@@ -151,13 +152,13 @@ const Reactions = (props) => {
 
   if (props.isMobile) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{love}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{wow}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{sad}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{angry}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{like}</div>
-        <div style={{ width: '15%', paddingRight: '1%' }}>{dislike}</div>
+      <div style={{ display: 'flex', marginLeft: '-3px' }}>
+        <div style={{ width: '13%', marginRight: '11px' }}>{love}</div>
+        <div style={{ width: '13%', marginRight: '11px'}}>{wow}</div>
+        <div style={{ width: '13%', marginRight: '11px' }}>{sad}</div>
+        <div style={{ width: '13%', marginRight: '11px' }}>{angry}</div>
+        <div style={{ width: '13%', marginRight: '11px' }}>{like}</div>
+        <div style={{ width: '13%' }}>{dislike}</div>
       </div>
     );
   }
@@ -292,7 +293,7 @@ export default class Reviews extends Component {
       let badgeColor;
       if (rating == null || Number.isNaN(rating)) {
         badgeColor = 'dark';
-      } else if ((!flipColorScale && rating < 3) || (flipColorScale && rating > 4)) {
+      } else if ((!flipColorScale && rating < 3) || (flipColorScale && rating >= 4)) {
         badgeColor = 'danger';
       } else if ((!flipColorScale && rating < 4) || (flipColorScale && rating >= 3)) {
         badgeColor = 'warning';

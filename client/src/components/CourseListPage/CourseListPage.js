@@ -55,7 +55,7 @@ const CourseListTable = (props) => (props.isMobile ? (
   <table className="table">
     <thead>
       <tr>
-        <th>Course</th>
+        <th className="course-name">Course</th>
         <th>Rating</th>
       </tr>
     </thead>
@@ -126,11 +126,15 @@ class CourseList extends Component {
       courses,
       activePage: Number.parseInt(urlParams.get('page')) || 1,
       loading: true,
-      filters
+      filters,
+      resize: false
     };
   }
 
   componentDidMount() {
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions.bind(this));
+
     const url = 'https://jhu-course-rating-api.herokuapp.com/courses';
     // const url = 'http://localhost:4000/courses';
     this.setState({
@@ -178,6 +182,18 @@ class CourseList extends Component {
       .catch((error) => {});
   }
 
+  updateDimensions() {
+    if(window.innerWidth < 620) {
+      this.setState({ resize: true });
+    } else {
+      this.setState({ resize: true });
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions.bind(this));
+  }
+
   changePage(num) {
     this.setState({ activePage: num });
 
@@ -205,11 +221,11 @@ class CourseList extends Component {
     const urlParams = new URLSearchParams(window.location.search);
     if (options.courseName !== undefined) {
       if (options.courseName.length === 0) urlParams.delete('name');
-      else urlParams.set('name', options.courseName);
+      else urlParams.set('name', options.courseName.trim());
     }
     if (options.instructorName !== undefined) {
       if (options.instructorName.length === 0) urlParams.delete('teacher');
-      else urlParams.set('teacher', options.instructorName);
+      else urlParams.set('teacher', options.instructorName.trim());
     }
     if (options.offeredInFall2020 !== undefined) {
       if (!options.offeredInFall2020) urlParams.delete('nextSem');
@@ -343,7 +359,7 @@ class CourseList extends Component {
     const { activePage, courses, filters } = this.state;
     const matchingCourses = this.search(courses, filters);
     const visibleCourses = matchingCourses.slice((activePage - 1) * 50, activePage * 50);
-    const isMobile = window.innerWidth < 600;
+    const isMobile = window.innerWidth < 620;
 
     return (
       <>
@@ -379,7 +395,7 @@ class CourseList extends Component {
             activePage={activePage}
           />
 
-          <div className="flex-wrapper" style={{ marginTop: '-10px', float: 'right' }}>
+          <div className="flex-wrapper" style={{ marginTop: '-5px', float: 'right' }}>
             <PaginationComponent
               page={activePage}
               changePage={this.changePage}
