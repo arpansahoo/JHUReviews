@@ -145,35 +145,8 @@ class CourseList extends Component {
       .get(url)
       .then((response) => {
         const courses = response.data;
-
-        // some elements of instructors array are long commma separated strings
-        // so we separate them into individual elements, so fuse can find them better
-        for (let i = 0; i < courses.length; i++) {
-          const fixedInstructors = [];
-          const instructors = courses[i].i;
-          for (let j = 0; j < instructors.length; j++) {
-            const str = instructors[j];
-            if (str.indexOf(',') === -1) {
-              fixedInstructors.push(str);
-            } else {
-              const indices = [];
-              for (let i = 0; i < str.length; i++) {
-                if (str.charAt(i) === ',') indices.push(i);
-              }
-              for (let i = 0; i < indices.length; i++) {
-                const substring = str.substring(indices[i - 1] + 2, indices[i]);
-                fixedInstructors.push(substring);
-              }
-              fixedInstructors.push(str.substring(indices[indices.length - 1] + 2));
-            }
-            courses[i].instructors = fixedInstructors;
-          }
-        }
-
         calculateCourseStats(courses);
-
         sessionStorage.setItem('courses', JSON.stringify(courses));
-
         this.setState({
           courses,
           loading: false
@@ -327,7 +300,7 @@ class CourseList extends Component {
     // Filter courses by fuzzy search on instructor name
     const instructorName = filters.instructorName.toLowerCase().trim();
     courses.forEach((course) => {
-      course.instructorNames = course.instructors.join(' ');
+      course.instructorNames = course.i.join(' ');
     });
     if (instructorName) {
       // Filter to keep only matching courses

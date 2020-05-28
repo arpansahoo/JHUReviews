@@ -381,13 +381,21 @@ export default class Reviews extends Component {
             uiconfig={this.state.uiConfig}
             firebaseauth={firebase.auth()}
           />
-          <h5 style={{ paddingTop: '5px' }}>Reviews</h5>
+          <h5 style={{ paddingTop: '5px' }}>Reactions</h5>
+          <Reactions
+            react={this.react.bind(this)}
+            reactions={this.state.reactions}
+            reactIndex={this.state.reactIndex}
+            isMobile={this.props.isMobile}
+          />
+
+          <h5 style={{ paddingTop: '0px' }}>Reviews</h5>
           <p>No one has reviewed this course yet. Be the first!</p>
           <Button
             onClick={() => this.review()}
             variant="outline-primary"
             size="sm"
-            style={{ marginTop: '-5px', marginBottom: '10px' }}
+            style={{ marginTop: '-5px', marginBottom: '8px' }}
           >
             Submit a Review
           </Button>
@@ -404,8 +412,8 @@ export default class Reviews extends Component {
           uiconfig={this.state.uiConfig}
           firebaseauth={firebase.auth()}
         />
+        
         <h5 style={{ paddingTop: '5px' }}>Reactions</h5>
-
         <Reactions
           react={this.react.bind(this)}
           reactions={this.state.reactions}
@@ -415,6 +423,7 @@ export default class Reviews extends Component {
 
         <h5>Average Stats</h5>
         {this.stats()}
+        
         <div className="flex-wrapper">
           <h5 style={{ paddingTop: '15px' }}>Reviews</h5>
           <div>
