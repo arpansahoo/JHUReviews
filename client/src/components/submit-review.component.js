@@ -6,12 +6,12 @@ import {
 import firebase from 'firebase/app';
 import Popover from './popover.component';
 import Header from './header.component';
+import { history } from '../util';
 
 class ReviewForm extends Component {
   constructor(props) {
     super(props);
-    if (window.history.state == null) { window.history.pushState(null, null, '/'); window.location.reload() }
-
+    
     this.changeText = this.changeText.bind(this);
     this.changeSemester = this.changeSemester.bind(this);
     this.changeInstructorName = this.changeInstructorName.bind(this);
@@ -118,9 +118,13 @@ class ReviewForm extends Component {
         obj
       )
       // .post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
-      .then((res) => {})
+      .then((res) => {window.location.reload()})
       .catch((error) => {})
-      .finally(() => window.history.back());
+    
+    if (this.props.match.params.redirect) 
+        this.props.history.push('/?' + this.props.match.params.redirect)
+    else 
+      this.props.history.push('/')
   }
 
   render() {
@@ -139,7 +143,7 @@ class ReviewForm extends Component {
             </div>
             <FormComponent
               instructors={this.state.instructors}
-              page={this.props.match.params.page}
+              redirect={this.props.match.params.redirect}
               changeText={this.changeText}
               changeSemester={this.changeSemester}
               changeInstructorName={this.changeInstructorName}
@@ -226,11 +230,16 @@ class ReviewForm extends Component {
 
 function FormComponent(props) {
   const [validated, setValidated] = useState(false);
+  const redirect = props.redirect
 
   const handleCancel = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    window.history.back();
+    if (redirect) 
+      history.push('/?' + redirect)
+    else 
+      history.push('/')
+    window.location.reload()
   };
 
   const handleSubmit = (event) => {

@@ -171,14 +171,58 @@ const Reactions = (props) => {
         marginBottom: '-2px',
       }}
     >
-      <div style={{ width: '52px', marginRight: '15px' }}>{love}</div>
-      <div style={{ width: '52px', marginRight: '15px' }}>{wow}</div>
-      <div style={{ width: '52px', marginRight: '15px' }}>{sad}</div>
-      <div style={{ width: '52px', marginRight: '15px' }}>{angry}</div>
-      <div style={{ width: '52px', marginRight: '15px' }}>{like}</div>
-      <div style={{ width: '52px', marginRight: '15px' }}>{dislike}</div>
+      <div style={{ width: '50px', marginRight: '15px' }}>{love}</div>
+      <div style={{ width: '50px', marginRight: '15px' }}>{wow}</div>
+      <div style={{ width: '50px', marginRight: '15px' }}>{sad}</div>
+      <div style={{ width: '50px', marginRight: '15px' }}>{angry}</div>
+      <div style={{ width: '50px', marginRight: '15px' }}>{like}</div>
+      <div style={{ width: '50px', marginRight: '15px' }}>{dislike}</div>
     </div>
   );
+};
+
+const mean = (array) => {
+  let sum = 0;
+  for (let i = 0; i < array.length; i += 1) {
+    sum += array[i];
+  }
+  return sum / array.length;
+};
+
+const calculateStats = (currentCourse) => {
+  const overallQualityRatings = [];
+  const workloadRatings = [];
+  const difficultyRatings = [];
+  const gradingRatings = [];
+  const learningRatings = [];
+  const teacherRatings = [];
+
+  currentCourse.rev.forEach((review) => {
+    // Old review (from pdf) which only contains overall quality rating
+    if (review.b === '1') {
+      // Old reviews are worth 5 new reviews
+      for (let j = 0; j < 5; j += 1) {
+        overallQualityRatings.push(Number.parseFloat(review.o));
+      }
+      // New review
+    } else if (review.b === '0') {
+      overallQualityRatings.push(Number.parseFloat(review.o));
+      workloadRatings.push(Number.parseFloat(review.w));
+      difficultyRatings.push(Number.parseFloat(review.d));
+      gradingRatings.push(Number.parseFloat(review.g));
+      learningRatings.push(Number.parseFloat(review.l));
+      teacherRatings.push(Number.parseFloat(review.t));
+    }
+  });
+
+  return {
+    overallQuality: mean(overallQualityRatings),
+    workload: mean(workloadRatings),
+    difficulty: mean(difficultyRatings),
+    grading: mean(gradingRatings),
+    learning: mean(learningRatings),
+    teacherRating: mean(teacherRatings)
+  }
 };
 
 export default class Reviews extends Component {
@@ -189,12 +233,18 @@ export default class Reviews extends Component {
     const reviews = props.course.rev;
     const reactions = props.course.e;
     const reactIndex = -1;
-
+    const stats = calculateStats(props.course)
     this.state = {
       showModal: false,
       reviews,
       reactions,
       reactIndex,
+      overallQuality: stats.overallQuality,
+      workload: stats.workload,
+      difficulty: stats.difficulty,
+      grading: stats.grading,
+      learning: stats.learning,
+      teacherRating: stats.teacherRating,
       isSignedIn: false,
       uid: null,
       uiConfig: {
@@ -210,13 +260,22 @@ export default class Reviews extends Component {
   componentDidMount() {
     this._isMounted = true;
     this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => this.login(user));
+
     axios
       .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.course._id}`)
       // .get('http://localhost:4000/courses/'+this.props.course._id)
       .then((response) => {
         if (this._isMounted) {
+          const stats = calculateStats(response.data)
           this.setState({
             reactions: response.data.e,
+            reviews: response.data.rev,
+            overallQuality: stats.overallQuality,
+            workload: stats.workload,
+            difficulty: stats.difficulty,
+            grading: stats.grading,
+            learning: stats.learning,
+            teacherRating: stats.teacherRating,
           });
         }
       })
@@ -255,7 +314,8 @@ export default class Reviews extends Component {
 
     // Push to new url but keep current url in state
     if (this.state.submitReview && !this.state.submitReact) {
-      this.props.history.push(`/submit-review/${this.props.course._id}`, {
+      const urlParams = new URLSearchParams(window.location.search);
+      this.props.history.push(`/submit-review/${this.props.course._id}/${urlParams.toString()}`, {
         previous: history.location.pathname + history.location.search
       });
       window.location.reload();
@@ -279,13 +339,14 @@ export default class Reviews extends Component {
         submitReact: false
       });
     } else {
-      this.props.history.push(`/submit-review/${this.props.course._id}`);
+      const urlParams = new URLSearchParams(window.location.search);
+      this.props.history.push(`/submit-review/${this.props.course._id}/${urlParams.toString()}`);
       window.location.reload();
     }
   }
 
   stats() {
-    const { course } = this.props;
+    // const { course } = this.props;
 
     const statsBadge = (ratingName, rating, flipColorScale) => {
       let badgeColor;
@@ -323,18 +384,20 @@ export default class Reviews extends Component {
       );
     };
 
-    return (
-      <>
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {statsBadge('Overall', course.overallQuality)}
-          {statsBadge('Workload', course.workload, true)}
-          {statsBadge('Difficulty', course.difficulty, true)}
-          {statsBadge('Grading', course.grading, true)}
-          {statsBadge('Gainz', course.learning)}
-          {statsBadge('Instructor', course.teacherRating)}
-        </div>
-      </>
-    );
+    if (this._isMounted) {
+      return (
+        <>
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            {statsBadge('Overall', this.state.overallQuality)}
+            {statsBadge('Workload', this.state.workload, true)}
+            {statsBadge('Difficulty', this.state.difficulty, true)}
+            {statsBadge('Grading', this.state.grading, true)}
+            {statsBadge('Gainz', this.state.learning)}
+            {statsBadge('Instructor', this.state.teacherRating)}
+          </div>
+        </>
+      );
+    }
   }
 
   react(num) {
@@ -421,7 +484,7 @@ export default class Reviews extends Component {
           isMobile={this.props.isMobile}
         />
 
-        <h5>Average Stats</h5>
+        <h5 style={{ paddingBottom: '3px' }}>Average Stats</h5>
         {this.stats()}
         
         <div className="flex-wrapper">

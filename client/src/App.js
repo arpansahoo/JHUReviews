@@ -16,6 +16,7 @@ const App = () => (
   <Router>
     <Switch>
       <Route path="/" exact component={CourseListPage} />
+      <Route path="/submit-review/:id/:redirect" component={ReviewForm} />
       <Route path="/submit-review/:id" component={ReviewForm} />
       <Route component={Page404} />
     </Switch>

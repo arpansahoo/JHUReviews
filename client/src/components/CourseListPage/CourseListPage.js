@@ -18,11 +18,11 @@ const mean = (array) => {
 const calculateCourseStats = (courses) => {
   courses.forEach((currentCourse) => {
     const overallQualityRatings = [];
-    const workloadRatings = [];
-    const difficultyRatings = [];
-    const gradingRatings = [];
-    const learningRatings = [];
-    const teacherRatings = [];
+    // const workloadRatings = [];
+    // const difficultyRatings = [];
+    // const gradingRatings = [];
+    // const learningRatings = [];
+    // const teacherRatings = [];
 
     currentCourse.rev.forEach((review) => {
       // Old review (from pdf) which only contains overall quality rating
@@ -34,20 +34,20 @@ const calculateCourseStats = (courses) => {
         // New review
       } else if (review.b === '0') {
         overallQualityRatings.push(Number.parseFloat(review.o));
-        workloadRatings.push(Number.parseFloat(review.w));
-        difficultyRatings.push(Number.parseFloat(review.d));
-        gradingRatings.push(Number.parseFloat(review.g));
-        learningRatings.push(Number.parseFloat(review.l));
-        teacherRatings.push(Number.parseFloat(review.t));
+        // workloadRatings.push(Number.parseFloat(review.w));
+        // difficultyRatings.push(Number.parseFloat(review.d));
+        // gradingRatings.push(Number.parseFloat(review.g));
+        // learningRatings.push(Number.parseFloat(review.l));
+        // teacherRatings.push(Number.parseFloat(review.t));
       }
     });
 
     currentCourse.overallQuality = mean(overallQualityRatings);
-    currentCourse.workload = mean(workloadRatings);
-    currentCourse.difficulty = mean(difficultyRatings);
-    currentCourse.grading = mean(gradingRatings);
-    currentCourse.learning = mean(learningRatings);
-    currentCourse.teacherRating = mean(teacherRatings);
+    // currentCourse.workload = mean(workloadRatings);
+    // currentCourse.difficulty = mean(difficultyRatings);
+    // currentCourse.grading = mean(gradingRatings);
+    // currentCourse.learning = mean(learningRatings);
+    // currentCourse.teacherRating = mean(teacherRatings);
   });
 };
 
@@ -292,7 +292,7 @@ class CourseList extends Component {
             .toLowerCase()
             .includes(keyword);
           const matchesCourseNum = currentCourse.num.toLowerCase().includes(keyword);
-          const matchesCourseDept = currentCourse.d && currentCourse.d.toLowerCase().includes(keyword);
+          // const matchesCourseDept = currentCourse.d && currentCourse.d.toLowerCase().includes(keyword);
           return matchesCourseName || matchesCourseNum;
         }));
     }
@@ -332,6 +332,7 @@ class CourseList extends Component {
     const { activePage, courses, filters } = this.state;
     const matchingCourses = this.search(courses, filters);
     const visibleCourses = matchingCourses.slice((activePage - 1) * 50, activePage * 50);
+    const isMobile = window.innerWidth < 620;
 
     return (
       <>
@@ -340,7 +341,11 @@ class CourseList extends Component {
         <div className="site-container">
           <div style={{ paddingTop: '5px' }}>
             <div style={{ marginBottom: '0px' }}>
-              <SearchFilter filters={filters} updateSearchFilters={this.updateSearchFilters} />
+              <SearchFilter 
+                filters={filters}
+                updateSearchFilters={this.updateSearchFilters}
+                isMobile={isMobile} 
+              />
             </div>
 
             <div className="sort-wrapper" style={{ marginTop: '10px', marginBottom: '-5px' }}>
@@ -358,7 +363,7 @@ class CourseList extends Component {
           </div>
 
           <CourseListTable
-            isMobile={window.innerWidth < 620}
+            isMobile={isMobile}
             visibleCourses={visibleCourses}
             activePage={activePage}
           />
