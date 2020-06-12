@@ -1,11 +1,10 @@
-import React, { Component, useState } from 'react';
-import axios from 'axios';
-import {
-  Form, Button, InputGroup, Col
-} from 'react-bootstrap';
-import firebase from 'firebase/app';
-import Popover from './popover.component';
-import Header from './header.component';
+import React, { Component, useState } from "react";
+import axios from "axios";
+import { Form, Button, InputGroup, Col } from "react-bootstrap";
+import firebase from "firebase/app";
+import Popover from "./popover.component";
+import Header from "./header.component";
+import { history } from "../util";
 
 class ReviewForm extends Component {
   constructor(props) {
@@ -23,30 +22,30 @@ class ReviewForm extends Component {
     this.onSubmit = this.onSubmit.bind(this);
 
     let isSignedIn = false;
-    if (localStorage.getItem('loggedIn') === 'true') isSignedIn = true;
+    if (localStorage.getItem("loggedIn") === "true") isSignedIn = true;
 
     this.state = {
-      number: '',
-      title: '',
+      number: "",
+      title: "",
       instructors: [],
-      semester: '',
-      instructor_name: '',
-      overall: '',
-      workload: '',
-      difficulty: '',
-      grading: '',
-      learning: '',
-      instructor_quality: '',
-      text: '',
+      semester: "",
+      instructor_name: "",
+      overall: "",
+      workload: "",
+      difficulty: "",
+      grading: "",
+      learning: "",
+      instructor_quality: "",
+      text: "",
       isSignedIn,
       uid: null,
       uiConfig: {
-        signInFlow: 'popup',
-        signInOptions: ['microsoft.com'],
+        signInFlow: "popup",
+        signInOptions: ["microsoft.com"],
         callbacks: {
-          signInSuccessWithAuthResult: () => false
-        }
-      }
+          signInSuccessWithAuthResult: () => false,
+        },
+      },
     };
   }
 
@@ -57,17 +56,24 @@ class ReviewForm extends Component {
   }
 
   componentDidMount() {
-    this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => this.login(user));
-    if (!this.state.isSignedIn) window.history.pushState(null, null, '/');
+    this.unregisterAuthObserver = firebase
+      .auth()
+      .onAuthStateChanged((user) => this.login(user));
+    if (!this.state.isSignedIn) {
+      window.history.pushState(null, null, "/");
+      window.location.reload();
+    }
 
     axios
-      .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.match.params.id}`)
+      .get(
+        `https://jhu-course-rating-api.herokuapp.com/courses/${this.props.match.params.id}`
+      )
       // .get('http://localhost:4000/courses/'+this.props.match.params.id)
       .then((response) => {
         this.setState({
           number: response.data.num,
           title: response.data.n,
-          instructors: response.data.i.reverse()
+          instructors: response.data.i.reverse(),
         });
       })
       .catch((error) => {});
@@ -89,13 +95,13 @@ class ReviewForm extends Component {
       this.state.difficulty,
       this.state.learning,
       this.state.grading,
-      this.state.instructor_quality
+      this.state.instructor_quality,
     ];
 
-    if (array[1] === '') array[1] = 'S20';
-    if (array[2] === '') array[2] = this.state.instructors[0];
+    if (array[1] === "") array[1] = "S20";
+    if (array[2] === "") array[2] = this.state.instructors[0];
     for (let i = 3; i < array.length; i++) {
-      if (array[i] === '') array[i] = '3.00';
+      if (array[i] === "") array[i] = "3.00";
     }
 
     const obj = {
@@ -108,7 +114,7 @@ class ReviewForm extends Component {
       l: array[6],
       g: array[7],
       t: array[8],
-      b: '0'
+      b: "0",
     };
 
     axios
@@ -117,9 +123,14 @@ class ReviewForm extends Component {
         obj
       )
       // .post('http://localhost:4000/courses/add-review/'+this.props.match.params.id+"/"+this.state.uid, obj)
-      .then((res) => {})
-      .catch((error) => {})
-      .finally(() => window.history.back());
+      .then((res) => {
+        window.location.reload();
+      })
+      .catch((error) => {});
+
+    if (this.props.match.params.redirect)
+      this.props.history.push("/?" + this.props.match.params.redirect);
+    else this.props.history.push("/");
   }
 
   render() {
@@ -127,18 +138,16 @@ class ReviewForm extends Component {
       <>
         <Header submit />
         <div className="site-container">
-          <div style={{ paddingTop: '20px' }}>
-            <div style={{ paddingBottom: '5px' }}>
+          <div style={{ paddingTop: "20px" }}>
+            <div style={{ paddingBottom: "5px" }}>
               <h2>You are submitting a review for:</h2>
-              <h5 style={{ color: '#6c757d' }}>
-                {this.state.number}
-                {' '}
-                {this.state.title}
+              <h5 style={{ color: "#6c757d" }}>
+                {this.state.number} {this.state.title}
               </h5>
             </div>
             <FormComponent
               instructors={this.state.instructors}
-              page={this.props.match.params.page}
+              redirect={this.props.match.params.redirect}
               changeText={this.changeText}
               changeSemester={this.changeSemester}
               changeInstructorName={this.changeInstructorName}
@@ -158,78 +167,81 @@ class ReviewForm extends Component {
 
   changeInstructorName(e) {
     this.setState({
-      instructor_name: e.target.value.trim()
+      instructor_name: e.target.value.trim(),
     });
   }
 
   changeSemester(e) {
     let { value } = e.target;
-    if (value === 'Spring 2020') {
-      value = 'S20';
-    } else if (value === 'Fall 2019') {
-      value = 'F19';
-    } else if (value === 'Spring 2019') {
-      value = 'S19';
-    } else if (value === 'Fall 2018') {
-      value = 'F18';
-    } else if (value === 'Spring 2018') {
-      value = 'S18';
+    if (value === "Spring 2020") {
+      value = "S20";
+    } else if (value === "Fall 2019") {
+      value = "F19";
+    } else if (value === "Spring 2019") {
+      value = "S19";
+    } else if (value === "Fall 2018") {
+      value = "F18";
+    } else if (value === "Spring 2018") {
+      value = "S18";
     }
     this.setState({
-      semester: value
+      semester: value,
     });
   }
 
   changeText(e) {
     this.setState({
-      text: e.target.value.trim()
+      text: e.target.value.trim(),
     });
   }
 
   changeOverall(e) {
     this.setState({
-      overall: e.target.value
+      overall: e.target.value,
     });
   }
 
   changeWorkload(e) {
     this.setState({
-      workload: e.target.value
+      workload: e.target.value,
     });
   }
 
   changeDifficulty(e) {
     this.setState({
-      difficulty: e.target.value
+      difficulty: e.target.value,
     });
   }
 
   changeLearning(e) {
     this.setState({
-      learning: e.target.value
+      learning: e.target.value,
     });
   }
 
   changeGrading(e) {
     this.setState({
-      grading: e.target.value
+      grading: e.target.value,
     });
   }
 
   changeInstructorQuality(e) {
     this.setState({
-      instructor_quality: e.target.value
+      instructor_quality: e.target.value,
     });
   }
 }
 
 function FormComponent(props) {
   const [validated, setValidated] = useState(false);
+  const redirect = props.redirect;
 
   const handleCancel = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    window.history.back();
+    if (redirect) history.push("/?" + redirect);
+    else history.push("/");
+    window.location.reload();
   };
 
   const handleSubmit = (event) => {
@@ -248,7 +260,11 @@ function FormComponent(props) {
   return (
     <Form noValidate validated={validated} onSubmit={handleSubmit}>
       <Form.Row>
-        <Form.Group style={{ marginRight: '10px' }} as={Col} controlId="validationCustomUsername">
+        <Form.Group
+          style={{ marginRight: "10px" }}
+          as={Col}
+          controlId="validationCustomUsername"
+        >
           <Form.Label>Semester</Form.Label>
           <InputGroup>
             <Form.Control
@@ -268,7 +284,11 @@ function FormComponent(props) {
         <Form.Group as={Col} controlId="validationCustom05">
           <Form.Label>Instructor Name</Form.Label>
           <InputGroup>
-            <Form.Control as="select" required onChange={props.changeInstructorName}>
+            <Form.Control
+              as="select"
+              required
+              onChange={props.changeInstructorName}
+            >
               {props.instructors.map((instructor) => (
                 <option key={instructor}>{instructor}</option>
               ))}
@@ -278,7 +298,11 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group style={{ marginRight: '10px' }} as={Col} controlId="validationCustomUsername">
+        <Form.Group
+          style={{ marginRight: "10px" }}
+          as={Col}
+          controlId="validationCustomUsername"
+        >
           <Form.Label>
             <Popover
               name="Overall Quality"
@@ -288,7 +312,12 @@ function FormComponent(props) {
             />
           </Form.Label>
           <InputGroup>
-            <Form.Control as="select" defaultValue="3" required onChange={props.changeOverall}>
+            <Form.Control
+              as="select"
+              defaultValue="3"
+              required
+              onChange={props.changeOverall}
+            >
               <option>1</option>
               <option>2</option>
               <option>3</option>
@@ -307,7 +336,12 @@ function FormComponent(props) {
             />
           </Form.Label>
           <InputGroup>
-            <Form.Control as="select" defaultValue="3" required onChange={props.changeWorkload}>
+            <Form.Control
+              as="select"
+              defaultValue="3"
+              required
+              onChange={props.changeWorkload}
+            >
               <option>1</option>
               <option>2</option>
               <option>3</option>
@@ -319,7 +353,11 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group style={{ marginRight: '10px' }} as={Col} controlId="validationCustomUsername">
+        <Form.Group
+          style={{ marginRight: "10px" }}
+          as={Col}
+          controlId="validationCustomUsername"
+        >
           <Form.Label>
             <Popover
               name="Difficulty"
@@ -329,7 +367,12 @@ function FormComponent(props) {
             />
           </Form.Label>
           <InputGroup>
-            <Form.Control as="select" defaultValue="3" required onChange={props.changeDifficulty}>
+            <Form.Control
+              as="select"
+              defaultValue="3"
+              required
+              onChange={props.changeDifficulty}
+            >
               <option>1</option>
               <option>2</option>
               <option>3</option>
@@ -348,7 +391,12 @@ function FormComponent(props) {
             />
           </Form.Label>
           <InputGroup>
-            <Form.Control as="select" defaultValue="3" required onChange={props.changeGrading}>
+            <Form.Control
+              as="select"
+              defaultValue="3"
+              required
+              onChange={props.changeGrading}
+            >
               <option>1</option>
               <option>2</option>
               <option>3</option>
@@ -360,7 +408,11 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group style={{ marginRight: '10px' }} as={Col} controlId="validationCustomUsername">
+        <Form.Group
+          style={{ marginRight: "10px" }}
+          as={Col}
+          controlId="validationCustomUsername"
+        >
           <Form.Label>
             <Popover
               name="Gainz"
@@ -370,7 +422,12 @@ function FormComponent(props) {
             />
           </Form.Label>
           <InputGroup>
-            <Form.Control as="select" defaultValue="3" required onChange={props.changeLearning}>
+            <Form.Control
+              as="select"
+              defaultValue="3"
+              required
+              onChange={props.changeLearning}
+            >
               <option>1</option>
               <option>2</option>
               <option>3</option>
@@ -415,17 +472,19 @@ function FormComponent(props) {
             maxLength={550}
             onChange={props.changeText}
           />
-          <Form.Control.Feedback type="invalid">Please provide a review.</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+            Please provide a review.
+          </Form.Control.Feedback>
         </Form.Group>
       </Form.Row>
 
-      <div style={{ marginTop: '5px' }}>
+      <div style={{ marginTop: "5px" }}>
         <Button type="submit">Submit</Button>
         <Button
           variant="danger"
           onClick={handleCancel}
           type="cancel"
-          style={{ marginLeft: '15px' }}
+          style={{ marginLeft: "15px" }}
         >
           Cancel
         </Button>

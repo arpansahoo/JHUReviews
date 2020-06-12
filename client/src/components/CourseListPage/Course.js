@@ -1,8 +1,8 @@
-import React from 'react';
-import { Button, Badge } from 'react-bootstrap';
+import React from "react";
+import { Button, Badge } from "react-bootstrap";
 
-import Reviews from './Reviews';
-import { history } from '../../util';
+import Reviews from "./Reviews";
+import { history } from "../../util";
 
 class Course extends React.Component {
   constructor(props) {
@@ -15,29 +15,52 @@ class Course extends React.Component {
   }
 
   render() {
-    if (isNaN(this.props.course.overallQuality)) this.props.course.overallQuality = '0.00';
+    if (isNaN(this.props.course.overallQuality))
+      this.props.course.overallQuality = "0.00";
     const rating = Number(this.props.course.overallQuality);
-    let color = 'dark';
+    let color = "dark";
     if (rating < 1) {
-      color = 'dark';
+      color = "dark";
     } else if (rating < 3) {
-      color = 'danger';
+      color = "danger";
     } else if (rating < 4) {
-      color = 'warning';
+      color = "warning";
     } else {
-      color = 'success';
+      color = "success";
     }
 
     const collapseExpandButton = (
       <>
         {this.state.open && (
-          <Button variant="link" style={{ padding: '0' }} onClick={() => this.handleClick(false)}>
-            <p style={{ margin: '0', marginTop: this.props.isMobile ? '-4.5px' : '-2px' }}>[-]</p>
+          <Button
+            variant="link"
+            style={{ padding: "0" }}
+            onClick={() => this.handleClick(false)}
+          >
+            <p
+              style={{
+                margin: "0",
+                marginTop: this.props.isMobile ? "-4.5px" : "-2px",
+              }}
+            >
+              [-]
+            </p>
           </Button>
         )}
         {!this.state.open && (
-          <Button variant="link" style={{ padding: '0' }} onClick={() => this.handleClick(true)}>
-            <p style={{ margin: '0', marginTop: this.props.isMobile ? '-4.5px' : '-2px' }}>[+]</p>
+          <Button
+            variant="link"
+            style={{ padding: "0" }}
+            onClick={() => this.handleClick(true)}
+          >
+            <p
+              style={{
+                margin: "0",
+                marginTop: this.props.isMobile ? "-4.5px" : "-2px",
+              }}
+            >
+              [+]
+            </p>
           </Button>
         )}
       </>
@@ -46,7 +69,7 @@ class Course extends React.Component {
     const reviews = this.state.open && (
       <tr>
         <td colSpan="100%">
-          <div style={{"overflow-y": "hidden", "overflow-x":"hidden"}}>
+          <div style={{ overflowY: "hidden", overflowX: "hidden" }}>
             <Reviews
               history={history}
               course={this.props.course}
@@ -61,19 +84,22 @@ class Course extends React.Component {
     if (this.props.isMobile) {
       return (
         <>
-          <tr className="hover" onClick={() => this.handleClick(!this.state.open)}>
+          <tr
+            className="hover"
+            onClick={() => this.handleClick(!this.state.open)}
+          >
             <td>
-              <div style={{ paddingLeft: '1px' }}>
+              <div style={{ paddingLeft: "1px" }}>
                 {`${this.props.course.n} `}
                 {collapseExpandButton}
               </div>
             </td>
-            <td style={{ paddingLeft: '15px' }}>
+            <td style={{ paddingLeft: "15px" }}>
               <Badge
                 variant={color}
-                style={{ fontSize: '15px', padding: '5px', fontWeight: '400' }}
+                style={{ fontSize: "15px", padding: "5px", fontWeight: "400" }}
               >
-                {rating > 0 ? rating.toPrecision(3) : 'N/A'}
+                {rating > 0 ? rating.toPrecision(3) : "N/A"}
               </Badge>
               <br />
             </td>
@@ -85,20 +111,26 @@ class Course extends React.Component {
 
     return (
       <>
-        <tr className="hover" onClick={() => this.handleClick(!this.state.open)}>
+        <tr
+          className="hover"
+          onClick={() => this.handleClick(!this.state.open)}
+        >
           <td>{this.props.course.num}</td>
           <td>
-            <div className="row" style={{ paddingLeft: '17px' }}>
-              <div style={{ paddingRight: '5px' }}>{this.props.course.n}</div>
+            <div className="row" style={{ paddingLeft: "17px" }}>
+              <div style={{ paddingRight: "5px" }}>{this.props.course.n}</div>
               {collapseExpandButton}
             </div>
           </td>
-          <td style={{ paddingLeft: '14px' }}>{this.props.course.a}</td>
-          <td style={{ paddingLeft: '15px' }}>{this.props.course.w}</td>
-          <td style={{ paddingLeft: '15px' }}>{this.props.course.c}</td>
-          <td style={{ paddingLeft: '15px' }}>
-            <Badge variant={color} style={{ fontSize: '15px', padding: '5px', fontWeight: '400' }}>
-              {rating > 0 ? rating.toPrecision(3) : 'N/A'}
+          <td style={{ paddingLeft: "14px" }}>{this.props.course.a}</td>
+          <td style={{ paddingLeft: "15px" }}>{this.props.course.w}</td>
+          <td style={{ paddingLeft: "15px" }}>{this.props.course.c}</td>
+          <td style={{ paddingLeft: "15px" }}>
+            <Badge
+              variant={color}
+              style={{ fontSize: "15px", padding: "5px", fontWeight: "400" }}
+            >
+              {rating > 0 ? rating.toPrecision(3) : "N/A"}
             </Badge>
           </td>
         </tr>

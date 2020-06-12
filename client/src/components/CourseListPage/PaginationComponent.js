@@ -1,5 +1,5 @@
-import React from 'react';
-import { Pagination } from 'react-bootstrap';
+import React from "react";
+import { Pagination } from "react-bootstrap";
 
 const PaginationComponent = (props) => {
   const active = props.page;
@@ -10,10 +10,19 @@ const PaginationComponent = (props) => {
     return (
       <>
         <Pagination size="sm">
-          <Pagination.First disabled={active === 1} onClick={() => props.changePage(1)} />
-          <Pagination.Prev disabled={active === 1} onClick={() => props.changePage(active - 1)} />
+          <Pagination.First
+            disabled={active === 1}
+            onClick={() => props.changePage(1)}
+          />
+          <Pagination.Prev
+            disabled={active === 1}
+            onClick={() => props.changePage(active - 1)}
+          />
 
-          <Pagination.Item active={active === 1} onClick={() => props.changePage(1)}>
+          <Pagination.Item
+            active={active === 1}
+            onClick={() => props.changePage(1)}
+          >
             {1}
           </Pagination.Item>
           <Pagination.Item
@@ -70,12 +79,19 @@ const PaginationComponent = (props) => {
         </Pagination>
       </>
     );
-  } if (active < last - 6) {
+  }
+  if (active < last - 6) {
     return (
       <>
         <Pagination size="sm">
-          <Pagination.First disabled={active === 1} onClick={() => props.changePage(1)} />
-          <Pagination.Prev disabled={active === 1} onClick={() => props.changePage(active - 1)} />
+          <Pagination.First
+            disabled={active === 1}
+            onClick={() => props.changePage(1)}
+          />
+          <Pagination.Prev
+            disabled={active === 1}
+            onClick={() => props.changePage(active - 1)}
+          />
 
           <Pagination.Item onClick={() => props.changePage(active - 3)}>
             {active - 3}
@@ -125,10 +141,19 @@ const PaginationComponent = (props) => {
   return (
     <>
       <Pagination size="sm">
-        <Pagination.First disabled={active === 1} onClick={() => props.changePage(1)} />
-        <Pagination.Prev disabled={active === 1} onClick={() => props.changePage(active - 1)} />
+        <Pagination.First
+          disabled={active === 1}
+          onClick={() => props.changePage(1)}
+        />
+        <Pagination.Prev
+          disabled={active === 1}
+          onClick={() => props.changePage(active - 1)}
+        />
 
-        <Pagination.Item active={active === last - 6} onClick={() => props.changePage(last - 6)}>
+        <Pagination.Item
+          active={active === last - 6}
+          onClick={() => props.changePage(last - 6)}
+        >
           {last - 6}
         </Pagination.Item>
         <Pagination.Item

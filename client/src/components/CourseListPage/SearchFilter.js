@@ -1,43 +1,60 @@
-import React from 'react';
-import { InputGroup, FormControl, Form } from 'react-bootstrap';
+import React from "react";
+import { InputGroup, FormControl, Form } from "react-bootstrap";
 
 const SearchFilter = (props) => (
   <>
     <div>
       <div className="search-flex">
-        <InputGroup style={{ marginRight: '20px', marginTop: '-5px' }} className="mb-3">
+        <InputGroup
+          style={{ marginRight: "20px", marginTop: "-5px" }}
+          className="mb-3"
+        >
           <FormControl
-            placeholder="Search for a course or department..."
+            placeholder="Search for a course..."
             defaultValue={props.filters.courseName}
             onChange={(e) => {
               props.updateSearchFilters({ courseName: e.target.value });
             }}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && props.isMobile) {
+                // hide mobile keyboard after pressing enter
+                e.target.blur();
+              }
+            }}
           />
         </InputGroup>
-        <InputGroup style={{ marginTop: '-5px' }} className="mb-3">
+        <InputGroup style={{ marginTop: "-5px" }} className="mb-3">
           <FormControl
             placeholder="Search for an instructor..."
             defaultValue={props.filters.instructorName}
             onChange={(e) => {
               props.updateSearchFilters({ instructorName: e.target.value });
             }}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && props.isMobile) {
+                // hide mobile keyboard after pressing enter
+                e.target.blur();
+              }
+            }}
           />
         </InputGroup>
       </div>
 
-      <div style={{ marginLeft: '1px' }}>
+      <div style={{ marginLeft: "1px" }}>
         <Form>
-          {['checkbox'].map((type) => (
+          {["checkbox"].map((type) => (
             <div key={`inline-${type}`} className="mb-3">
               <div className="filter-wrapper">
                 <div className="flex-wrapper">
                   <Form.Check
                     onChange={(e) => {
                       props.updateSearchFilters({
-                        includeHumanitiesAreaDesignation: e.target.checked
+                        includeHumanitiesAreaDesignation: e.target.checked,
                       });
                     }}
-                    defaultChecked={props.filters.includeHumanitiesAreaDesignation}
+                    defaultChecked={
+                      props.filters.includeHumanitiesAreaDesignation
+                    }
                     inline
                     label="H"
                     type={type}
@@ -46,10 +63,12 @@ const SearchFilter = (props) => (
                   <Form.Check
                     onChange={(e) => {
                       props.updateSearchFilters({
-                        includeSocialSciencesAreaDesignation: e.target.checked
+                        includeSocialSciencesAreaDesignation: e.target.checked,
                       });
                     }}
-                    defaultChecked={props.filters.includeSocialSciencesAreaDesignation}
+                    defaultChecked={
+                      props.filters.includeSocialSciencesAreaDesignation
+                    }
                     inline
                     label="S"
                     type={type}
@@ -58,10 +77,12 @@ const SearchFilter = (props) => (
                   <Form.Check
                     onChange={(e) => {
                       props.updateSearchFilters({
-                        includeNaturalSciencesAreaDesignation: e.target.checked
+                        includeNaturalSciencesAreaDesignation: e.target.checked,
                       });
                     }}
-                    defaultChecked={props.filters.includeNaturalSciencesAreaDesignation}
+                    defaultChecked={
+                      props.filters.includeNaturalSciencesAreaDesignation
+                    }
                     inline
                     label="N"
                     type={type}
@@ -70,10 +91,12 @@ const SearchFilter = (props) => (
                   <Form.Check
                     onChange={(e) => {
                       props.updateSearchFilters({
-                        includeEngineeringAreaDesignation: e.target.checked
+                        includeEngineeringAreaDesignation: e.target.checked,
                       });
                     }}
-                    defaultChecked={props.filters.includeEngineeringAreaDesignation}
+                    defaultChecked={
+                      props.filters.includeEngineeringAreaDesignation
+                    }
                     inline
                     label="E"
                     type={type}
@@ -82,10 +105,12 @@ const SearchFilter = (props) => (
                   <Form.Check
                     onChange={(e) => {
                       props.updateSearchFilters({
-                        includeQuantitativeAreaDesignation: e.target.checked
+                        includeQuantitativeAreaDesignation: e.target.checked,
                       });
                     }}
-                    defaultChecked={props.filters.includeQuantitativeAreaDesignation}
+                    defaultChecked={
+                      props.filters.includeQuantitativeAreaDesignation
+                    }
                     inline
                     label="Q"
                     type={type}
@@ -94,10 +119,12 @@ const SearchFilter = (props) => (
                   <Form.Check
                     onChange={(e) => {
                       props.updateSearchFilters({
-                        includeCoursesWithoutAreaDesignation: e.target.checked
+                        includeCoursesWithoutAreaDesignation: e.target.checked,
                       });
                     }}
-                    defaultChecked={props.filters.includeCoursesWithoutAreaDesignation}
+                    defaultChecked={
+                      props.filters.includeCoursesWithoutAreaDesignation
+                    }
                     inline
                     label="Include N/A"
                     type={type}
@@ -108,7 +135,9 @@ const SearchFilter = (props) => (
                 <div className="flex-wrapper">
                   <Form.Check
                     onChange={(e) => {
-                      props.updateSearchFilters({ writingIntensive: e.target.checked });
+                      props.updateSearchFilters({
+                        writingIntensive: e.target.checked,
+                      });
                     }}
                     defaultChecked={props.filters.writingIntensive}
                     inline
@@ -118,7 +147,9 @@ const SearchFilter = (props) => (
                   />
                   <Form.Check
                     onChange={(e) => {
-                      props.updateSearchFilters({ offeredInFall2020: e.target.checked });
+                      props.updateSearchFilters({
+                        offeredInFall2020: e.target.checked,
+                      });
                     }}
                     defaultChecked={props.filters.offeredInFall2020}
                     inline
