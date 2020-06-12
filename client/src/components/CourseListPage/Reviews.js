@@ -1,46 +1,51 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import {
-  Card, Badge, Button
-} from 'react-bootstrap';
-import firebase from 'firebase/app';
-import FacebookEmoji from './FacebookEmoji';
-import icons from './Icon';
+import React, { Component } from "react";
+import axios from "axios";
+import { Card, Badge, Button } from "react-bootstrap";
+import firebase from "firebase/app";
+import FacebookEmoji from "./FacebookEmoji";
+import icons from "./Icon";
 
-import 'firebase/auth';
-import { history } from '../../util';
-import LoginModal from '../login-modal.component.js';
+import "firebase/auth";
+import { history } from "../../util";
+import LoginModal from "../login-modal.component.js";
 
 const Review = (props) => {
   let semester = props.rev.s;
-  if (semester === 'S20') {
-    semester = 'Spring 2020';
-  } else if (semester === 'F19') {
-    semester = 'Fall 2019';
-  } else if (semester === 'S19') {
-    semester = 'Spring 2019';
-  } else if (semester === 'F18') {
-    semester = 'Fall 2018';
-  } else if (semester === 'S18') {
-    semester = 'Spring 2018';
+  if (semester === "S20") {
+    semester = "Spring 2020";
+  } else if (semester === "F19") {
+    semester = "Fall 2019";
+  } else if (semester === "S19") {
+    semester = "Spring 2019";
+  } else if (semester === "F18") {
+    semester = "Fall 2018";
+  } else if (semester === "S18") {
+    semester = "Spring 2018";
   }
 
-  const prefix = props.rev.b === '1' ? 'Official Evaluation:  ' : 'Student Review:  ';
+  const prefix =
+    props.rev.b === "1" ? "Official Evaluation:  " : "Student Review:  ";
 
-  const sep = props.isMobile ? <br /> : ' | ';
+  const sep = props.isMobile ? <br /> : " | ";
 
   return (
     <>
-      <Card style={{ backgroundColor: '#f8f9fa', marginTop: '10px', marginBottom: props.isMobile ? '15px' : '10px' }}>
+      <Card
+        style={{
+          backgroundColor: "#f8f9fa",
+          marginTop: "10px",
+          marginBottom: props.isMobile ? "15px" : "10px",
+        }}
+      >
         <Card.Body
           style={{
-            marginTop: '-5px',
-            marginBottom: '-23px',
-            marginRight: '-5px',
-            marginLeft: '-5px'
+            marginTop: "-5px",
+            marginBottom: "-23px",
+            marginRight: "-5px",
+            marginLeft: "-5px",
           }}
         >
-          <h6 style={{ marginBottom: '2px' }}>
+          <h6 style={{ marginBottom: "2px" }}>
             {semester}
             {sep}
             Instructor:
@@ -49,7 +54,7 @@ const Review = (props) => {
             Rating:
             {` ${Number(props.rev.o).toPrecision(3)}`}
           </h6>
-          <p style={{ textAlign: 'left', fontSize: '0.90em' }}>
+          <p style={{ textAlign: "left", fontSize: "0.90em" }}>
             <i>{prefix}</i>
             {props.rev.c.trim()}
           </p>
@@ -62,13 +67,13 @@ const Review = (props) => {
 const cmpReviews = (r1, r2) => {
   const numberSem = (sem) => {
     switch (sem) {
-      case 'S18':
+      case "S18":
         return 1;
-      case 'F18':
+      case "F18":
         return 2;
-      case 'S19':
+      case "S19":
         return 3;
-      case 'F19':
+      case "F19":
         return 4;
       default:
         return 5;
@@ -92,7 +97,7 @@ const cmpReviews = (r1, r2) => {
 const Reactions = (props) => {
   const love = (
     <FacebookEmoji
-      icon={icons.find('facebook', 'love')}
+      icon={icons.find("facebook", "love")}
       label="love"
       number={props.reactions[0]}
       onSelect={() => props.react(0)}
@@ -102,7 +107,7 @@ const Reactions = (props) => {
 
   const wow = (
     <FacebookEmoji
-      icon={icons.find('facebook', 'wow')}
+      icon={icons.find("facebook", "wow")}
       number={props.reactions[1]}
       label="interesting"
       onSelect={() => props.react(1)}
@@ -112,7 +117,7 @@ const Reactions = (props) => {
 
   const sad = (
     <FacebookEmoji
-      icon={icons.find('facebook', 'sad')}
+      icon={icons.find("facebook", "sad")}
       number={props.reactions[2]}
       label="sad"
       onSelect={() => props.react(2)}
@@ -122,7 +127,7 @@ const Reactions = (props) => {
 
   const angry = (
     <FacebookEmoji
-      icon={icons.find('facebook', 'angry')}
+      icon={icons.find("facebook", "angry")}
       number={props.reactions[3]}
       label="angry"
       onSelect={() => props.react(3)}
@@ -132,7 +137,7 @@ const Reactions = (props) => {
 
   const like = (
     <FacebookEmoji
-      icon={icons.find('facebook', 'like')}
+      icon={icons.find("facebook", "like")}
       number={props.reactions[4]}
       label="like"
       onSelect={() => props.react(4)}
@@ -142,7 +147,7 @@ const Reactions = (props) => {
 
   const dislike = (
     <FacebookEmoji
-      icon={icons.find('facebook', 'dislike')}
+      icon={icons.find("facebook", "dislike")}
       number={props.reactions[5]}
       label="dislike"
       onSelect={() => props.react(5)}
@@ -152,13 +157,13 @@ const Reactions = (props) => {
 
   if (props.isMobile) {
     return (
-      <div style={{ display: 'flex' }}>
-        <div style={{ width: '13%', marginRight: '11px' }}>{love}</div>
-        <div style={{ width: '13%', marginRight: '11px'}}>{wow}</div>
-        <div style={{ width: '13%', marginRight: '11px' }}>{sad}</div>
-        <div style={{ width: '13%', marginRight: '11px' }}>{angry}</div>
-        <div style={{ width: '13%', marginRight: '11px' }}>{like}</div>
-        <div style={{ width: '13%' }}>{dislike}</div>
+      <div style={{ display: "flex" }}>
+        <div style={{ width: "13%", marginRight: "11px" }}>{love}</div>
+        <div style={{ width: "13%", marginRight: "11px" }}>{wow}</div>
+        <div style={{ width: "13%", marginRight: "11px" }}>{sad}</div>
+        <div style={{ width: "13%", marginRight: "11px" }}>{angry}</div>
+        <div style={{ width: "13%", marginRight: "11px" }}>{like}</div>
+        <div style={{ width: "13%" }}>{dislike}</div>
       </div>
     );
   }
@@ -166,17 +171,17 @@ const Reactions = (props) => {
   return (
     <div
       style={{
-        display: 'flex',
-        marginTop: '-5px',
-        marginBottom: '-2px',
+        display: "flex",
+        marginTop: "-5px",
+        marginBottom: "-2px",
       }}
     >
-      <div style={{ width: '50px', marginRight: '15px' }}>{love}</div>
-      <div style={{ width: '50px', marginRight: '15px' }}>{wow}</div>
-      <div style={{ width: '50px', marginRight: '15px' }}>{sad}</div>
-      <div style={{ width: '50px', marginRight: '15px' }}>{angry}</div>
-      <div style={{ width: '50px', marginRight: '15px' }}>{like}</div>
-      <div style={{ width: '50px', marginRight: '15px' }}>{dislike}</div>
+      <div style={{ width: "50px", marginRight: "15px" }}>{love}</div>
+      <div style={{ width: "50px", marginRight: "15px" }}>{wow}</div>
+      <div style={{ width: "50px", marginRight: "15px" }}>{sad}</div>
+      <div style={{ width: "50px", marginRight: "15px" }}>{angry}</div>
+      <div style={{ width: "50px", marginRight: "15px" }}>{like}</div>
+      <div style={{ width: "50px", marginRight: "15px" }}>{dislike}</div>
     </div>
   );
 };
@@ -199,13 +204,13 @@ const calculateStats = (currentCourse) => {
 
   currentCourse.rev.forEach((review) => {
     // Old review (from pdf) which only contains overall quality rating
-    if (review.b === '1') {
+    if (review.b === "1") {
       // Old reviews are worth 5 new reviews
       for (let j = 0; j < 5; j += 1) {
         overallQualityRatings.push(Number.parseFloat(review.o));
       }
       // New review
-    } else if (review.b === '0') {
+    } else if (review.b === "0") {
       overallQualityRatings.push(Number.parseFloat(review.o));
       workloadRatings.push(Number.parseFloat(review.w));
       difficultyRatings.push(Number.parseFloat(review.d));
@@ -221,8 +226,8 @@ const calculateStats = (currentCourse) => {
     difficulty: mean(difficultyRatings),
     grading: mean(gradingRatings),
     learning: mean(learningRatings),
-    teacherRating: mean(teacherRatings)
-  }
+    teacherRating: mean(teacherRatings),
+  };
 };
 
 export default class Reviews extends Component {
@@ -233,7 +238,7 @@ export default class Reviews extends Component {
     const reviews = props.course.rev;
     const reactions = props.course.e;
     const reactIndex = -1;
-    const stats = calculateStats(props.course)
+    const stats = calculateStats(props.course);
     this.state = {
       showModal: false,
       reviews,
@@ -248,25 +253,29 @@ export default class Reviews extends Component {
       isSignedIn: false,
       uid: null,
       uiConfig: {
-        signInFlow: 'popup',
-        signInOptions: ['microsoft.com'],
+        signInFlow: "popup",
+        signInOptions: ["microsoft.com"],
         callbacks: {
-          signInSuccessWithAuthResult: () => false
-        }
-      }
+          signInSuccessWithAuthResult: () => false,
+        },
+      },
     };
   }
 
   componentDidMount() {
     this._isMounted = true;
-    this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => this.login(user));
+    this.unregisterAuthObserver = firebase
+      .auth()
+      .onAuthStateChanged((user) => this.login(user));
 
     axios
-      .get(`https://jhu-course-rating-api.herokuapp.com/courses/${this.props.course._id}`)
+      .get(
+        `https://jhu-course-rating-api.herokuapp.com/courses/${this.props.course._id}`
+      )
       // .get('http://localhost:4000/courses/'+this.props.course._id)
       .then((response) => {
         if (this._isMounted) {
-          const stats = calculateStats(response.data)
+          const stats = calculateStats(response.data);
           this.setState({
             reactions: response.data.e,
             reviews: response.data.rev,
@@ -305,7 +314,7 @@ export default class Reviews extends Component {
         .then((response) => {
           if (this._isMounted) {
             this.setState({
-              reactIndex: JSON.parse(response.data)
+              reactIndex: JSON.parse(response.data),
             });
           }
         })
@@ -315,9 +324,12 @@ export default class Reviews extends Component {
     // Push to new url but keep current url in state
     if (this.state.submitReview && !this.state.submitReact) {
       const urlParams = new URLSearchParams(window.location.search);
-      this.props.history.push(`/submit-review/${this.props.course._id}/${urlParams.toString()}`, {
-        previous: history.location.pathname + history.location.search
-      });
+      this.props.history.push(
+        `/submit-review/${this.props.course._id}/${urlParams.toString()}`,
+        {
+          previous: history.location.pathname + history.location.search,
+        }
+      );
       window.location.reload();
     }
   }
@@ -326,7 +338,7 @@ export default class Reviews extends Component {
     if (this._isMounted) {
       this.setState({
         showModal: !this.state.showModal,
-        submitReview: false
+        submitReview: false,
       });
     }
   }
@@ -336,11 +348,13 @@ export default class Reviews extends Component {
       this.setState({
         showModal: !this.state.showModal,
         submitReview: true,
-        submitReact: false
+        submitReact: false,
       });
     } else {
       const urlParams = new URLSearchParams(window.location.search);
-      this.props.history.push(`/submit-review/${this.props.course._id}/${urlParams.toString()}`);
+      this.props.history.push(
+        `/submit-review/${this.props.course._id}/${urlParams.toString()}`
+      );
       window.location.reload();
     }
   }
@@ -351,31 +365,41 @@ export default class Reviews extends Component {
     const statsBadge = (ratingName, rating, flipColorScale) => {
       let badgeColor;
       if (rating == null || Number.isNaN(rating)) {
-        badgeColor = 'dark';
-      } else if ((!flipColorScale && rating < 3) || (flipColorScale && rating >= 4)) {
-        badgeColor = 'danger';
-      } else if ((!flipColorScale && rating < 4) || (flipColorScale && rating >= 3)) {
-        badgeColor = 'warning';
-      } else if ((!flipColorScale && rating >= 4) || (flipColorScale && rating < 3)) {
-        badgeColor = 'success';
+        badgeColor = "dark";
+      } else if (
+        (!flipColorScale && rating < 3) ||
+        (flipColorScale && rating >= 4)
+      ) {
+        badgeColor = "danger";
+      } else if (
+        (!flipColorScale && rating < 4) ||
+        (flipColorScale && rating >= 3)
+      ) {
+        badgeColor = "warning";
+      } else if (
+        (!flipColorScale && rating >= 4) ||
+        (flipColorScale && rating < 3)
+      ) {
+        badgeColor = "success";
       }
 
-      const formattedRating = rating == null || Number.isNaN(rating) ? 'N/A' : rating.toPrecision(3);
+      const formattedRating =
+        rating == null || Number.isNaN(rating) ? "N/A" : rating.toPrecision(3);
 
       return (
         <h5
           style={{
-            marginRight: '10px',
-            width: this.props.isMobile ? '38%' : 'auto'
+            marginRight: "10px",
+            width: this.props.isMobile ? "38%" : "auto",
           }}
         >
           <Badge
             variant={badgeColor}
             style={{
-              textAlign: 'left',
-              padding: '8px',
-              fontWeight: '400',
-              width: '100%'
+              textAlign: "left",
+              padding: "8px",
+              fontWeight: "400",
+              width: "100%",
             }}
           >
             {`${ratingName}: ${formattedRating}`}
@@ -387,13 +411,13 @@ export default class Reviews extends Component {
     if (this._isMounted) {
       return (
         <>
-          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-            {statsBadge('Overall', this.state.overallQuality)}
-            {statsBadge('Workload', this.state.workload, true)}
-            {statsBadge('Difficulty', this.state.difficulty, true)}
-            {statsBadge('Grading', this.state.grading, true)}
-            {statsBadge('Gainz', this.state.learning)}
-            {statsBadge('Instructor', this.state.teacherRating)}
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            {statsBadge("Overall", this.state.overallQuality)}
+            {statsBadge("Workload", this.state.workload, true)}
+            {statsBadge("Difficulty", this.state.difficulty, true)}
+            {statsBadge("Grading", this.state.grading, true)}
+            {statsBadge("Gainz", this.state.learning)}
+            {statsBadge("Instructor", this.state.teacherRating)}
           </div>
         </>
       );
@@ -417,7 +441,7 @@ export default class Reviews extends Component {
             reactions: res.data,
             reactIndex: index,
             submitReact: true,
-            submitReview: false
+            submitReview: false,
           });
         }
       })
@@ -426,7 +450,7 @@ export default class Reviews extends Component {
           this.setState({
             showModal: true,
             submitReact: true,
-            submitReview: false
+            submitReview: false,
           });
         }
       });
@@ -444,7 +468,7 @@ export default class Reviews extends Component {
             uiconfig={this.state.uiConfig}
             firebaseauth={firebase.auth()}
           />
-          <h5 style={{ paddingTop: '5px' }}>Reactions</h5>
+          <h5 style={{ paddingTop: "5px" }}>Reactions</h5>
           <Reactions
             react={this.react.bind(this)}
             reactions={this.state.reactions}
@@ -452,13 +476,13 @@ export default class Reviews extends Component {
             isMobile={this.props.isMobile}
           />
 
-          <h5 style={{ paddingTop: '0px' }}>Reviews</h5>
+          <h5 style={{ paddingTop: "0px" }}>Reviews</h5>
           <p>No one has reviewed this course yet. Be the first!</p>
           <Button
             onClick={() => this.review()}
             variant="outline-primary"
             size="sm"
-            style={{ marginTop: '-5px', marginBottom: '8px' }}
+            style={{ marginTop: "-5px", marginBottom: "8px" }}
           >
             Submit a Review
           </Button>
@@ -475,8 +499,8 @@ export default class Reviews extends Component {
           uiconfig={this.state.uiConfig}
           firebaseauth={firebase.auth()}
         />
-        
-        <h5 style={{ paddingTop: '5px' }}>Reactions</h5>
+
+        <h5 style={{ paddingTop: "5px" }}>Reactions</h5>
         <Reactions
           react={this.react.bind(this)}
           reactions={this.state.reactions}
@@ -484,17 +508,17 @@ export default class Reviews extends Component {
           isMobile={this.props.isMobile}
         />
 
-        <h5 style={{ paddingBottom: '3px' }}>Average Stats</h5>
+        <h5 style={{ paddingBottom: "3px" }}>Average Stats</h5>
         {this.stats()}
-        
+
         <div className="flex-wrapper">
-          <h5 style={{ paddingTop: '15px' }}>Reviews</h5>
+          <h5 style={{ paddingTop: "15px" }}>Reviews</h5>
           <div>
             <Button
               onClick={() => this.review()}
               variant="outline-primary"
               size="sm"
-              style={{ marginTop: '11.7px', marginLeft: '10px' }}
+              style={{ marginTop: "11.7px", marginLeft: "10px" }}
             >
               Submit a Review
             </Button>
@@ -505,7 +529,11 @@ export default class Reviews extends Component {
             .sort(cmpReviews)
             .filter((rev) => rev.c)
             .map((review, key) => (
-              <Review rev={review} key={`review-${key}`} isMobile={this.props.isMobile} />
+              <Review
+                rev={review}
+                key={`review-${key}`}
+                isMobile={this.props.isMobile}
+              />
             ))}
         </div>
       </>

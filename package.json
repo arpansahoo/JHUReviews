@@ -1,18 +1,18 @@
 {
   "name": "jhureviews",
   "version": "1.2.3",
-  "description": "",
+  "description": "JHUReviews - Course Evaluations Made Powerful",
   "homepage": "https://www.jhureviews.com",
-  "main": "index.js",
+  "repository": "https://github.com/arpansahoo/JHUReviews",
+  "private": true,
+  "author": "Arpan Sahoo",
+  "license": "ISC",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cd client && npm start",
     "predeploy": "cd client && npm install --only=dev && npm install && npm run build",
     "deploy": "cd client && gh-pages -d build"
   },
-  "keywords": [],
-  "author": "Arpan Sahoo",
-  "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",

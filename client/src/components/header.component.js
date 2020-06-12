@@ -1,19 +1,17 @@
-import React, { Component } from 'react';
-import {
-  Navbar, Nav, Image, Spinner
-} from 'react-bootstrap';
-import firebase from 'firebase/app';
-import AboutModal from './about-modal.component';
-import LoginModal from './login-modal.component';
-import logo from '../images/logo1.png';
-import { history } from '../util';
-import 'firebase/auth';
+import React, { Component } from "react";
+import { Navbar, Nav, Image, Spinner } from "react-bootstrap";
+import firebase from "firebase/app";
+import AboutModal from "./about-modal.component";
+import LoginModal from "./login-modal.component";
+import logo from "../images/logo1.png";
+import { history } from "../util";
+import "firebase/auth";
 
 export default class Header extends Component {
   constructor() {
     super();
     let isSignedIn = false;
-    if (localStorage.getItem('loggedIn') === 'true') isSignedIn = true;
+    if (localStorage.getItem("loggedIn") === "true") isSignedIn = true;
 
     this.state = {
       showModal: false,
@@ -22,12 +20,12 @@ export default class Header extends Component {
       logout: false,
       uid: null,
       uiConfig: {
-        signInFlow: 'popup',
-        signInOptions: ['microsoft.com'],
+        signInFlow: "popup",
+        signInOptions: ["microsoft.com"],
         callbacks: {
-          signInSuccessWithAuthResult: () => false
-        }
-      }
+          signInSuccessWithAuthResult: () => false,
+        },
+      },
     };
   }
 
@@ -36,14 +34,16 @@ export default class Header extends Component {
     if (user) id = user.uid;
     this.setState({ isSignedIn: !!user, uid: id });
     if (user) {
-      localStorage.setItem('loggedIn', true);
+      localStorage.setItem("loggedIn", true);
     } else {
-      localStorage.setItem('loggedIn', false);
+      localStorage.setItem("loggedIn", false);
     }
   }
 
   componentDidMount() {
-    this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => this.login(user));
+    this.unregisterAuthObserver = firebase
+      .auth()
+      .onAuthStateChanged((user) => this.login(user));
   }
 
   // Make sure we un-register Firebase observers when the component unmounts.
@@ -53,17 +53,17 @@ export default class Header extends Component {
 
   handleToggleModal() {
     this.setState({
-      showModal: !this.state.showModal
+      showModal: !this.state.showModal,
     });
   }
 
   logout() {
     firebase.auth().signOut();
     this.setState({
-      logout: true
+      logout: true,
     });
     if (this.props.submit) {
-      history.push('/');
+      history.push("/");
       window.location.reload();
     }
   }
@@ -71,7 +71,7 @@ export default class Header extends Component {
   toggleLoginModal() {
     this.setState({
       showLoginModal: !this.state.showLoginModal,
-      logout: false
+      logout: false,
     });
   }
 
@@ -80,9 +80,10 @@ export default class Header extends Component {
       <>
         <Navbar
           style={{
-            marginBottom: '5px',
-            backgroundColor: 'white',
-            boxShadow: '0 0 12px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.15)'
+            marginBottom: "5px",
+            backgroundColor: "white",
+            boxShadow:
+              "0 0 12px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.15)",
           }}
           sticky="top"
           collapseOnSelect
@@ -93,14 +94,18 @@ export default class Header extends Component {
             <div className="flex-wrapper">
               <Image
                 src={logo}
-                style={{ maxHeight: '30px', marginTop: '0px', marginRight: '5px' }}
+                style={{
+                  maxHeight: "30px",
+                  marginTop: "0px",
+                  marginRight: "5px",
+                }}
                 fluid
               />
               JHUReviews
               <Spinner
                 variant="primary"
-                style={{ marginTop: '0px', marginLeft: '15px' }}
-                className={this.props.loading ? '' : 'hidden'}
+                style={{ marginTop: "0px", marginLeft: "15px" }}
+                className={this.props.loading ? "" : "hidden"}
                 animation="border"
                 role="status"
               >
@@ -119,17 +124,28 @@ export default class Header extends Component {
               >
                 About
               </Nav.Link>
-              {this.state.isSignedIn && <Nav.Link onClick={() => this.logout()}>Logout</Nav.Link>}
+              {this.state.isSignedIn && (
+                <Nav.Link onClick={() => this.logout()}>Logout</Nav.Link>
+              )}
               {!this.state.isSignedIn && (
-                <Nav.Link onClick={() => this.toggleLoginModal()}>Login</Nav.Link>
+                <Nav.Link onClick={() => this.toggleLoginModal()}>
+                  Login
+                </Nav.Link>
               )}
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-        <AboutModal show={this.state.showModal} onHide={() => this.handleToggleModal()} />
+        <AboutModal
+          show={this.state.showModal}
+          onHide={() => this.handleToggleModal()}
+        />
         <LoginModal
           title="Login to JHUReviews"
-          show={this.state.showLoginModal && !this.state.isSignedIn && !this.state.logout}
+          show={
+            this.state.showLoginModal &&
+            !this.state.isSignedIn &&
+            !this.state.logout
+          }
           onHide={() => this.toggleLoginModal()}
           uiconfig={this.state.uiConfig}
           firebaseauth={firebase.auth()}
