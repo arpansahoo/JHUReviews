@@ -263,7 +263,7 @@ function FormComponent(props) {
         <Form.Group
           style={{ marginRight: "10px" }}
           as={Col}
-          controlId="validationCustomUsername"
+          controlId="semester"
         >
           <Form.Label>Semester</Form.Label>
           <InputGroup>
@@ -281,7 +281,7 @@ function FormComponent(props) {
             </Form.Control>
           </InputGroup>
         </Form.Group>
-        <Form.Group as={Col} controlId="validationCustom05">
+        <Form.Group as={Col} controlId="instructor">
           <Form.Label>Instructor Name</Form.Label>
           <InputGroup>
             <Form.Control
@@ -301,7 +301,7 @@ function FormComponent(props) {
         <Form.Group
           style={{ marginRight: "10px" }}
           as={Col}
-          controlId="validationCustomUsername"
+          controlId="quality"
         >
           <Form.Label>
             <Popover
@@ -326,7 +326,7 @@ function FormComponent(props) {
             </Form.Control>
           </InputGroup>
         </Form.Group>
-        <Form.Group as={Col} controlId="validationCustomUsername">
+        <Form.Group as={Col} controlId="workload">
           <Form.Label>
             <Popover
               name="Workload"
@@ -356,7 +356,7 @@ function FormComponent(props) {
         <Form.Group
           style={{ marginRight: "10px" }}
           as={Col}
-          controlId="validationCustomUsername"
+          controlId="difficulty"
         >
           <Form.Label>
             <Popover
@@ -381,7 +381,7 @@ function FormComponent(props) {
             </Form.Control>
           </InputGroup>
         </Form.Group>
-        <Form.Group as={Col} controlId="validationCustomUsername">
+        <Form.Group as={Col} controlId="grading">
           <Form.Label>
             <Popover
               name="Grading"
@@ -408,11 +408,7 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group
-          style={{ marginRight: "10px" }}
-          as={Col}
-          controlId="validationCustomUsername"
-        >
+        <Form.Group style={{ marginRight: "10px" }} as={Col} controlId="gainz">
           <Form.Label>
             <Popover
               name="Gainz"
@@ -436,7 +432,7 @@ function FormComponent(props) {
             </Form.Control>
           </InputGroup>
         </Form.Group>
-        <Form.Group as={Col} controlId="validationCustomUsername">
+        <Form.Group as={Col} controlId="instructor quality">
           <Form.Label>
             <Popover
               name="Instructor Quality"
@@ -463,7 +459,7 @@ function FormComponent(props) {
       </Form.Row>
 
       <Form.Row>
-        <Form.Group as={Col} controlId="validationCustom05">
+        <Form.Group as={Col} controlId="text">
           <Form.Label>Review (Optional)</Form.Label>
           <Form.Control
             as="textarea"
