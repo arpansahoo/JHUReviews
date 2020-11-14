@@ -114,7 +114,7 @@ class CourseList extends Component {
       includeQuantitativeAreaDesignation: urlParams.get("q") !== "0",
       includeCoursesWithoutAreaDesignation: urlParams.get("na") !== "0",
       writingIntensive: urlParams.get("w") || false,
-      offeredInFall2020: urlParams.get("nextSem") || false,
+      offeredNextSem: urlParams.get("nextSem") || false,
       sortBy: Number.parseInt(urlParams.get("sort")) || 0,
     };
 
@@ -203,9 +203,9 @@ class CourseList extends Component {
         urlParams.delete("teacher");
       else urlParams.set("teacher", options.instructorName.trim());
     }
-    if (options.offeredInFall2020 !== undefined) {
-      if (!options.offeredInFall2020) urlParams.delete("nextSem");
-      else urlParams.set("nextSem", Number(options.offeredInFall2020));
+    if (options.offeredNextSem !== undefined) {
+      if (!options.offeredNextSem) urlParams.delete("nextSem");
+      else urlParams.set("nextSem", Number(options.offeredNextSem));
     }
     if (options.writingIntensive !== undefined) {
       if (!options.writingIntensive) urlParams.delete("w");
@@ -281,7 +281,7 @@ class CourseList extends Component {
       if (filters.writingIntensive && currentCourse.w === "N") {
         valid = false;
       }
-      if (filters.offeredInFall2020 && currentCourse.o === "0") {
+      if (filters.offeredNextSem && currentCourse.o === "0") {
         valid = false;
       }
 

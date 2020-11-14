@@ -148,12 +148,12 @@ const SearchFilter = (props) => (
                   <Form.Check
                     onChange={(e) => {
                       props.updateSearchFilters({
-                        offeredInFall2020: e.target.checked,
+                        offeredNextSem: e.target.checked,
                       });
                     }}
-                    defaultChecked={props.filters.offeredInFall2020}
+                    defaultChecked={props.filters.offeredNextSem}
                     inline
-                    label="Offered in Fall '20"
+                    label="Offered in Spring '21"
                     type={type}
                     id={`inline-${type}-8`}
                   />
