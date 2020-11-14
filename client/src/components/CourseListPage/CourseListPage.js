@@ -294,7 +294,6 @@ class CourseList extends Component {
       // some naive hardcoding for common abbreviations
       courseName = courseName.replace("orgo", "organic");
       courseName = courseName.replace("stats", "statistics");
-      courseName = courseName.replace("ifp", "fiction/poetry");
       if (courseName === "bbc") {
         courseName = "brain, behavior and cognition";
       }
