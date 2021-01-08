@@ -98,7 +98,7 @@ class ReviewForm extends Component {
       this.state.instructor_quality,
     ];
 
-    if (array[1] === "") array[1] = "S20";
+    if (array[1] === "") array[1] = "F20";
     if (array[2] === "") array[2] = this.state.instructors[0];
     for (let i = 3; i < array.length; i++) {
       if (array[i] === "") array[i] = "3.00";
@@ -173,7 +173,9 @@ class ReviewForm extends Component {
 
   changeSemester(e) {
     let { value } = e.target;
-    if (value === "Spring 2020") {
+    if (value === "Fall 2020") {
+      value = "F20";
+    } else if (value === "Spring 2020") {
       value = "S20";
     } else if (value === "Fall 2019") {
       value = "F19";
@@ -269,7 +271,7 @@ function FormComponent(props) {
           <InputGroup>
             <Form.Control
               as="select"
-              defaultValue="Spring 2020"
+              defaultValue="Fall 2020"
               required
               onChange={props.changeSemester}
             >
@@ -278,6 +280,7 @@ function FormComponent(props) {
               <option>Spring 2019</option>
               <option>Fall 2019</option>
               <option>Spring 2020</option>
+              <option>Fall 2020</option>
             </Form.Control>
           </InputGroup>
         </Form.Group>
