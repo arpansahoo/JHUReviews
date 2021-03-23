@@ -8,7 +8,7 @@ import CourseListPage from "./components/CourseListPage/CourseListPage";
 import ReviewForm from "./components/submit-review.component";
 import Page404 from "./components/page404.component";
 
-import firebaseConfig from "./firebase-config";
+import firebaseConfig from "./firebase-config.js";
 
 firebase.initializeApp(firebaseConfig);
 

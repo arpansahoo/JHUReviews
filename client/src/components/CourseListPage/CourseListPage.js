@@ -273,7 +273,8 @@ class CourseList extends Component {
         (filters.includeHumanitiesAreaDesignation && areas.includes("H")) ||
         (filters.includeSocialSciencesAreaDesignation && areas.includes("S")) ||
         (filters.includeNaturalSciencesAreaDesignation &&
-          areas.includes("N")) ||
+          areas.includes("N") &&
+          areas !== "N/A") ||
         (filters.includeEngineeringAreaDesignation && areas.includes("E")) ||
         (filters.includeQuantitativeAreaDesignation && areas.includes("Q")) ||
         (filters.includeCoursesWithoutAreaDesignation && areas === "N/A");
