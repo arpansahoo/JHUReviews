@@ -10,19 +10,10 @@ import { history } from "../../util";
 import LoginModal from "../login-modal.component.js";
 
 const Review = (props) => {
-  let semester = props.rev.s;
-  if (semester === "S20") {
-    semester = "Spring 2020";
-  } else if (semester === "F19") {
-    semester = "Fall 2019";
-  } else if (semester === "S19") {
-    semester = "Spring 2019";
-  } else if (semester === "F18") {
-    semester = "Fall 2018";
-  } else if (semester === "S18") {
-    semester = "Spring 2018";
-  }
-
+  const semesterString = props.rev.s;
+  const semester = `${
+    semesterString.slice(0, 1) === "F" ? "Fall" : "Spring"
+  } 20${semesterString.slice(1)}`;
   const prefix =
     props.rev.b === "1" ? "Official Evaluation:  " : "Student Review:  ";
 
@@ -75,8 +66,10 @@ const cmpReviews = (r1, r2) => {
         return 3;
       case "F19":
         return 4;
-      default:
+      case "S20":
         return 5;
+      default:
+        return 6;
     }
   };
 
